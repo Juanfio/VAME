@@ -24,6 +24,7 @@
     {
       "items": [
         "reference/vame/model/create_training",
+        "reference/vame/model/dataloader",
         "reference/vame/model/evaluate",
         "reference/vame/model/rnn_model",
         "reference/vame/model/rnn_vae"
