@@ -51,7 +51,30 @@ def interpol(arr: np.ndarray) -> np.ndarray:
     arr = np.transpose(y)
     return arr
 
-def plot_check_parameter(cfg, iqr_val, num_frames, X_true, X_med, anchor_1, anchor_2):
+def plot_check_parameter(
+    cfg: dict,
+    iqr_val: float,
+    num_frames: int,
+    X_true: List[np.ndarray],
+    X_med: np.ndarray,
+    anchor_1: int,
+    anchor_2: int
+) -> None:
+    '''
+    Plot the check parameter - z-scored data and the filtered data.
+
+    Args:
+        cfg (dict): Configuration parameters.
+        iqr_val (float): IQR value.
+        num_frames (int): Number of frames.
+        X_true (List[np.ndarray]): List of true data.
+        X_med (np.ndarray): Filtered data.
+        anchor_1 (int): Index of the first anchor point (deprecated).
+        anchor_2 (int): Index of the second anchor point (deprecated).
+
+    Returns:
+        None - Plot the z-scored data and the filtered data.
+    '''
     plot_X_orig = np.concatenate(X_true, axis=0).T
     plot_X_med = X_med.copy()
     iqr_cutoff = cfg['iqr_factor']*iqr_val
@@ -111,20 +134,27 @@ def plot_check_parameter(cfg, iqr_val, num_frames, X_true, X_med, anchor_1, anch
     print("Please run the function with check_parameter=False if you are happy with the results")
 
 def traindata_aligned(
-    cfg,
-    files,
-    testfraction,
-    num_features,
-    savgol_filter,
-    check_parameter
+    cfg: dict,
+    files: List[str],
+    testfraction: float,
+    num_features: int,
+    savgol_filter: bool,
+    check_parameter: bool
 ) -> None:
-    print('cfg', cfg, type(cfg))
-    print('files', files, type(files))
-    print('testfraction', testfraction, type(testfraction))
-    print('num_features', num_features, type(num_features))
-    print('savgol_filter', savgol_filter, type(savgol_filter))
-    print('check_parameter', check_parameter, type(check_parameter))
+    '''
+    Create training dataset for aligned data.
 
+    Args:
+        cfg (dict): Configuration parameters.
+        files (List[str]): List of files.
+        testfraction (float): Fraction of data to use as test data.
+        num_features (int): Number of features (deprecated).
+        savgol_filter (bool): Flag indicating whether to apply Savitzky-Golay filter.
+        check_parameter (bool): If True, the function will plot the z-scored data and the filtered data.
+
+    Returns:
+        None - Save numpy arrays with the test/train info to the project folder.
+    '''
 
     X_train = []
     pos = []
@@ -228,7 +258,30 @@ def traindata_aligned(
         print('Lenght of test data: %d' %len(z_test.T))
 
 
-def traindata_fixed(cfg, files, testfraction, num_features, savgol_filter, check_parameter, pose_ref_index):
+def traindata_fixed(
+    cfg: dict,
+    files: List[str],
+    testfraction: float,
+    num_features: int,
+    savgol_filter: bool,
+    check_parameter: bool,
+    pose_ref_index: Optional[List[int]]
+) -> None:
+    '''
+    Create training dataset for fixed data.
+
+    Args:
+        cfg (dict): Configuration parameters.
+        files (List[str]): List of files.
+        testfraction (float): Fraction of data to use as test data.
+        num_features (int): Number of features.
+        savgol_filter (bool): Flag indicating whether to apply Savitzky-Golay filter.
+        check_parameter (bool): If True, the function will plot the z-scored data and the filtered data.
+        pose_ref_index (Optional[List[int]]): List of reference coordinate indices for alignment.
+
+    Returns:
+        None - Save numpy arrays with the test/train info to the project folder.
+    '''
     X_train = []
     pos = []
     pos_temp = 0
