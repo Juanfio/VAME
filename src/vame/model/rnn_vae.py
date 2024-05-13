@@ -14,11 +14,10 @@ from torch import nn
 import torch.utils.data as Data
 from torch.autograd import Variable
 from torch.optim.lr_scheduler import StepLR, ReduceLROnPlateau
-
 import os
 import numpy as np
 from pathlib import Path
-
+from typing import Tuple
 from vame.util.auxiliary import read_config
 from vame.model.dataloader import SEQUENCE_DATASET
 from vame.model.rnn_model import RNN_VAE, RNN_VAE_LEGACY
@@ -32,17 +31,48 @@ if use_gpu:
 else:
     torch.device("cpu")
 
-def reconstruction_loss(x, x_tilde, reduction):
+def reconstruction_loss(x: torch.Tensor, x_tilde: torch.Tensor, reduction: str) -> torch.Tensor:
+    '''Compute the reconstruction loss between input and reconstructed data.
+
+    Args:
+        x (torch.Tensor): Input data tensor.
+        x_tilde (torch.Tensor): Reconstructed data tensor.
+        reduction (str): Type of reduction for the loss.
+
+    Returns:
+        torch.Tensor: Reconstruction loss.
+    '''
     mse_loss = nn.MSELoss(reduction=reduction)
     rec_loss = mse_loss(x_tilde,x)
     return rec_loss
 
-def future_reconstruction_loss(x, x_tilde, reduction):
+def future_reconstruction_loss(x: torch.Tensor, x_tilde: torch.Tensor, reduction: str) -> torch.Tensor:
+    '''Compute the future reconstruction loss between input and predicted future data.
+
+    Args:
+        x (torch.Tensor): Input future data tensor.
+        x_tilde (torch.Tensor): Reconstructed future data tensor.
+        reduction (str): Type of reduction for the loss.
+
+    Returns:
+        torch.Tensor: Future reconstruction loss.
+    '''
     mse_loss = nn.MSELoss(reduction=reduction)
     rec_loss = mse_loss(x_tilde,x)
     return rec_loss
 
-def cluster_loss(H, kloss, lmbda, batch_size):
+def cluster_loss(H: torch.Tensor, kloss: int, lmbda: float, batch_size: int) -> torch.Tensor:
+    '''Compute the cluster loss.
+
+    Args:
+        H (torch.Tensor): Latent representation tensor.
+        kloss (int): Number of clusters.
+        lmbda (float): Lambda value for the loss.
+        batch_size (int): Size of the batch.
+
+    Returns:
+        torch.Tensor: Cluster loss.
+    '''
     gram_matrix = (H.T @ H) / batch_size
     _ ,sv_2, _ = torch.svd(gram_matrix)
     sv = torch.sqrt(sv_2[:kloss])
@@ -50,21 +80,38 @@ def cluster_loss(H, kloss, lmbda, batch_size):
     return lmbda*loss
 
 
-def kullback_leibler_loss(mu, logvar):
-    # see Appendix B from VAE paper:
-        # Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014
-        # https://arxiv.org/abs/1312.6114
-        # 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
+def kullback_leibler_loss(mu: torch.Tensor, logvar: torch.Tensor) -> torch.Tensor:
+    '''Compute the Kullback-Leibler divergence loss.
+    see Appendix B from VAE paper: Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014 - https://arxiv.org/abs/1312.6114
+
+    Formula: 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
+
+    Args:
+        mu (torch.Tensor): Mean of the latent distribution.
+        logvar (torch.Tensor): Log variance of the latent distribution.
+
+    Returns:
+        torch.Tensor: Kullback-Leibler divergence loss.
+    '''
     # I'm using torch.mean() here as the sum() version depends on the size of the latent vector
     KLD = -0.5 * torch.mean(1 + logvar - mu.pow(2) - logvar.exp())
     return KLD
 
 
-def kl_annealing(epoch, kl_start, annealtime, function):
-    """
-        Annealing of Kullback-Leibler loss to let the model learn first
-        the reconstruction of the data before the KL loss term gets introduced.
-    """
+def kl_annealing(epoch: int, kl_start: int, annealtime: int, function: str) -> float:
+    '''
+    Anneal the Kullback-Leibler loss to let the model learn first the reconstruction of the data
+    before the KL loss term gets introduced.
+
+    Args:
+        epoch (int): Current epoch number.
+        kl_start (int): Epoch number to start annealing the loss.
+        annealtime (int): Annealing time.
+        function (str): Annealing function type.
+
+    Returns:
+        float: Annealed weight value for the loss.
+    '''
     if epoch > kl_start:
         if function == 'linear':
             new_weight = min(1, (epoch-kl_start)/(annealtime))
@@ -81,7 +128,18 @@ def kl_annealing(epoch, kl_start, annealtime, function):
         return new_weight
 
 
-def gaussian(ins, is_training, seq_len, std_n=0.8):
+def gaussian(ins: torch.Tensor, is_training: bool, seq_len: int, std_n: float = 0.8) -> torch.Tensor:
+    '''Add Gaussian noise to the input data.
+
+    Args:
+        ins (torch.Tensor): Input data tensor.
+        is_training (bool): Whether it is training mode.
+        seq_len (int): Length of the sequence.
+        std_n (float): Standard deviation for the Gaussian noise.
+
+    Returns:
+        torch.Tensor: Noisy input data tensor.
+    '''
     if is_training:
         emp_std = ins.std(1)*std_n
         emp_std = emp_std.unsqueeze(2).repeat(1, 1, seq_len)
@@ -91,9 +149,53 @@ def gaussian(ins, is_training, seq_len, std_n=0.8):
     return ins
 
 
-def train(train_loader, epoch, model, optimizer, anneal_function, BETA, kl_start,
-          annealtime, seq_len, future_decoder, future_steps, scheduler, mse_red,
-          mse_pred, kloss, klmbda, bsize, noise):
+def train(
+    train_loader: Data.DataLoader,
+    epoch: int,
+    model: nn.Module,
+    optimizer: torch.optim.Optimizer,
+    anneal_function: str,
+    BETA: float,
+    kl_start: int,
+    annealtime: int,
+    seq_len: int,
+    future_decoder: bool,
+    future_steps: int,
+    scheduler: torch.optim.lr_scheduler._LRScheduler,
+    mse_red: str,
+    mse_pred: str,
+    kloss: int,
+    klmbda: float,
+    bsize: int,
+    noise: bool
+) -> Tuple[float, float, float, float, float, float]:
+    '''Train the model.
+
+    Args:
+        train_loader (DataLoader): Training data loader.
+        epoch (int): Current epoch number.
+        model (nn.Module): Model to be trained.
+        optimizer (Optimizer): Optimizer for training.
+        anneal_function (str): Annealing function type.
+        BETA (float): Beta value for the loss.
+        kl_start (int): Epoch number to start annealing the loss.
+        annealtime (int): Annealing time.
+        seq_len (int): Length of the sequence.
+        future_decoder (bool): Whether a future decoder is used.
+        future_steps (int): Number of future steps to predict.
+        scheduler (lr_scheduler._LRScheduler): Learning rate scheduler.
+        mse_red (str): Reduction type for MSE reconstruction loss.
+        mse_pred (str): Reduction type for MSE prediction loss.
+        kloss (int): Number of clusters for cluster loss.
+        klmbda (float): Lambda value for cluster loss.
+        bsize (int): Size of the batch.
+        noise (bool): Whether to add Gaussian noise to the input.
+
+    Returns:
+        Tuple[float, float, float, float, float, float]: Kullback-Leibler weight, train loss, K-means loss, KL loss,
+        MSE loss, future loss.
+    '''
+
     model.train() # toggle model to train mode
     train_loss = 0.0
     mse_loss = 0.0
@@ -164,7 +266,42 @@ def train(train_loader, epoch, model, optimizer, anneal_function, BETA, kl_start
     return kl_weight, train_loss/idx, kl_weight*kmeans_losses/idx, kullback_loss/idx, mse_loss/idx, fut_loss/idx
 
 
-def test(test_loader, epoch, model, optimizer, BETA, kl_weight, seq_len, mse_red, kloss, klmbda, future_decoder, bsize):
+def test(
+    test_loader: Data.DataLoader,
+    epoch: int,
+    model: nn.Module,
+    optimizer: torch.optim.Optimizer,
+    BETA: float,
+    kl_weight: float,
+    seq_len: int,
+    mse_red: str,
+    kloss: str,
+    klmbda: float,
+    future_decoder: bool,
+    bsize: int
+) -> Tuple[float, float, float]:
+    '''
+    Evaluate the model on the test dataset.
+
+    Args:
+        test_loader (DataLoader): DataLoader for the test dataset.
+        epoch (int, deprecated): Current epoch number.
+        model (nn.Module): The trained model.
+        optimizer (Optimizer, deprecated): The optimizer used for training.
+        BETA (float): Beta value for the VAE loss.
+        kl_weight (float): Weighting factor for the KL divergence loss.
+        seq_len (int): Length of the sequence.
+        mse_red (str): Reduction method for the MSE loss.
+        kloss (str): Loss function for K-means clustering.
+        klmbda (float): Lambda value for K-means loss.
+        future_decoder (bool): Flag indicating whether to use a future decoder.
+        bsize (int): Batch size.
+
+    Returns:
+        Tuple[float, float, float]: Tuple containing MSE loss per item, total test loss per item,
+        and K-means loss weighted by the kl_weight.
+    '''
+
     model.eval() # toggle model to inference mode
     test_loss = 0.0
     mse_loss = 0.0
@@ -210,11 +347,11 @@ def test(test_loader, epoch, model, optimizer, BETA, kl_weight, seq_len, mse_red
     return mse_loss /idx, test_loss/idx, kl_weight*kmeans_losses
 
 
-def train_model(config: str):
-    '''Train Variational Autoencoder using the config.yaml file values
+def train_model(config: str) -> None:
+    '''Train Variational Autoencoder using the configuration file values.
 
     Args:
-        config (str): Path to the config.yaml file
+        config (str): Path to the configuration file.
     '''
     config_file = Path(config).resolve()
     cfg = read_config(config_file)
