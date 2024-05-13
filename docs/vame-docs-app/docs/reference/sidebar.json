@@ -8,7 +8,8 @@
         "reference/vame/analysis/pose_segmentation",
         "reference/vame/analysis/segment_behavior",
         "reference/vame/analysis/tree_hierarchy",
-        "reference/vame/analysis/umap_visualization"
+        "reference/vame/analysis/umap_visualization",
+        "reference/vame/analysis/videowriter"
       ],
       "label": "vame.analysis",
       "type": "category"
