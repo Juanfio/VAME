@@ -15,6 +15,7 @@ import numpy as np
 from pathlib import Path
 from matplotlib import pyplot as plt
 import torch.utils.data as Data
+from typing import Optional
 
 from vame.util.auxiliary import read_config
 from vame.model.rnn_vae import RNN_VAE
@@ -27,8 +28,29 @@ else:
     torch.device("cpu")
 
 
-def plot_reconstruction(filepath, test_loader, seq_len_half, model, model_name,
-                        FUTURE_DECODER, FUTURE_STEPS, suffix=None):
+def plot_reconstruction(
+    filepath: str,
+    test_loader: Data.DataLoader,
+    seq_len_half: int,
+    model: RNN_VAE,
+    model_name: str,
+    FUTURE_DECODER: bool,
+    FUTURE_STEPS: int,
+    suffix: Optional[str] = None
+) -> None:
+    '''
+    Plot the reconstruction and future prediction of the input sequence.
+
+    Args:
+        filepath (str): Path to save the plot.
+        test_loader (Data.DataLoader): DataLoader for the test dataset.
+        seq_len_half (int): Half of the temporal window size.
+        model (RNN_VAE): Trained VAE model.
+        model_name (str): Name of the model.
+        FUTURE_DECODER (bool): Flag indicating whether the model has a future prediction decoder.
+        FUTURE_STEPS (int): Number of future steps to predict.
+        suffix (Optional[str], optional): Suffix for the saved plot filename. Defaults to None.
+    '''
     #x = test_loader.__iter__().next()
     dataiter = iter(test_loader)
     x = next(dataiter)
@@ -81,7 +103,15 @@ def plot_reconstruction(filepath, test_loader, seq_len_half, model, model_name,
             fig.savefig(os.path.join(filepath,'evaluate','Reconstruction_'+model_name+'_'+suffix+'.png'), bbox_inches='tight')
 
 
-def plot_loss(cfg, filepath, model_name):
+def plot_loss(cfg: dict, filepath: str, model_name: str) -> None:
+    '''
+    Plot the losses of the trained model.
+
+    Args:
+        cfg (dict): Configuration dictionary.
+        filepath (str): Path to save the plot.
+        model_name (str): Name of the model.
+    '''
     basepath = os.path.join(cfg['project_path'],"model","model_losses")
     train_loss = np.load(os.path.join(basepath,'train_losses_'+model_name+'.npy'))
     test_loss = np.load(os.path.join(basepath,'test_losses_'+model_name+'.npy'))
@@ -113,7 +143,25 @@ def plot_loss(cfg, filepath, model_name):
     fig.savefig(os.path.join(filepath,"evaluate",'MSE-and-KL-Loss'+model_name+'.png'))
 
 
-def eval_temporal(cfg, use_gpu, model_name, fixed, snapshot=None, suffix=None):
+def eval_temporal(
+    cfg: dict,
+    use_gpu: bool,
+    model_name: str,
+    fixed: bool,
+    snapshot: Optional[str] = None,
+    suffix: Optional[str] = None
+) -> None:
+    '''
+    Evaluate the temporal aspects of the trained model.
+
+    Args:
+        cfg (dict): Configuration dictionary.
+        use_gpu (bool): Flag indicating whether to use GPU for evaluation.
+        model_name (str): Name of the model.
+        fixed (bool): Flag indicating whether the data is fixed or not.
+        snapshot (Optional[str], optional): Path to the model snapshot. Defaults to None.
+        suffix (Optional[str], optional): Suffix for the saved plot filename. Defaults to None.
+    '''
     SEED = 19
     ZDIMS = cfg['zdims']
     FUTURE_DECODER = cfg['prediction_decoder']
