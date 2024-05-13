@@ -5,6 +5,7 @@
         "reference/vame/analysis/community_analysis",
         "reference/vame/analysis/generative_functions",
         "reference/vame/analysis/gif_creator",
+        "reference/vame/analysis/pose_segmentation",
         "reference/vame/analysis/tree_hierarchy"
       ],
       "label": "vame.analysis",
