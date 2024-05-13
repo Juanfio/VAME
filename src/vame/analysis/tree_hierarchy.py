@@ -72,7 +72,29 @@ def hierarchy_pos(
     return _hierarchy_pos(G, root, width, vert_gap, vert_loc, xcenter)
 
 
-def merge_func(transition_matrix, n_cluster, motif_norm, merge_sel):
+def merge_func(
+    transition_matrix: np.ndarray,
+    n_cluster: int,
+    motif_norm: np.ndarray,
+    merge_sel: int
+) -> Tuple[np.ndarray, np.ndarray]:
+    '''
+    Merge nodes in a graph based on a selection criterion.
+
+    Args:
+        transition_matrix (np.ndarray): The transition matrix of the graph.
+        n_cluster (int): The number of clusters.
+        motif_norm (np.ndarray): The normalized motif matrix.
+        merge_sel (int): The merge selection criterion.
+            - 0: Merge nodes with highest transition probability.
+            - 1: Merge nodes with lowest cost.
+
+    Raises:
+        ValueError: If an invalid merge selection criterion is provided.
+
+    Returns:
+        Tuple[np.ndarray, np.ndarray]: A tuple containing the merged nodes.
+    '''
 
     if merge_sel == 0:
         # merge nodes with highest transition probability
@@ -91,11 +113,32 @@ def merge_func(transition_matrix, n_cluster, motif_norm, merge_sel):
                 if cost <= cost_temp:
                     cost_temp = cost
                     merge_nodes = (np.array([i]), np.array([j]))
+    else:
+        raise ValueError("Invalid merge selection criterion. Please select 0 or 1.")
 
     return merge_nodes
 
 
-def graph_to_tree(motif_usage, transition_matrix, n_cluster, merge_sel=1):
+def graph_to_tree(
+    motif_usage: np.ndarray,
+    transition_matrix: np.ndarray,
+    n_cluster: int,
+    merge_sel: int = 1
+) -> nx.Graph:
+    '''
+    Convert a graph to a tree.
+
+    Args:
+        motif_usage (np.ndarray): The motif usage matrix.
+        transition_matrix (np.ndarray): The transition matrix of the graph.
+        n_cluster (int): The number of clusters.
+        merge_sel (int, optional): The merge selection criterion. Defaults to 1.
+            - 0: Merge nodes with highest transition probability.
+            - 1: Merge nodes with lowest cost.
+
+    Returns:
+        nx.Graph: The tree.
+    '''
 
     if merge_sel == 1:
         # motif_usage_temp = np.load(path_to_file+'/behavior_quantification/motif_usage.npy')
@@ -265,7 +308,16 @@ def graph_to_tree(motif_usage, transition_matrix, n_cluster, merge_sel=1):
     return T
 
 
-def draw_tree(T):
+def draw_tree(T: nx.Graph) -> None:
+    '''
+    Draw a tree.
+
+    Args:
+        T (nx.Graph): The tree to be drawn.
+
+    Returns:
+        None
+    '''
     # pos = nx.drawing.layout.fruchterman_reingold_layout(T)
     pos = hierarchy_pos(T,'Root',width=.5, vert_gap = 0.1, vert_loc = 0, xcenter = 50)
     fig = plt.figure(2)
@@ -274,7 +326,18 @@ def draw_tree(T):
     figManager.window.showMaximized()
 
 
-def traverse_tree(T, root_node=None):
+def traverse_tree(T: nx.Graph, root_node: str = None) -> str:
+    # TODO duplicated function def
+    '''
+    Traverse a tree and return the traversal sequence.
+
+    Args:
+        T (nx.Graph): The tree to be traversed.
+        root_node (str, optional): The root node of the tree. If None, traversal starts from the root.
+
+    Returns:
+        str: The traversal sequence.
+    '''
     if root_node == None:
         node=['Root']
     else:
@@ -314,7 +377,9 @@ def traverse_tree(T, root_node=None):
 
 
 
-def _traverse_tree(T, node, traverse_preorder,traverse_list):
+def _traverse_tree(T: nx.Graph, node: List[str], traverse_preorder: str, traverse_list: List[str]) -> str:
+    # TODO duplicated function def
+    # Aux function for traverse_tree
     traverse_preorder += str(node[0])
     traverse_list.append(node[0])
     children = list(T.neighbors(node[0]))
@@ -339,7 +404,18 @@ def _traverse_tree(T, node, traverse_preorder,traverse_list):
 
     return traverse_preorder
 
-def traverse_tree(T, root_node=None):
+def traverse_tree(T: nx.Graph, root_node: str = None) -> str:
+    # TODO duplicated function def
+    '''
+    Traverse a tree and return the traversal sequence.
+
+    Args:
+        T (nx.Graph): The tree to be traversed.
+        root_node (str, optional): The root node of the tree. If None, traversal starts from the root.
+
+    Returns:
+        str: The traversal sequence.
+    '''
     if root_node == None:
         node=['Root']
     else:
@@ -352,7 +428,30 @@ def traverse_tree(T, root_node=None):
     return traverse_preorder
 
 
-def _traverse_tree_cutline(T, node, traverse_list, cutline, level, community_bag, community_list=None):
+def _traverse_tree_cutline(
+    T: nx.Graph,
+    node: List[str],
+    traverse_list: List[str],
+    cutline: int,
+    level: int,
+    community_bag: List[List[str]],
+    community_list: List[str] = None
+) -> List[List[str]]:
+    '''
+    Helper function for tree traversal with a cutline.
+
+    Args:
+        T (nx.Graph): The tree to be traversed.
+        node (List[str]): Current node being traversed.
+        traverse_list (List[str]): List of traversed nodes.
+        cutline (int): The cutline level.
+        level (int): The current level in the tree.
+        community_bag (List[List[str]]): List of community bags.
+        community_list (List[str], optional): List of nodes in the current community bag.
+
+    Returns:
+        List[List[str]]: List of lists community bags.
+    '''
     cmap = plt.get_cmap("tab10")
     traverse_list.append(node[0])
     if community_list is not None and type(node[0]) is not str:
@@ -384,7 +483,18 @@ def _traverse_tree_cutline(T, node, traverse_list, cutline, level, community_bag
     return  community_bag
 
 
-def traverse_tree_cutline(T, root_node=None,cutline=2):
+def traverse_tree_cutline(T: nx.Graph, root_node: str = None, cutline: int = 2) -> List[List[str]]:
+    '''
+    Traverse a tree with a cutline and return the community bags.
+
+    Args:
+        T (nx.Graph): The tree to be traversed.
+        root_node (str, optional): The root node of the tree. If None, traversal starts from the root.
+        cutline (int, optional): The cutline level.
+
+    Returns:
+        List[List[str]]: List of community bags.
+    '''
     if root_node == None:
         node=['Root']
     else:

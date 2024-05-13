@@ -38,3 +38,131 @@ Ref: From Joel&#x27;s answer at https://stackoverflow.com/a/29597209/2966723.
 
   Dict[str, Tuple[float, float]]: A dictionary mapping node names to their positions (x, y).
 
+#### merge\_func
+
+```python
+def merge_func(transition_matrix: np.ndarray, n_cluster: int,
+               motif_norm: np.ndarray,
+               merge_sel: int) -> Tuple[np.ndarray, np.ndarray]
+```
+
+Merge nodes in a graph based on a selection criterion.
+
+**Arguments**:
+
+- `transition_matrix` _np.ndarray_ - The transition matrix of the graph.
+- `n_cluster` _int_ - The number of clusters.
+- `motif_norm` _np.ndarray_ - The normalized motif matrix.
+- `merge_sel` _int_ - The merge selection criterion.
+  - 0: Merge nodes with highest transition probability.
+  - 1: Merge nodes with lowest cost.
+  
+
+**Raises**:
+
+- `ValueError` - If an invalid merge selection criterion is provided.
+  
+
+**Returns**:
+
+  Tuple[np.ndarray, np.ndarray]: A tuple containing the merged nodes.
+
+#### graph\_to\_tree
+
+```python
+def graph_to_tree(motif_usage: np.ndarray,
+                  transition_matrix: np.ndarray,
+                  n_cluster: int,
+                  merge_sel: int = 1) -> nx.Graph
+```
+
+Convert a graph to a tree.
+
+**Arguments**:
+
+- `motif_usage` _np.ndarray_ - The motif usage matrix.
+- `transition_matrix` _np.ndarray_ - The transition matrix of the graph.
+- `n_cluster` _int_ - The number of clusters.
+- `merge_sel` _int, optional_ - The merge selection criterion. Defaults to 1.
+  - 0: Merge nodes with highest transition probability.
+  - 1: Merge nodes with lowest cost.
+  
+
+**Returns**:
+
+- `nx.Graph` - The tree.
+
+#### draw\_tree
+
+```python
+def draw_tree(T: nx.Graph) -> None
+```
+
+Draw a tree.
+
+**Arguments**:
+
+- `T` _nx.Graph_ - The tree to be drawn.
+  
+
+**Returns**:
+
+  None
+
+#### traverse\_tree
+
+```python
+def traverse_tree(T: nx.Graph, root_node: str = None) -> str
+```
+
+Traverse a tree and return the traversal sequence.
+
+**Arguments**:
+
+- `T` _nx.Graph_ - The tree to be traversed.
+- `root_node` _str, optional_ - The root node of the tree. If None, traversal starts from the root.
+  
+
+**Returns**:
+
+- `str` - The traversal sequence.
+
+#### traverse\_tree
+
+```python
+def traverse_tree(T: nx.Graph, root_node: str = None) -> str
+```
+
+Traverse a tree and return the traversal sequence.
+
+**Arguments**:
+
+- `T` _nx.Graph_ - The tree to be traversed.
+- `root_node` _str, optional_ - The root node of the tree. If None, traversal starts from the root.
+  
+
+**Returns**:
+
+- `str` - The traversal sequence.
+
+#### traverse\_tree\_cutline
+
+```python
+def traverse_tree_cutline(T: nx.Graph,
+                          root_node: str = None,
+                          cutline: int = 2) -> List[List[str]]
+```
+
+Traverse a tree with a cutline and return the community bags.
+
+**Arguments**:
+
+- `T` _nx.Graph_ - The tree to be traversed.
+- `root_node` _str, optional_ - The root node of the tree. If None, traversal starts from the root.
+- `cutline` _int, optional_ - The cutline level.
+  
+
+**Returns**:
+
+- `List[List[str]]` - List of community bags.
+
