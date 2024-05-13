@@ -12,13 +12,30 @@ import cv2 as cv
 import numpy as np
 import pandas as pd
 import tqdm
-
+from typing import Tuple, List
 
 from pathlib import Path
 from vame.util.auxiliary import read_config
 
 #Returns cropped image using rect tuple
-def crop_and_flip(rect, src, points, ref_index):
+def crop_and_flip(
+    rect: Tuple,
+    src: np.ndarray,
+    points: List[np.ndarray],
+    ref_index: Tuple[int, int]
+) -> Tuple[np.ndarray, List[np.ndarray]]:
+    '''
+    Crop and flip the image based on the given rectangle and points.
+
+    Args:
+        rect (Tuple): Rectangle coordinates (center, size, theta).
+        src (np.ndarray): Source image.
+        points (List[np.ndarray]): List of points.
+        ref_index (Tuple[int, int]): Reference indices for alignment.
+
+    Returns:
+        Tuple[np.ndarray, List[np.ndarray]]: Cropped and flipped image, and shifted points.
+    '''
     #Read out rect structures and convert
     center, size, theta = rect
 
@@ -100,13 +117,29 @@ def crop_and_flip(rect, src, points, ref_index):
     return out, dlc_points_shifted
 
 
-#Helper function to return indexes of nans
-def nan_helper(y):
+def nan_helper(y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    '''
+    Helper function to identify NaN values in an array.
+
+    Args:
+        y (np.ndarray): Input array.
+
+    Returns:
+        Tuple[np.ndarray, np.ndarray]: Boolean mask for NaN values and function to interpolate them.
+    '''
     return np.isnan(y), lambda z: z.nonzero()[0]
 
 
-#Interpolates all nan values of given array
-def interpol(arr):
+def interpol(arr: np.ndarray) -> np.ndarray:
+    '''
+    Interpolates NaN values in the given array.
+
+    Args:
+        arr (np.ndarray): Input array.
+
+    Returns:
+        np.ndarray: Array with interpolated NaN values.
+    '''
 
     y = np.transpose(arr)
 
@@ -119,10 +152,19 @@ def interpol(arr):
 
     return arr
 
-def background(path_to_file,filename,video_format='.mp4',num_frames=1000):
-    """
-    Compute background image from fixed camera
-    """
+def background(path_to_file: str, filename: str, video_format: str = '.mp4', num_frames: int = 1000) -> np.ndarray:
+    '''
+    Compute the background image from a fixed camera.
+
+    Args:
+        path_to_file (str): Path to the file directory.
+        filename (str): Name of the video file without the format.
+        video_format (str, optional): Format of the video file. Defaults to '.mp4'.
+        num_frames (int, optional): Number of frames to use for background computation. Defaults to 1000.
+
+    Returns:
+        np.ndarray: Background image.
+    '''
     import scipy.ndimage
     capture = cv.VideoCapture(os.path.join(path_to_file,'videos',filename+video_format))
 
@@ -152,22 +194,38 @@ def background(path_to_file,filename,video_format='.mp4',num_frames=1000):
     return background
 
 
-def align_mouse(path_to_file,filename,video_format,crop_size, pose_list,
-                pose_ref_index, confidence, pose_flip_ref,bg,frame_count,use_video=True):
+def align_mouse(
+    path_to_file: str,
+    filename: str,
+    video_format: str,
+    crop_size: Tuple[int, int],
+    pose_list: List[np.ndarray],
+    pose_ref_index: Tuple[int, int],
+    confidence: float,
+    pose_flip_ref: Tuple[int, int],
+    bg: np.ndarray,
+    frame_count: int,
+    use_video: bool = True
+) -> Tuple[List[np.ndarray],List[List[np.ndarray]], np.ndarray]:
+    '''
+    Align the mouse in the video frames.
 
-    #returns: list of cropped images (if video is used) and list of cropped DLC points
-    #
-    #parameters:
-    #path_to_file: directory
-    #filename: name of video file without format
-    #video_format: format of video file
-    #crop_size: tuple of x and y crop size
-    #dlc_list: list of arrays containg corresponding x and y DLC values
-    #dlc_ref_index: indices of 2 lists in dlc_list to align mouse along
-    #dlc_flip_ref: indices of 2 lists in dlc_list to flip mouse if flip was false
-    #bg: background image to subtract
-    #frame_count: number of frames to align
-    #use_video: boolean if video should be cropped or DLC points only
+    Args:
+        path_to_file (str): Path to the file directory.
+        filename (str): Name of the video file without the format.
+        video_format (str): Format of the video file.
+        crop_size (Tuple[int, int]): Size to crop the video frames.
+        pose_list (List[np.ndarray]): List of pose coordinates.
+        pose_ref_index (Tuple[int, int]): Pose reference indices.
+        confidence (float): Pose confidence threshold.
+        pose_flip_ref (Tuple[int, int]): Reference indices for flipping.
+        bg (np.ndarray): Background image.
+        frame_count (int): Number of frames to align.
+        use_video (bool, optional): bool if video should be cropped or DLC points only. Defaults to True.
+
+    Returns:
+        Tuple[List[np.ndarray], List[List[np.ndarray]], np.ndarray]: List of aligned images, list of aligned DLC points, and time series data.
+    '''
 
     images = []
     points = []
@@ -275,8 +333,15 @@ def align_mouse(path_to_file,filename,video_format,crop_size, pose_list,
     return images, points, time_series
 
 
-#play aligned video
-def play_aligned_video(a, n, frame_count):
+def play_aligned_video(a: List[np.ndarray], n: List[List[np.ndarray]], frame_count: int) -> None:
+    '''
+    Play the aligned video.
+
+    Args:
+        a (List[np.ndarray]): List of aligned images.
+        n (List[List[np.ndarray]]): List of aligned DLC points.
+        frame_count (int): Number of frames in the video.
+    '''
     colors = [(255,0,0),(0,255,0),(0,0,255),(255,255,0),(255,0,255),(0,255,255),(0,0,0),(255,255,255)]
 
     for i in range(frame_count):
@@ -303,7 +368,32 @@ def play_aligned_video(a, n, frame_count):
     cv.destroyAllWindows()
 
 
-def alignment(path_to_file, filename, pose_ref_index, video_format, crop_size, confidence, use_video=False, check_video=False):
+def alignment(
+    path_to_file: str,
+    filename: str,
+    pose_ref_index: List[int],
+    video_format: str,
+    crop_size: Tuple[int, int],
+    confidence: float,
+    use_video: bool = False,
+    check_video: bool = False
+) -> Tuple[np.ndarray, List[np.ndarray]]:
+    '''
+    Perform alignment of egocentric data.
+
+    Args:
+        path_to_file (str): Path to the file directory.
+        filename (str): Name of the video file without the format.
+        pose_ref_index (List[int]): Pose reference indices.
+        video_format (str): Format of the video file.
+        crop_size (Tuple[int, int]): Size to crop the video frames.
+        confidence (float): Pose confidence threshold.
+        use_video (bool, optional): Whether to use video for alignment. Defaults to False.
+        check_video (bool, optional): Whether to check the aligned video. Defaults to False.
+
+    Returns:
+        Tuple[np.ndarray, List[np.ndarray]]: Aligned time series data and list of aligned frames.
+    '''
 
     #read out data
     data = pd.read_csv(os.path.join(path_to_file,'videos','pose_estimation',filename+'.csv'), skiprows = 2)
