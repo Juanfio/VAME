@@ -21,13 +21,16 @@ Licensed under GNU Lesser General Public License v3.0
 import os, yaml
 from pathlib import Path
 import ruamel.yaml
+from typing import Tuple
 
 
-def create_config_template():
-    """
-    Creates a template for config.yaml file. This specific order is preserved while saving as yaml file.
-    """
-    import ruamel.yaml
+def create_config_template() -> Tuple[dict, ruamel.yaml.YAML]:
+    '''
+    Creates a template for the config.yaml file.
+
+    Returns:
+        Tuple[dict, ruamel.yaml.YAML]: A tuple containing the template dictionary and the Ruamel YAML instance.
+    '''
     yaml_str = """\
 # Project configurations
     Project:
@@ -126,10 +129,16 @@ def create_config_template():
     return(cfg_file,ruamelFile)
 
 
-def read_config(configname):
-    """
+def read_config(configname: str) -> dict:
+    '''
     Reads structured config file defining a project.
-    """
+
+    Args:
+        configname (str): Path to the config file.
+
+    Returns:
+        dict: The contents of the config file as a dictionary.
+    '''
     ruamelFile = ruamel.yaml.YAML()
     path = Path(configname)
     if os.path.exists(path):
@@ -158,10 +167,15 @@ def read_config(configname):
         )
     return cfg
 
-def write_config(configname,cfg):
-    """
+
+def write_config(configname: str, cfg: dict) -> None:
+    '''
     Write structured config file.
-    """
+
+    Args:
+        configname (str): Path to the config file.
+        cfg (dict): Dictionary containing the config data.
+    '''
     with open(configname, 'w') as cf:
         ruamelFile = ruamel.yaml.YAML()
         cfg_file,ruamelFile = create_config_template()
@@ -170,7 +184,14 @@ def write_config(configname,cfg):
 
         ruamelFile.dump(cfg_file, cf)
 
-def update_config(config, force_update: bool = False):
+def update_config(config: str, force_update: bool = False) -> None:
+    '''
+    Updates the configuration file with default values.
+
+    Args:
+        config (str): Path to the config file.
+        force_update (bool, optional): Whether to force the update even if the user declines. Defaults to False.
+    '''
     config_file = Path(config).resolve()
     cfg = read_config(config_file)
 

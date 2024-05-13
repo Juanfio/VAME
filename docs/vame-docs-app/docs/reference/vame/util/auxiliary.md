@@ -22,24 +22,55 @@ Licensed under GNU Lesser General Public License v3.0
 #### create\_config\_template
 
 ```python
-def create_config_template()
+def create_config_template() -> Tuple[dict, ruamel.yaml.YAML]
 ```
 
-Creates a template for config.yaml file. This specific order is preserved while saving as yaml file.
+Creates a template for the config.yaml file.
+
+**Returns**:
+
+  Tuple[dict, ruamel.yaml.YAML]: A tuple containing the template dictionary and the Ruamel YAML instance.
 
 #### read\_config
 
 ```python
-def read_config(configname)
+def read_config(configname: str) -> dict
 ```
 
 Reads structured config file defining a project.
 
+**Arguments**:
+
+- `configname` _str_ - Path to the config file.
+  
+
+**Returns**:
+
+- `dict` - The contents of the config file as a dictionary.
+
 #### write\_config
 
 ```python
-def write_config(configname, cfg)
+def write_config(configname: str, cfg: dict) -> None
 ```
 
 Write structured config file.
+
+**Arguments**:
+
+- `configname` _str_ - Path to the config file.
+- `cfg` _dict_ - Dictionary containing the config data.
+
+#### update\_config
+
+```python
+def update_config(config: str, force_update: bool = False) -> None
+```
+
+Updates the configuration file with default values.
+
+**Arguments**:
+
+- `config` _str_ - Path to the config file.
+- `force_update` _bool, optional_ - Whether to force the update even if the user declines. Defaults to False.
 
