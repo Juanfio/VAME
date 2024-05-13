@@ -26,7 +26,7 @@ const FeatureList = [
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
-        VAME offers a straightforward Python API, making it easy for users to integrate into their workflows and perform behavioral analysis with minimal effort.
+        VAME offers a straight forward Python API, making it easy for users to integrate into their workflows and perform behavioral analysis with minimal effort.
       </>
     ),
   },
