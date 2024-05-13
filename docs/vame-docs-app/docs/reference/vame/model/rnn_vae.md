@@ -19,3 +19,15 @@ def kl_annealing(epoch, kl_start, annealtime, function)
 Annealing of Kullback-Leibler loss to let the model learn first
 the reconstruction of the data before the KL loss term gets introduced.
 
+#### train\_model
+
+```python
+def train_model(config: str)
+```
+
+Train Variational Autoencoder using the config.yaml file values
+
+**Arguments**:
+
+- `config` _str_ - Path to the config.yaml file
+

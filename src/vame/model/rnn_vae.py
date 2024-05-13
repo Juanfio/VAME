@@ -92,7 +92,7 @@ def gaussian(ins, is_training, seq_len, std_n=0.8):
 
 
 def train(train_loader, epoch, model, optimizer, anneal_function, BETA, kl_start,
-          annealtime, seq_len, future_decoder, future_steps, scheduler, mse_red, 
+          annealtime, seq_len, future_decoder, future_steps, scheduler, mse_red,
           mse_pred, kloss, klmbda, bsize, noise):
     model.train() # toggle model to train mode
     train_loss = 0.0
@@ -137,11 +137,11 @@ def train(train_loader, epoch, model, optimizer, anneal_function, BETA, kl_start
             kmeans_loss = cluster_loss(latent.T, kloss, klmbda, bsize)
             kl_weight = kl_annealing(epoch, kl_start, annealtime, anneal_function)
             loss = rec_loss + BETA*kl_weight*kl_loss + kl_weight*kmeans_loss
-        
+
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        
+
         # torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm = 5)
 
         train_loss += loss.item()
@@ -151,7 +151,7 @@ def train(train_loader, epoch, model, optimizer, anneal_function, BETA, kl_start
 
         # if idx % 1000 == 0:
         #     print('Epoch: %d.  loss: %.4f' %(epoch, loss.item()))
-   
+
     scheduler.step(loss) #be sure scheduler is called before optimizer in >1.1 pytorch
 
     if future_decoder:
@@ -210,7 +210,12 @@ def test(test_loader, epoch, model, optimizer, BETA, kl_weight, seq_len, mse_red
     return mse_loss /idx, test_loss/idx, kl_weight*kmeans_losses
 
 
-def train_model(config):
+def train_model(config: str):
+    '''Train Variational Autoencoder using the config.yaml file values
+
+    Args:
+        config (str): Path to the config.yaml file
+    '''
     config_file = Path(config).resolve()
     cfg = read_config(config_file)
     legacy = cfg['legacy']
@@ -218,7 +223,7 @@ def train_model(config):
     pretrained_weights = cfg['pretrained_weights']
     pretrained_model = cfg['pretrained_model']
     fixed = cfg['egocentric_data']
-    
+
     print("Train Variational Autoencoder - model name: %s \n" %model_name)
     if not os.path.exists(os.path.join(cfg['project_path'],'model','best_model',"")):
         os.mkdir(os.path.join(cfg['project_path'],'model','best_model',""))
@@ -235,7 +240,7 @@ def train_model(config):
         torch.device("cpu")
         print("warning, a GPU was not found... proceeding with CPU (slow!) \n")
         #raise NotImplementedError('GPU Computing is required!')
-        
+
     """ HYPERPARAMTERS """
     # General
     CUDA = use_gpu
@@ -279,7 +284,7 @@ def train_model(config):
     BEST_LOSS = 999999
     convergence = 0
     print('Latent Dimensions: %d, Time window: %d, Batch Size: %d, Beta: %d, lr: %.4f\n' %(ZDIMS, cfg['time_window'], TRAIN_BATCH_SIZE, BETA, LEARNING_RATE))
-    
+
     # simple logging of diverse losses
     train_losses = []
     test_losses = []
@@ -290,7 +295,7 @@ def train_model(config):
     fut_losses = []
 
     torch.manual_seed(SEED)
-    
+
     if legacy == False:
         RNN = RNN_VAE
     else:
@@ -321,7 +326,7 @@ def train_model(config):
                 ANNEALTIME = 1
             except:
                 print("Could not load pretrained model. Check file path in config.yaml.")
-            
+
     """ DATASET """
     trainset = SEQUENCE_DATASET(os.path.join(cfg['project_path'],"data", "train",""), data='train_seq.npy', train=True, temporal_window=TEMPORAL_WINDOW)
     testset = SEQUENCE_DATASET(os.path.join(cfg['project_path'],"data", "train",""), data='test_seq.npy', train=False, temporal_window=TEMPORAL_WINDOW)
@@ -337,7 +342,7 @@ def train_model(config):
         scheduler = ReduceLROnPlateau(optimizer, 'min', factor=cfg['scheduler_gamma'], patience=cfg['scheduler_step_size'], threshold=1e-3, threshold_mode='rel', verbose=True)
     else:
         scheduler = StepLR(optimizer, step_size=scheduler_step_size, gamma=1, last_epoch=-1)
-    
+
     print("Start training... ")
     for epoch in range(1,EPOCHS):
         print("Epoch: %d" %epoch)
@@ -402,7 +407,7 @@ def train_model(config):
         np.save(os.path.join(cfg['project_path'],'model','model_losses','mse_train_losses_'+model_name), mse_losses)
         np.save(os.path.join(cfg['project_path'],'model','model_losses','mse_test_losses_'+model_name), current_loss)
         np.save(os.path.join(cfg['project_path'],'model','model_losses','fut_losses_'+model_name), fut_losses)
-        
+
         print("\n")
 
     if convergence < cfg['model_convergence']:

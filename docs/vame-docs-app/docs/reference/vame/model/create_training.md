@@ -1,6 +1,6 @@
 ---
-sidebar_label: csv_to_npy
-title: vame.util.csv_to_npy
+sidebar_label: create_training
+title: vame.model.create_training
 ---
 
 Variational Animal Motion Embedding 1.0-alpha Toolbox
@@ -35,27 +35,30 @@ Identifies indices of NaN values in an array and provides a function to convert 
 def interpol(arr: np.ndarray) -> np.ndarray
 ```
 
-Interpolates all NaN values of a given array.
+Interpolates all NaN values in the given array.
 
 **Arguments**:
 
-- `arr` _np.ndarray_ - A numpy array with NaN values.
+- `arr` _np.ndarray_ - Input array containing NaN values.
   
 
 **Returns**:
 
-- `np.ndarray` - A numpy array with interpolated NaN values.
+- `np.ndarray` - Array with NaN values replaced by interpolated values.
 
-#### csv\_to\_numpy
+#### create\_trainset
 
 ```python
-def csv_to_numpy(config: str) -> None
+def create_trainset(config: str,
+                    pose_ref_index: Optional[List] = None,
+                    check_parameter: bool = False) -> None
 ```
 
-Converts a pose-estimation.csv file to a numpy array. Note that this code is only useful for data which is a priori egocentric, i.e. head-fixed
-or otherwise restrained animals.
+Creates a training dataset for the VAME model.
 
-**Raises**:
+**Arguments**:
 
-- `ValueError` - If the config.yaml file indicates that the data is not egocentric.
+- `config` _str_ - Path to the config file.
+- `pose_ref_index` _Optional[List], optional_ - List of reference coordinate indices for alignment. Defaults to None.
+- `check_parameter` _bool, optional_ - If True, the function will plot the z-scored data and the filtered data. Defaults to False.
 

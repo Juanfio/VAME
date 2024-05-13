@@ -25,7 +25,7 @@ if use_gpu:
     pass
 else:
     torch.device("cpu")
-    
+
 
 def plot_reconstruction(filepath, test_loader, seq_len_half, model, model_name,
                         FUTURE_DECODER, FUTURE_STEPS, suffix=None):
@@ -159,7 +159,7 @@ def eval_temporal(cfg, use_gpu, model_name, fixed, snapshot=None, suffix=None):
     if not snapshot:
         plot_reconstruction(filepath, test_loader, seq_len_half, model, model_name, FUTURE_DECODER, FUTURE_STEPS)#, suffix=suffix
     elif snapshot:
-        plot_reconstruction(filepath, test_loader, seq_len_half, model, model_name, FUTURE_DECODER, FUTURE_STEPS, suffix=suffix)#, 
+        plot_reconstruction(filepath, test_loader, seq_len_half, model, model_name, FUTURE_DECODER, FUTURE_STEPS, suffix=suffix)#,
     if use_gpu:
         plot_loss(cfg, filepath, model_name)
     else:
@@ -167,19 +167,13 @@ def eval_temporal(cfg, use_gpu, model_name, fixed, snapshot=None, suffix=None):
         # pass #note, loading of losses needs to be adapted for CPU use #TODO
 
 
-def evaluate_model(config, use_snapshots=False):
-    """
-    Evaluation of testset.
-        
-    Parameters
-    ----------
-    config : str
-        Path to config file.
-    model_name : str
-        name of model (same as in config.yaml)
-    use_snapshots : bool
-        Whether to plot for all snapshots or only the best model.
-    """
+def evaluate_model(config: str, use_snapshots: bool = False) -> None:
+    '''Evaluate the trained model.
+
+    Args:
+        config (str): Path to config file.
+        use_snapshots (bool, optional): Whether to plot for all snapshots or only the best model. Defaults to False.
+    '''
     config_file = Path(config).resolve()
     cfg = read_config(config_file)
     #legacy = cfg['legacy']
@@ -198,7 +192,7 @@ def evaluate_model(config, use_snapshots=False):
         torch.device("cpu")
         print("CUDA is not working, or a GPU is not found; using CPU!")
 
-    print("\n\nEvaluation of %s model. \n" %model_name)   
+    print("\n\nEvaluation of %s model. \n" %model_name)
     if not use_snapshots:
         eval_temporal(cfg, use_gpu, model_name, fixed)#suffix=suffix
     elif use_snapshots:

@@ -13,17 +13,13 @@ Licensed under GNU General Public License v3.0
 #### evaluate\_model
 
 ```python
-def evaluate_model(config, use_snapshots=False)
+def evaluate_model(config: str, use_snapshots: bool = False) -> None
 ```
 
-Evaluation of testset.
+Evaluate the trained model.
 
-Parameters
-----------
-config : str
-    Path to config file.
-model_name : str
-    name of model (same as in config.yaml)
-use_snapshots : bool
-    Whether to plot for all snapshots or only the best model.
+**Arguments**:
+
+- `config` _str_ - Path to config file.
+- `use_snapshots` _bool, optional_ - Whether to plot for all snapshots or only the best model. Defaults to False.
 

@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
+
 # C extensions
 *.so
 *.mp4
@@ -92,6 +94,8 @@ celerybeat-schedule
 .venv
 venv/
 ENV/
+venv_docs/*
+examples/sample_data/*
 
 # Spyder project settings
 .spyderproject

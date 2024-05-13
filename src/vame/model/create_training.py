@@ -16,16 +16,35 @@ from pathlib import Path
 import scipy.signal
 from scipy.stats import iqr
 import matplotlib.pyplot as plt
+from typing import List, Optional, Tuple
 
 from vame.util.auxiliary import read_config
 
 
-#Helper function to return indexes of nans
-def nan_helper(y):
+def nan_helper(y: np.ndarray) -> Tuple:
+    '''
+    Identifies indices of NaN values in an array and provides a function to convert them to non-NaN indices.
+
+    Args:
+        y (np.ndarray): Input array containing NaN values.
+
+    Returns:
+        Tuple[np.ndarray, Union[np.ndarray, None]]: A tuple containing two elements:
+            - An array of boolean values indicating the positions of NaN values.
+            - A lambda function to convert NaN indices to non-NaN indices.
+    '''
     return np.isnan(y), lambda z: z.nonzero()[0]
 
-#Interpolates all nan values of given array
-def interpol(arr):
+def interpol(arr: np.ndarray) -> np.ndarray:
+    '''
+    Interpolates all NaN values in the given array.
+
+    Args:
+        arr (np.ndarray): Input array containing NaN values.
+
+    Returns:
+        np.ndarray: Array with NaN values replaced by interpolated values.
+    '''
     y = np.transpose(arr)
     nans, x = nan_helper(y)
     y[nans]= np.interp(x(nans), x(~nans), y[~nans])
@@ -91,7 +110,21 @@ def plot_check_parameter(cfg, iqr_val, num_frames, X_true, X_med, anchor_1, anch
 
     print("Please run the function with check_parameter=False if you are happy with the results")
 
-def traindata_aligned(cfg, files, testfraction, num_features, savgol_filter, check_parameter):
+def traindata_aligned(
+    cfg,
+    files,
+    testfraction,
+    num_features,
+    savgol_filter,
+    check_parameter
+) -> None:
+    print('cfg', cfg, type(cfg))
+    print('files', files, type(files))
+    print('testfraction', testfraction, type(testfraction))
+    print('num_features', num_features, type(num_features))
+    print('savgol_filter', savgol_filter, type(savgol_filter))
+    print('check_parameter', check_parameter, type(check_parameter))
+
 
     X_train = []
     pos = []
@@ -281,7 +314,18 @@ def traindata_fixed(cfg, files, testfraction, num_features, savgol_filter, check
         print('Lenght of test data: %d' %len(z_test.T))
 
 
-def create_trainset(config, pose_ref_index=None, check_parameter=False):
+def create_trainset(
+    config: str,
+    pose_ref_index: Optional[List] = None,
+    check_parameter: bool =False
+) -> None:
+    '''Creates a training dataset for the VAME model.
+
+    Args:
+        config (str): Path to the config file.
+        pose_ref_index (Optional[List], optional): List of reference coordinate indices for alignment. Defaults to None.
+        check_parameter (bool, optional): If True, the function will plot the z-scored data and the filtered data. Defaults to False.
+    '''
     config_file = Path(config).resolve()
     cfg = read_config(config_file)
     legacy = cfg['legacy']
