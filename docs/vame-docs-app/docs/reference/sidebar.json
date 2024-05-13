@@ -7,7 +7,8 @@
         "reference/vame/analysis/gif_creator",
         "reference/vame/analysis/pose_segmentation",
         "reference/vame/analysis/segment_behavior",
-        "reference/vame/analysis/tree_hierarchy"
+        "reference/vame/analysis/tree_hierarchy",
+        "reference/vame/analysis/umap_visualization"
       ],
       "label": "vame.analysis",
       "type": "category"
