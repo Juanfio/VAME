@@ -42,7 +42,7 @@ def init_new_project(
         videotype (str, optional): Video extension (.mp4 or .avi). Defaults to '.mp4'.
 
     Returns:
-        projconfigfile (str): Path to the new project config file.
+        projconfigfile (str): Path to the new vame project config file.
     """
 
     date = dt.today()

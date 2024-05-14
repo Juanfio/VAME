@@ -3,9 +3,8 @@ name: Deploy VAME Docs to GitHub Pages
 on:
   push:
     branches:
-      - main
-      #- docs
-      - docs/adding-docs-app # todo remove
+      - docs
+      - docs/adding-docs-app
 
 jobs:
   deploy:
@@ -17,6 +16,18 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v3
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install docs dependencies.
+        run: pip install -r docs/requirements-docs.txt
+
+      - name: Auto generate API Reference.
+        run: cd docs && pydoc-markdown
+
       - uses: actions/setup-node@v3
         with:
           node-version: 18
