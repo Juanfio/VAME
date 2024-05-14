@@ -16,7 +16,8 @@ const config = {
   url: 'https://ethoml.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/VAME/',
+  // baseUrl: '/VAME/',
+  baseUrl: process.env.GITHUB_ACTIONS ? `${process.env.BASE_URL}/` : "/VAME/",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
