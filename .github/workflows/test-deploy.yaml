@@ -1,0 +1,35 @@
+name: Test deployment
+
+on:
+  pull_request:
+    branches:
+      - docs
+      - docs/adding-docs-app # todo remove
+
+jobs:
+  test-deploy:
+    name: Test deployment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install VAME Project.
+        run: |
+          python -m pip install --upgrade pip
+          pip install .
+
+      - name: Install docs dependencies.
+        run: pip install -r docs/requirements-docs.txt
+
+      - name: Auto generate API Reference.
+        run: pydoc-markdown
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: yarn
+          working-directory: docs/vame-docs-app
+          cache-dependency-path: docs/vame-docs-app/yarn.lock
+
+      - name: Install dependencies
+        run: cd docs/vame-docs-app && yarn install --frozen-lockfile
+      - name: Test build website
+        run: cd docs/vame-docs-app && yarn build
