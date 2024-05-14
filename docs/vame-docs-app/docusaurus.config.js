@@ -4,7 +4,7 @@
 // There are various equivalent ways to declare your Docusaurus config.
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
-import {themes as prismThemes} from 'prism-react-renderer';
+import { themes as prismThemes } from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -64,7 +64,7 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
-      image: 'img/docusaurus-social-card.jpg',
+      image: 'img/vame_social_card.jpg',
       navbar: {
         title: 'VAME',
         items: [
@@ -74,7 +74,7 @@ const config = {
             position: 'right',
             label: 'Documentation',
           },
-          {to: '/blog', label: 'Blog', position: 'right'},
+          { to: '/blog', label: 'Blog', position: 'right' },
           {
             href: 'https://github.com/facebook/docusaurus',
             label: 'GitHub',
