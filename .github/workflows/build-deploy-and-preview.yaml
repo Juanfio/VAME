@@ -4,12 +4,12 @@ on:
   push:
     branches: 
       - docs/adding-docs-app
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
-      - closed
+  # pull_request:
+  #   types:
+  #     - opened
+  #     - reopened
+  #     - synchronize
+  #     - closed
 
 permissions:
   contents: write
@@ -23,14 +23,19 @@ jobs:
     name: Build, Deploy to GitHub Pages and Deploy PR Preview
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: 3.11
+
       - name: Install docs dependencies.
         run: pip install -r docs/requirements-docs.txt
+
       - name: Auto generate API Reference.
         run: cd docs && pydoc-markdown
+
       - name: Build, Deploy to GitHub Pages and Deploy PR Preview
         uses: chvmvd/build-deploy-and-preview-action@v1.2.0
         with:
