@@ -33,7 +33,7 @@ def init_new_project(
     working_directory: str = None,
     videotype:str = '.mp4'
 ) -> str:
-    '''Creates a new VAME project with the given parameters.
+    """Creates a new VAME project with the given parameters.
 
     Args:
         project (str): Project name.
@@ -43,7 +43,7 @@ def init_new_project(
 
     Returns:
         projconfigfile (str): Path to the new project config file.
-    '''
+    """
 
     date = dt.today()
     month = date.strftime("%B")

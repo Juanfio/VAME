@@ -24,7 +24,7 @@ def crop_and_flip(
     points: List[np.ndarray],
     ref_index: Tuple[int, int]
 ) -> Tuple[np.ndarray, List[np.ndarray]]:
-    '''
+    """
     Crop and flip the image based on the given rectangle and points.
 
     Args:
@@ -35,7 +35,7 @@ def crop_and_flip(
 
     Returns:
         Tuple[np.ndarray, List[np.ndarray]]: Cropped and flipped image, and shifted points.
-    '''
+    """
     #Read out rect structures and convert
     center, size, theta = rect
 
@@ -118,7 +118,7 @@ def crop_and_flip(
 
 
 def nan_helper(y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-    '''
+    """
     Helper function to identify NaN values in an array.
 
     Args:
@@ -126,12 +126,12 @@ def nan_helper(y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
 
     Returns:
         Tuple[np.ndarray, np.ndarray]: Boolean mask for NaN values and function to interpolate them.
-    '''
+    """
     return np.isnan(y), lambda z: z.nonzero()[0]
 
 
 def interpol(arr: np.ndarray) -> np.ndarray:
-    '''
+    """
     Interpolates NaN values in the given array.
 
     Args:
@@ -139,7 +139,7 @@ def interpol(arr: np.ndarray) -> np.ndarray:
 
     Returns:
         np.ndarray: Array with interpolated NaN values.
-    '''
+    """
 
     y = np.transpose(arr)
 
@@ -153,7 +153,7 @@ def interpol(arr: np.ndarray) -> np.ndarray:
     return arr
 
 def background(path_to_file: str, filename: str, video_format: str = '.mp4', num_frames: int = 1000) -> np.ndarray:
-    '''
+    """
     Compute the background image from a fixed camera.
 
     Args:
@@ -164,7 +164,7 @@ def background(path_to_file: str, filename: str, video_format: str = '.mp4', num
 
     Returns:
         np.ndarray: Background image.
-    '''
+    """
     import scipy.ndimage
     capture = cv.VideoCapture(os.path.join(path_to_file,'videos',filename+video_format))
 
@@ -207,7 +207,7 @@ def align_mouse(
     frame_count: int,
     use_video: bool = True
 ) -> Tuple[List[np.ndarray],List[List[np.ndarray]], np.ndarray]:
-    '''
+    """
     Align the mouse in the video frames.
 
     Args:
@@ -225,7 +225,7 @@ def align_mouse(
 
     Returns:
         Tuple[List[np.ndarray], List[List[np.ndarray]], np.ndarray]: List of aligned images, list of aligned DLC points, and time series data.
-    '''
+    """
 
     images = []
     points = []
@@ -334,14 +334,14 @@ def align_mouse(
 
 
 def play_aligned_video(a: List[np.ndarray], n: List[List[np.ndarray]], frame_count: int) -> None:
-    '''
+    """
     Play the aligned video.
 
     Args:
         a (List[np.ndarray]): List of aligned images.
         n (List[List[np.ndarray]]): List of aligned DLC points.
         frame_count (int): Number of frames in the video.
-    '''
+    """
     colors = [(255,0,0),(0,255,0),(0,0,255),(255,255,0),(255,0,255),(0,255,255),(0,0,0),(255,255,255)]
 
     for i in range(frame_count):
@@ -378,7 +378,7 @@ def alignment(
     use_video: bool = False,
     check_video: bool = False
 ) -> Tuple[np.ndarray, List[np.ndarray]]:
-    '''
+    """
     Perform alignment of egocentric data.
 
     Args:
@@ -393,7 +393,7 @@ def alignment(
 
     Returns:
         Tuple[np.ndarray, List[np.ndarray]]: Aligned time series data and list of aligned frames.
-    '''
+    """
 
     #read out data
     data = pd.read_csv(os.path.join(path_to_file,'videos','pose_estimation',filename+'.csv'), skiprows = 2)
@@ -446,7 +446,7 @@ def egocentric_alignment(
     video_format: str = '.mp4',
     check_video: bool =False
 ) -> None:
-    '''Aligns egocentric data for VAME training
+    """Aligns egocentric data for VAME training
 
     Args:
         config (str): Path for the project config file.
@@ -458,7 +458,7 @@ def egocentric_alignment(
 
     Raises:
         ValueError: If the config.yaml indicates that the data is not egocentric.
-    '''
+    """
 
     # pose_ref_index changed in this script from [0,5] to                                                                                                                                         [5,6] on 2/7/2024 PN
     """ Happy aligning """

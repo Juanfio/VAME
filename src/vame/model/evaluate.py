@@ -38,7 +38,7 @@ def plot_reconstruction(
     FUTURE_STEPS: int,
     suffix: Optional[str] = None
 ) -> None:
-    '''
+    """
     Plot the reconstruction and future prediction of the input sequence.
 
     Args:
@@ -50,7 +50,7 @@ def plot_reconstruction(
         FUTURE_DECODER (bool): Flag indicating whether the model has a future prediction decoder.
         FUTURE_STEPS (int): Number of future steps to predict.
         suffix (Optional[str], optional): Suffix for the saved plot filename. Defaults to None.
-    '''
+    """
     #x = test_loader.__iter__().next()
     dataiter = iter(test_loader)
     x = next(dataiter)
@@ -104,14 +104,14 @@ def plot_reconstruction(
 
 
 def plot_loss(cfg: dict, filepath: str, model_name: str) -> None:
-    '''
+    """
     Plot the losses of the trained model.
 
     Args:
         cfg (dict): Configuration dictionary.
         filepath (str): Path to save the plot.
         model_name (str): Name of the model.
-    '''
+    """
     basepath = os.path.join(cfg['project_path'],"model","model_losses")
     train_loss = np.load(os.path.join(basepath,'train_losses_'+model_name+'.npy'))
     test_loss = np.load(os.path.join(basepath,'test_losses_'+model_name+'.npy'))
@@ -151,7 +151,7 @@ def eval_temporal(
     snapshot: Optional[str] = None,
     suffix: Optional[str] = None
 ) -> None:
-    '''
+    """
     Evaluate the temporal aspects of the trained model.
 
     Args:
@@ -161,7 +161,7 @@ def eval_temporal(
         fixed (bool): Flag indicating whether the data is fixed or not.
         snapshot (Optional[str], optional): Path to the model snapshot. Defaults to None.
         suffix (Optional[str], optional): Suffix for the saved plot filename. Defaults to None.
-    '''
+    """
     SEED = 19
     ZDIMS = cfg['zdims']
     FUTURE_DECODER = cfg['prediction_decoder']
@@ -216,12 +216,12 @@ def eval_temporal(
 
 
 def evaluate_model(config: str, use_snapshots: bool = False) -> None:
-    '''Evaluate the trained model.
+    """Evaluate the trained model.
 
     Args:
         config (str): Path to config file.
         use_snapshots (bool, optional): Whether to plot for all snapshots or only the best model. Defaults to False.
-    '''
+    """
     config_file = Path(config).resolve()
     cfg = read_config(config_file)
     #legacy = cfg['legacy']

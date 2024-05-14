@@ -20,7 +20,7 @@ from typing import Tuple
 
 
 def nan_helper(y: np.ndarray) -> Tuple:
-    '''
+    """
     Identifies indices of NaN values in an array and provides a function to convert them to non-NaN indices.
 
     Args:
@@ -30,20 +30,20 @@ def nan_helper(y: np.ndarray) -> Tuple:
         Tuple[np.ndarray, Union[np.ndarray, None]]: A tuple containing two elements:
             - An array of boolean values indicating the positions of NaN values.
             - A lambda function to convert NaN indices to non-NaN indices.
-    '''
+    """
     return np.isnan(y), lambda z: z.nonzero()[0]
 
 
 
 def interpol(arr: np.ndarray) -> np.ndarray:
-    '''Interpolates all NaN values of a given array.
+    """Interpolates all NaN values of a given array.
 
     Args:
         arr (np.ndarray): A numpy array with NaN values.
 
     Return:
         np.ndarray: A numpy array with interpolated NaN values.
-    '''
+    """
 
     y = np.transpose(arr)
 
@@ -57,12 +57,12 @@ def interpol(arr: np.ndarray) -> np.ndarray:
     return arr
 
 def csv_to_numpy(config: str) -> None:
-    '''Converts a pose-estimation.csv file to a numpy array. Note that this code is only useful for data which is a priori egocentric, i.e. head-fixed
+    """Converts a pose-estimation.csv file to a numpy array. Note that this code is only useful for data which is a priori egocentric, i.e. head-fixed
     or otherwise restrained animals.
 
     Raises:
         ValueError: If the config.yaml file indicates that the data is not egocentric.
-    '''
+    """
     config_file = Path(config).resolve()
     cfg = read_config(config_file)
 

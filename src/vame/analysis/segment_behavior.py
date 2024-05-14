@@ -23,7 +23,7 @@ from vame.model.rnn_vae import RNN_VAE
 
 
 def load_data(PROJECT_PATH: str, file: str, data: str) -> np.ndarray:
-    '''Load data for the given file.
+    """Load data for the given file.
 
     Args:
         PROJECT_PATH (str): Path to the project directory.
@@ -32,7 +32,7 @@ def load_data(PROJECT_PATH: str, file: str, data: str) -> np.ndarray:
 
     Returns:
         np.ndarray: Loaded data.
-    '''
+    """
     X = np.load(os.path.join(PROJECT_PATH,"data",file,"",file+data+'.npy'))
     mean = np.load(os.path.join(PROJECT_PATH,"data","train",'seq_mean.npy'))
     std = np.load(os.path.join(PROJECT_PATH,"data","train",'seq_std.npy'))
@@ -41,7 +41,7 @@ def load_data(PROJECT_PATH: str, file: str, data: str) -> np.ndarray:
 
 
 def kmeans_clustering(context: np.ndarray, n_clusters: int) -> np.ndarray:
-    '''Perform k-Means clustering.
+    """Perform k-Means clustering.
 
     Args:
         context (np.ndarray): Input data for clustering.
@@ -49,13 +49,13 @@ def kmeans_clustering(context: np.ndarray, n_clusters: int) -> np.ndarray:
 
     Returns:
         np.ndarray: Cluster labels.
-    '''
+    """
     kmeans = KMeans(init='k-means++',n_clusters=n_clusters, random_state=42,n_init=15).fit(context)
     return kmeans.predict(context)
 
 
 def gmm_clustering(context: np.ndarray, n_components: int) -> np.ndarray:
-    '''Perform Gaussian Mixture Model (GMM) clustering.
+    """Perform Gaussian Mixture Model (GMM) clustering.
 
     Args:
         context (np.ndarray): Input data for clustering.
@@ -63,7 +63,7 @@ def gmm_clustering(context: np.ndarray, n_components: int) -> np.ndarray:
 
     Returns:
         np.ndarray: Cluster labels.
-    '''
+    """
     GMM = mixture.GaussianMixture
     gmm = GMM(n_components=n_components,covariance_type='full').fit(context)
     return gmm.predict(context)
@@ -75,7 +75,7 @@ def behavior_segmentation(
     cluster_method: str = 'kmeans',
     n_cluster: List[int] = [30]
 ) -> None:
-    '''Perform behavior segmentation.
+    """Perform behavior segmentation.
 
     Args:
         config (str): Path to the configuration file.
@@ -85,7 +85,7 @@ def behavior_segmentation(
 
     Returns:
         None: Save data to the results directory.
-    '''
+    """
 
     config_file = Path(config).resolve()
     cfg = read_config(config_file)
@@ -135,7 +135,7 @@ def temporal_quant(
     files: List[str],
     use_gpu: bool
 ) -> Tuple:
-    '''Quantify the temporal latent space.
+    """Quantify the temporal latent space.
 
     Args:
         cfg (dict): Configuration dictionary.
@@ -145,7 +145,7 @@ def temporal_quant(
 
     Returns:
         Tuple: Tuple of latent space array and logger.
-    '''
+    """
 
     SEED = 19
     ZDIMS = cfg['zdims']
@@ -242,7 +242,7 @@ def cluster_latent_space(
     n_cluster: List[int],
     model_name: str
 ) -> None:
-    '''Cluster the latent space.
+    """Cluster the latent space.
 
     Args:
         cfg (dict): Configuration dictionary.
@@ -255,7 +255,7 @@ def cluster_latent_space(
 
     Returns:
         None -> Save data to the results directory.
-    '''
+    """
 
     for cluster in n_cluster:
         if cluster_method == 'kmeans':

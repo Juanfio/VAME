@@ -17,7 +17,7 @@ import os
 
 class SEQUENCE_DATASET(Dataset):
     def __init__(self, path_to_file: str, data: str, train: bool, temporal_window: int) -> None:
-        '''Initialize the Sequence Dataset.
+        """Initialize the Sequence Dataset.
 
         Args:
             path_to_file (str): Path to the dataset files.
@@ -27,7 +27,7 @@ class SEQUENCE_DATASET(Dataset):
 
         Returns:
             None
-        '''
+        """
         self.temporal_window = temporal_window
         self.X = np.load(path_to_file+data)
         if self.X.shape[0] > self.X.shape[1]:
@@ -51,15 +51,15 @@ class SEQUENCE_DATASET(Dataset):
             print('Initialize test data. Datapoints %d' %self.data_points)
 
     def __len__(self) -> int:
-        '''Return the number of data points.
+        """Return the number of data points.
 
         Returns:
             int: Number of data points.
-        '''
+        """
         return self.data_points
 
     def __getitem__(self, index: int) -> torch.Tensor:
-        '''
+        """
         Get a normalized sequence at the specified index.
 
         Args:
@@ -67,7 +67,7 @@ class SEQUENCE_DATASET(Dataset):
 
         Returns:
             torch.Tensor: Normalized sequence data at the specified index.
-        '''
+        """
         temp_window = self.temporal_window
 
         nf = self.data_points

@@ -25,7 +25,7 @@ def hierarchy_pos(
     vert_loc: float = 0,
     xcenter: float = 0.5
 ) -> Dict[str, Tuple[float, float]]:
-    '''
+    """
     Positions nodes in a tree-like layout.
     Ref: From Joel's answer at https://stackoverflow.com/a/29597209/2966723.
 
@@ -39,7 +39,7 @@ def hierarchy_pos(
 
     Returns:
         Dict[str, Tuple[float, float]]: A dictionary mapping node names to their positions (x, y).
-    '''
+    """
 
     if not nx.is_tree(G):
         raise TypeError('cannot use hierarchy_pos on a graph that is not a tree')
@@ -78,7 +78,7 @@ def merge_func(
     motif_norm: np.ndarray,
     merge_sel: int
 ) -> Tuple[np.ndarray, np.ndarray]:
-    '''
+    """
     Merge nodes in a graph based on a selection criterion.
 
     Args:
@@ -94,7 +94,7 @@ def merge_func(
 
     Returns:
         Tuple[np.ndarray, np.ndarray]: A tuple containing the merged nodes.
-    '''
+    """
 
     if merge_sel == 0:
         # merge nodes with highest transition probability
@@ -125,7 +125,7 @@ def graph_to_tree(
     n_cluster: int,
     merge_sel: int = 1
 ) -> nx.Graph:
-    '''
+    """
     Convert a graph to a tree.
 
     Args:
@@ -138,7 +138,7 @@ def graph_to_tree(
 
     Returns:
         nx.Graph: The tree.
-    '''
+    """
 
     if merge_sel == 1:
         # motif_usage_temp = np.load(path_to_file+'/behavior_quantification/motif_usage.npy')
@@ -309,7 +309,7 @@ def graph_to_tree(
 
 
 def draw_tree(T: nx.Graph) -> None:
-    '''
+    """
     Draw a tree.
 
     Args:
@@ -317,7 +317,7 @@ def draw_tree(T: nx.Graph) -> None:
 
     Returns:
         None
-    '''
+    """
     # pos = nx.drawing.layout.fruchterman_reingold_layout(T)
     pos = hierarchy_pos(T,'Root',width=.5, vert_gap = 0.1, vert_loc = 0, xcenter = 50)
     fig = plt.figure(2)
@@ -328,7 +328,7 @@ def draw_tree(T: nx.Graph) -> None:
 
 def traverse_tree(T: nx.Graph, root_node: str = None) -> str:
     # TODO duplicated function def
-    '''
+    """
     Traverse a tree and return the traversal sequence.
 
     Args:
@@ -337,7 +337,7 @@ def traverse_tree(T: nx.Graph, root_node: str = None) -> str:
 
     Returns:
         str: The traversal sequence.
-    '''
+    """
     if root_node == None:
         node=['Root']
     else:
@@ -406,7 +406,7 @@ def _traverse_tree(T: nx.Graph, node: List[str], traverse_preorder: str, travers
 
 def traverse_tree(T: nx.Graph, root_node: str = None) -> str:
     # TODO duplicated function def
-    '''
+    """
     Traverse a tree and return the traversal sequence.
 
     Args:
@@ -415,7 +415,7 @@ def traverse_tree(T: nx.Graph, root_node: str = None) -> str:
 
     Returns:
         str: The traversal sequence.
-    '''
+    """
     if root_node == None:
         node=['Root']
     else:
@@ -437,7 +437,7 @@ def _traverse_tree_cutline(
     community_bag: List[List[str]],
     community_list: List[str] = None
 ) -> List[List[str]]:
-    '''
+    """
     Helper function for tree traversal with a cutline.
 
     Args:
@@ -451,7 +451,7 @@ def _traverse_tree_cutline(
 
     Returns:
         List[List[str]]: List of lists community bags.
-    '''
+    """
     cmap = plt.get_cmap("tab10")
     traverse_list.append(node[0])
     if community_list is not None and type(node[0]) is not str:
@@ -484,7 +484,7 @@ def _traverse_tree_cutline(
 
 
 def traverse_tree_cutline(T: nx.Graph, root_node: str = None, cutline: int = 2) -> List[List[str]]:
-    '''
+    """
     Traverse a tree with a cutline and return the community bags.
 
     Args:
@@ -494,7 +494,7 @@ def traverse_tree_cutline(T: nx.Graph, root_node: str = None, cutline: int = 2) 
 
     Returns:
         List[List[str]]: List of community bags.
-    '''
+    """
     if root_node == None:
         node=['Root']
     else:

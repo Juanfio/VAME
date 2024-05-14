@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-'''
+"""
 Variational Animal Motion Embedding 0.1 Toolbox
 © K. Luxem & P. Bauer, Department of Cellular Neuroscience
 Leibniz Institute for Neurobiology, Magdeburg, Germany
@@ -9,7 +9,7 @@ Licensed under GNU General Public License v3.0
 
 The Model is partially adapted from the Timeseries Clustering repository developed by Tejas Lodaya:
 https://github.com/tejaslodaya/timeseries-clustering-vae/blob/master/vrae/vrae.py
-'''
+"""
 
 
 import torch
@@ -18,12 +18,12 @@ from torch.autograd import Variable
 from typing import Tuple
 
 # NEW MODEL WITH SMALL ALTERATIONS
-''' MODEL  '''
+""" MODEL  """
 
 class Encoder(nn.Module):
-    '''Encoder module of the Variational Autoencoder.'''
+    """Encoder module of the Variational Autoencoder."""
     def __init__(self, NUM_FEATURES: int, hidden_size_layer_1: int, hidden_size_layer_2: int, dropout_encoder: float):
-        '''
+        """
         Initialize the Encoder module.
 
         Args:
@@ -31,7 +31,7 @@ class Encoder(nn.Module):
             hidden_size_layer_1 (int): Size of the first hidden layer.
             hidden_size_layer_2 (int): Size of the second hidden layer.
             dropout_encoder (float): Dropout rate for regularization.
-        '''
+        """
         super(Encoder, self).__init__()
 
         self.input_size = NUM_FEATURES
@@ -48,7 +48,7 @@ class Encoder(nn.Module):
         self.hidden_factor = (2 if self.bidirectional else 1) * self.n_layers
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
-        '''
+        """
         Forward pass of the Encoder module.
 
         Args:
@@ -56,7 +56,7 @@ class Encoder(nn.Module):
 
         Returns:
             torch.Tensor: Encoded representation tensor of shape (batch_size, hidden_size_layer_1 * 4).
-        '''
+        """
         outputs_1, hidden_1 = self.encoder_rnn(inputs)#UNRELEASED!
 
         hidden = torch.cat((hidden_1[0,...], hidden_1[1,...], hidden_1[2,...], hidden_1[3,...]),1)
@@ -65,9 +65,9 @@ class Encoder(nn.Module):
 
 
 class Lambda(nn.Module):
-    '''Lambda module for computing the latent space parameters.'''
+    """Lambda module for computing the latent space parameters."""
     def __init__(self, ZDIMS: int, hidden_size_layer_1: int, hidden_size_layer_2: int, softplus: bool):
-        '''
+        """
         Initialize the Lambda module.
 
         Args:
@@ -75,7 +75,7 @@ class Lambda(nn.Module):
             hidden_size_layer_1 (int): Size of the first hidden layer.
             hidden_size_layer_2 (int, deprecated): Size of the second hidden layer.
             softplus (bool): Whether to use softplus activation for logvar.
-        '''
+        """
         super(Lambda, self).__init__()
 
         self.hid_dim = hidden_size_layer_1*4
@@ -90,7 +90,7 @@ class Lambda(nn.Module):
             self.softplus_fn = nn.Softplus()
 
     def forward(self, hidden: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        '''
+        """
         Forward pass of the Lambda module.
 
         Args:
@@ -98,7 +98,7 @@ class Lambda(nn.Module):
 
         Returns:
             tuple[torch.Tensor, torch.Tensor, torch.Tensor]: Latent space tensor, mean tensor, logvar tensor.
-        '''
+        """
         self.mean = self.hidden_to_mean(hidden)
         if self.softplus == True:
             self.logvar = self.softplus_fn(self.hidden_to_logvar(hidden))
@@ -114,9 +114,9 @@ class Lambda(nn.Module):
 
 
 class Decoder(nn.Module):
-    '''Decoder module of the Variational Autoencoder.'''
+    """Decoder module of the Variational Autoencoder."""
     def __init__(self, TEMPORAL_WINDOW: int, ZDIMS: int, NUM_FEATURES: int, hidden_size_rec: int, dropout_rec: float):
-        '''
+        """
         Initialize the Decoder module.
 
         Args:
@@ -125,7 +125,7 @@ class Decoder(nn.Module):
             NUM_FEATURES (int): Number of input features.
             hidden_size_rec (int): Size of the recurrent hidden layer.
             dropout_rec (float): Dropout rate for regularization.
-        '''
+        """
         super(Decoder,self).__init__()
 
         self.num_features = NUM_FEATURES
@@ -145,7 +145,7 @@ class Decoder(nn.Module):
         self.hidden_to_output = nn.Linear(self.hidden_size*(2 if self.bidirectional else 1), self.num_features)
 
     def forward(self, inputs: torch.Tensor, z: torch.Tensor) -> torch.Tensor:
-        '''
+        """
         Forward pass of the Decoder module.
 
         Args:
@@ -154,7 +154,7 @@ class Decoder(nn.Module):
 
         Returns:
             torch.Tensor: Decoded output tensor of shape (batch_size, seq_len, NUM_FEATURES).
-        '''
+        """
         batch_size = inputs.size(0) # NEW
 
         hidden = self.latent_to_hidden(z) # NEW
@@ -168,7 +168,7 @@ class Decoder(nn.Module):
 
 
 class Decoder_Future(nn.Module):
-    '''Decoder module for predicting future sequences.'''
+    """Decoder module for predicting future sequences."""
     def __init__(
         self,
         TEMPORAL_WINDOW: int,
@@ -178,7 +178,7 @@ class Decoder_Future(nn.Module):
         hidden_size_pred: int,
         dropout_pred: float
     ):
-        '''
+        """
         Initialize the Decoder_Future module.
 
         Args:
@@ -188,7 +188,7 @@ class Decoder_Future(nn.Module):
             FUTURE_STEPS (int): Number of future steps to predict.
             hidden_size_pred (int): Size of the prediction hidden layer.
             dropout_pred (float): Dropout rate for regularization.
-        '''
+        """
         super(Decoder_Future,self).__init__()
 
         self.num_features = NUM_FEATURES
@@ -251,7 +251,7 @@ class RNN_VAE(nn.Module):
         softplus: bool
     ):
 
-        '''
+        """
         Initialize the VAE module.
 
         Args:
@@ -266,7 +266,7 @@ class RNN_VAE(nn.Module):
             hidden_size_pred (int): Size of the prediction hidden layer.
             dropout_encoder (float): Dropout rate for encoder.
 
-        '''
+        """
         super(RNN_VAE,self).__init__()
 
         self.FUTURE_DECODER = FUTURE_DECODER
@@ -279,7 +279,7 @@ class RNN_VAE(nn.Module):
                                                  dropout_pred)
 
     def forward(self, seq: torch.Tensor) -> tuple:
-        '''Forward pass of the VAE.
+        """Forward pass of the VAE.
 
         Args:
             seq (torch.Tensor): Input sequence tensor of shape (batch_size, seq_len, NUM_FEATURES).
@@ -297,17 +297,17 @@ class RNN_VAE(nn.Module):
                     - z (torch.Tensor): Latent representation tensor.
                     - mu (torch.Tensor): Mean of the latent distribution tensor.
                     - logvar (torch.Tensor): Log variance of the latent distribution tensor.
-        '''
+        """
 
-        ''' Encode input sequence '''
+        """ Encode input sequence """
         h_n = self.encoder(seq)
 
-        ''' Compute the latent state via reparametrization trick '''
+        """ Compute the latent state via reparametrization trick """
         z, mu, logvar = self.lmbda(h_n)
         ins = z.unsqueeze(2).repeat(1, 1, self.seq_len)
         ins = ins.permute(0,2,1)
 
-        ''' Predict the future of the sequence from the latent state'''
+        """ Predict the future of the sequence from the latent state"""
         prediction = self.decoder(ins, z)
 
         if self.FUTURE_DECODER:
@@ -322,18 +322,18 @@ class RNN_VAE(nn.Module):
 #----------------------------------------------------------------------------------------
 
 
-''' MODEL '''
+""" MODEL """
 class Encoder_LEGACY(nn.Module):
-    '''LEGACY Encoder module of the Variational Autoencoder.'''
+    """LEGACY Encoder module of the Variational Autoencoder."""
     def __init__(self, NUM_FEATURES: int, hidden_size_layer_1: int, hidden_size_layer_2: int, dropout_encoder: float):
-        '''(LEGACY) Initialize the Encoder_LEGACY module.
+        """(LEGACY) Initialize the Encoder_LEGACY module.
 
         Args:
             NUM_FEATURES (int): Number of input features.
             hidden_size_layer_1 (int): Size of the first hidden layer.
             hidden_size_layer_2 (int): Size of the second hidden layer.
             dropout_encoder (float): Dropout rate for the encoder.
-        '''
+        """
         super(Encoder_LEGACY, self).__init__()
 
         self.input_size = NUM_FEATURES
@@ -349,14 +349,14 @@ class Encoder_LEGACY(nn.Module):
                             bias=True, batch_first=True, dropout=self.dropout, bidirectional=True)
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
-        '''(LEGACY) Forward pass of the Encoder_LEGACY module.
+        """(LEGACY) Forward pass of the Encoder_LEGACY module.
 
         Args:
             inputs (torch.Tensor): Input tensor of shape (batch_size, seq_len, NUM_FEATURES).
 
         Returns:
             torch.Tensor: Encoded tensor.
-        '''
+        """
         outputs_1, hidden_1 = self.rnn_1(inputs)
         outputs_2, hidden_2 = self.rnn_2(outputs_1)
 
@@ -369,15 +369,15 @@ class Encoder_LEGACY(nn.Module):
 
 
 class Lambda_LEGACY(nn.Module):
-    '''LEGACY Lambda module for computing the latent space parameters.'''
+    """LEGACY Lambda module for computing the latent space parameters."""
     def __init__(self, ZDIMS: int, hidden_size_layer_1: int, hidden_size_layer_2: int):
-        '''(LEGACY) Initialize the Lambda_LEGACY module.
+        """(LEGACY) Initialize the Lambda_LEGACY module.
 
         Args:
             ZDIMS (int): Size of the latent space.
             hidden_size_layer_1 (int): Size of the first hidden layer.
             hidden_size_layer_2 (int): Size of the second hidden layer.
-        '''
+        """
         super(Lambda_LEGACY, self).__init__()
 
         self.hid_dim = hidden_size_layer_1*2 + hidden_size_layer_2*2
@@ -390,7 +390,7 @@ class Lambda_LEGACY(nn.Module):
         self.softplus = nn.Softplus()
 
     def forward(self, cell_output: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        '''(LEGACY) Forward pass of the Lambda_LEGACY module.
+        """(LEGACY) Forward pass of the Lambda_LEGACY module.
 
         Args:
             cell_output (torch.Tensor): Output tensor of the encoder.
@@ -400,7 +400,7 @@ class Lambda_LEGACY(nn.Module):
                 - torch.Tensor: Sampled latent tensor.
                 - torch.Tensor: Mean of the latent distribution.
                 - torch.Tensor: Log variance of the latent distribution.
-        '''
+        """
         self.latent_mean = self.hidden_to_mean(cell_output)
 
         # based on Pereira et al 2019:
@@ -417,9 +417,9 @@ class Lambda_LEGACY(nn.Module):
 
 
 class Decoder_LEGACY(nn.Module):
-    '''LEGACY Decoder module of the Variational Autoencoder.'''
+    """LEGACY Decoder module of the Variational Autoencoder."""
     def __init__(self, TEMPORAL_WINDOW: int, ZDIMS: int, NUM_FEATURES: int, hidden_size_rec: int, dropout_rec: float):
-        '''(LEGACY) Initialize the Decoder_LEGACY module.
+        """(LEGACY) Initialize the Decoder_LEGACY module.
 
         Args:
             TEMPORAL_WINDOW (int): Size of the temporal window.
@@ -427,7 +427,7 @@ class Decoder_LEGACY(nn.Module):
             NUM_FEATURES (int): Number of input features.
             hidden_size_rec (int): Size of the recurrent hidden layer.
             dropout_rec (float): Dropout rate for the decoder.
-        '''
+        """
         super(Decoder_LEGACY,self).__init__()
 
         self.num_features = NUM_FEATURES
@@ -443,23 +443,23 @@ class Decoder_LEGACY(nn.Module):
         self.hidden_to_output = nn.Linear(self.hidden_size, self.num_features)
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
-        '''(LEGACY) Forward pass of the Decoder_LEGACY module.
+        """(LEGACY) Forward pass of the Decoder_LEGACY module.
 
         Args:
             inputs (torch.Tensor): Input tensor.
 
         Returns:
             torch.Tensor: Reconstructed tensor.
-        '''
+        """
         decoder_output, _ = self.rnn_rec(inputs)
         prediction = self.hidden_to_output(decoder_output)
 
         return prediction
 
 class Decoder_Future_LEGACY(nn.Module):
-    '''LEGACY Decoder module for predicting future sequences.'''
+    """LEGACY Decoder module for predicting future sequences."""
     def __init__(self, TEMPORAL_WINDOW: int, ZDIMS: int, NUM_FEATURES: int, FUTURE_STEPS: int, hidden_size_pred: int, dropout_pred: float):
-        '''(LEGACY) Initialize the Decoder_Future_LEGACY module.
+        """(LEGACY) Initialize the Decoder_Future_LEGACY module.
 
         Args:
             TEMPORAL_WINDOW (int): Size of the temporal window.
@@ -468,7 +468,7 @@ class Decoder_Future_LEGACY(nn.Module):
             FUTURE_STEPS (int): Number of future steps to predict.
             hidden_size_pred (int): Size of the prediction hidden layer.
             dropout_pred (float): Dropout rate for the prediction.
-        '''
+        """
         super(Decoder_Future_LEGACY,self).__init__()
 
         self.num_features = NUM_FEATURES
@@ -485,14 +485,14 @@ class Decoder_Future_LEGACY(nn.Module):
         self.hidden_to_output = nn.Linear(self.hidden_size*2, self.num_features)
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
-        '''(LEGACY) Forward pass of the Decoder_Future_LEGACY module.
+        """(LEGACY) Forward pass of the Decoder_Future_LEGACY module.
 
         Args:
             inputs (torch.Tensor): Input tensor.
 
         Returns:
             torch.Tensor: Predicted future tensor.
-        '''
+        """
         inputs = inputs[:,:self.future_steps,:]
         decoder_output, _ = self.rnn_pred(inputs)
         prediction = self.hidden_to_output(decoder_output)
@@ -501,7 +501,7 @@ class Decoder_Future_LEGACY(nn.Module):
 
 
 class RNN_VAE_LEGACY(nn.Module):
-    '''LEGACY Variational Autoencoder module.'''
+    """LEGACY Variational Autoencoder module."""
     def __init__(
         self,
         TEMPORAL_WINDOW: int,
@@ -518,7 +518,7 @@ class RNN_VAE_LEGACY(nn.Module):
         dropout_pred: float,
         softplus: bool
     ):
-        '''(LEGACY) Initialize the RNN_VAE_LEGACY module.
+        """(LEGACY) Initialize the RNN_VAE_LEGACY module.
 
         Args:
             TEMPORAL_WINDOW (int): Size of the temporal window.
@@ -534,7 +534,7 @@ class RNN_VAE_LEGACY(nn.Module):
             dropout_rec (float): Dropout rate for the decoder.
             dropout_pred (float): Dropout rate for the prediction.
             softplus (bool, deprecated): Whether to use softplus activation.
-        '''
+        """
         super(RNN_VAE_LEGACY,self).__init__()
 
         self.FUTURE_DECODER = FUTURE_DECODER
@@ -547,7 +547,7 @@ class RNN_VAE_LEGACY(nn.Module):
                                                  dropout_pred)
 
     def forward(self, seq: torch.Tensor) -> Tuple:
-        '''Forward pass of the RNN_VAE_LEGACY module.
+        """Forward pass of the RNN_VAE_LEGACY module.
 
         Args:
             seq (torch.Tensor): Input sequence tensor of shape (batch_size, seq_len, NUM_FEATURES).
@@ -559,17 +559,17 @@ class RNN_VAE_LEGACY(nn.Module):
                 - torch.Tensor: Latent tensor.
                 - torch.Tensor: Mean of the latent distribution.
                 - torch.Tensor: Log variance of the latent distribution.
-        '''
+        """
 
-        ''' Encode input sequence '''
+        """ Encode input sequence """
         h_n = self.encoder(seq)
 
-        ''' Compute the latent state via reparametrization trick '''
+        """ Compute the latent state via reparametrization trick """
         latent, mu, logvar = self.lmbda(h_n)
         z = latent.unsqueeze(2).repeat(1, 1, self.seq_len)
         z = z.permute(0,2,1)
 
-        ''' Predict the future of the sequence from the latent state'''
+        """ Predict the future of the sequence from the latent state"""
         prediction = self.decoder(z)
 
         if self.FUTURE_DECODER:

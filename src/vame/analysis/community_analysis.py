@@ -24,7 +24,7 @@ from typing import List, Tuple
 
 
 def get_adjacency_matrix(labels: np.ndarray, n_cluster: int) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    '''Calculate the adjacency matrix, transition matrix, and temporal matrix.
+    """Calculate the adjacency matrix, transition matrix, and temporal matrix.
 
     Args:
         labels (np.ndarray): Array of cluster labels.
@@ -32,7 +32,7 @@ def get_adjacency_matrix(labels: np.ndarray, n_cluster: int) -> Tuple[np.ndarray
 
     Returns:
         Tuple[np.ndarray, np.ndarray, np.ndarray]: Tuple containing adjacency matrix, transition matrix, and temporal matrix.
-    '''
+    """
     temp_matrix = np.zeros((n_cluster,n_cluster), dtype=np.float64)
     adjacency_matrix = np.zeros((n_cluster,n_cluster), dtype=np.float64)
     cntMat = np.zeros((n_cluster))
@@ -64,7 +64,7 @@ def get_adjacency_matrix(labels: np.ndarray, n_cluster: int) -> Tuple[np.ndarray
 
 
 def get_transition_matrix(adjacency_matrix: np.ndarray, threshold: float = 0.0) -> np.ndarray:
-    '''Compute the transition matrix from the adjacency matrix.
+    """Compute the transition matrix from the adjacency matrix.
 
     Args:
         adjacency_matrix (np.ndarray): Adjacency matrix.
@@ -72,7 +72,7 @@ def get_transition_matrix(adjacency_matrix: np.ndarray, threshold: float = 0.0) 
 
     Returns:
         np.ndarray: Transition matrix.
-    '''
+    """
     row_sum=adjacency_matrix.sum(axis=1)
     transition_matrix = adjacency_matrix/row_sum[:,np.newaxis]
     transition_matrix[transition_matrix <= threshold] = 0
@@ -82,7 +82,7 @@ def get_transition_matrix(adjacency_matrix: np.ndarray, threshold: float = 0.0) 
 
 
 def consecutive(data: np.ndarray, stepsize: int = 1) -> List[np.ndarray]:
-    '''Identifies location of missing motif finding consecutive elements in an array and returns array(s) at the split.
+    """Identifies location of missing motif finding consecutive elements in an array and returns array(s) at the split.
 
     Args:
         data (np.ndarray): Input array.
@@ -90,7 +90,7 @@ def consecutive(data: np.ndarray, stepsize: int = 1) -> List[np.ndarray]:
 
     Returns:
         List[np.ndarray]: List of arrays containing consecutive elements.
-    '''
+    """
     data = data[:]
     return np.split(data, np.where(np.diff(data) != stepsize)[0]+1)
 
@@ -130,7 +130,7 @@ def consecutive(data: np.ndarray, stepsize: int = 1) -> List[np.ndarray]:
 
 
 def find_zero_labels(motif_usage: Tuple[np.ndarray, np.ndarray], n_cluster: int) -> np.ndarray:
-    '''Find zero labels in motif usage and fill them.
+    """Find zero labels in motif usage and fill them.
 
     Args:
         motif_usage (Tuple[np.ndarray, np.ndarray]): 2D list where the first index is a unique list of motif used and the second index is the motif usage in frames.
@@ -138,7 +138,7 @@ def find_zero_labels(motif_usage: Tuple[np.ndarray, np.ndarray], n_cluster: int)
 
     Returns:
         np.ndarray: List of motif usage frames with 0's where motifs weren't used (array with zero labels filled).
-    '''
+    """
     cons = consecutive(motif_usage[0])
     usage_list = list(motif_usage[1])
     if len(cons) != 1: #if missing motif is in the middle of the list
@@ -174,7 +174,7 @@ def find_zero_labels(motif_usage: Tuple[np.ndarray, np.ndarray], n_cluster: int)
     return usage
 
 def augment_motif_timeseries(label: np.ndarray, n_cluster: int) -> Tuple[np.ndarray, np.ndarray]:
-    '''Augment motif time series by filling zero motifs.
+    """Augment motif time series by filling zero motifs.
 
     Args:
         label (np.ndarray): Original label array.
@@ -182,7 +182,7 @@ def augment_motif_timeseries(label: np.ndarray, n_cluster: int) -> Tuple[np.ndar
 
     Returns:
         Tuple[np.ndarray, np.ndarray]: Augmented label array and indices of zero motifs.
-    '''
+    """
     augmented_label = label.copy()
 
     motif_usage = np.unique(augmented_label, return_counts=True)
@@ -200,7 +200,7 @@ def augment_motif_timeseries(label: np.ndarray, n_cluster: int) -> Tuple[np.ndar
     return augmented_label, zero_motifs
 
 def get_labels(cfg: dict, files: List[str], model_name: str, n_cluster: int, parametrization: str) -> List[np.ndarray]:
-    '''Get cluster labels for given videos files.
+    """Get cluster labels for given videos files.
 
     Args:
         cfg (dict): Configuration parameters.
@@ -211,7 +211,7 @@ def get_labels(cfg: dict, files: List[str], model_name: str, n_cluster: int, par
 
     Returns:
         List[np.ndarray]: List of cluster labels for each file.
-    '''
+    """
     shapes = []
     for file in files:
         path_to_file = os.path.join(cfg['project_path'],"results",file,'VAME', parametrization + '-' + str(n_cluster),"")
@@ -231,7 +231,7 @@ def get_labels(cfg: dict, files: List[str], model_name: str, n_cluster: int, par
     return labels
 
 def get_community_label(cfg: dict, files: List[str], model_name: str, n_cluster: int, parametrization: str) -> np.ndarray:
-    '''Get community labels for given files.
+    """Get community labels for given files.
 
     Args:
         cfg (dict): Configuration parameters.
@@ -242,7 +242,7 @@ def get_community_label(cfg: dict, files: List[str], model_name: str, n_cluster:
 
     Returns:
         np.ndarray: Array of community labels.
-    '''
+    """
     shapes = []
     for file in files:
         path_to_file = os.path.join(cfg['project_path'],"results",file,'VAME', parametrization + '-'+str(n_cluster),"")
@@ -262,7 +262,7 @@ def get_community_label(cfg: dict, files: List[str], model_name: str, n_cluster:
 
 
 def compute_transition_matrices(files: List[str], labels: List[np.ndarray], n_cluster: int) -> List[np.ndarray]:
-    '''Compute transition matrices for given files and labels.
+    """Compute transition matrices for given files and labels.
 
     Args:
         files (List[str]): List of file paths.
@@ -271,7 +271,7 @@ def compute_transition_matrices(files: List[str], labels: List[np.ndarray], n_cl
 
     Returns:
         List[np.ndarray]: List of transition matrices.
-    '''
+    """
     transition_matrices = []
     for i, file in enumerate(files):
         adj, trans, mat = get_adjacency_matrix(labels[i], n_cluster)
@@ -285,7 +285,7 @@ def create_community_bag(
     cut_tree: int,
     n_cluster: int
 ) -> Tuple:
-    '''Create community bag for given files and labels (Markov chain to tree -> community detection).
+    """Create community bag for given files and labels (Markov chain to tree -> community detection).
     Args:
         files (List[str]): List of file paths.
         labels (List[np.ndarray]): List of label arrays.
@@ -295,7 +295,7 @@ def create_community_bag(
 
     Returns:
         Tuple: Tuple containing list of community bags and list of trees.
-    '''
+    """
     trees = []
     communities_all = []
     for i, file in enumerate(files):
@@ -343,7 +343,7 @@ def create_cohort_community_bag(
     cut_tree: int,
     n_cluster: int
 ) -> Tuple:
-    '''Create cohort community bag for given labels, transition matrix, cut tree, and number of clusters.
+    """Create cohort community bag for given labels, transition matrix, cut tree, and number of clusters.
     (markov chain to tree -> community detection)
 
     Args:
@@ -355,7 +355,7 @@ def create_cohort_community_bag(
 
     Returns:
         Tuple: Tuple containing list of community bags and list of trees.
-    '''
+    """
 
     trees = []
     communities_all = []
@@ -398,7 +398,7 @@ def create_cohort_community_bag(
     return communities_all, trees
 
 def get_community_labels(files: List[str], labels: List[np.ndarray], communities_all: List[List[List[int]]]) -> List[np.ndarray]:
-    '''Transform kmeans parameterized latent vector into communities. Get community labels for given files and community bags.
+    """Transform kmeans parameterized latent vector into communities. Get community labels for given files and community bags.
 
     Args:
         files (List[str]): List of file paths.
@@ -407,7 +407,7 @@ def get_community_labels(files: List[str], labels: List[np.ndarray], communities
 
     Returns:
         List[np.ndarray]: List of community labels for each file.
-    '''
+    """
     community_labels_all = []
     for k, file in enumerate(files):
         num_comm = len(communities_all[k])
@@ -429,7 +429,7 @@ def get_cohort_community_labels(
     labels: List[np.ndarray],
     communities_all: List[List[List[int]]]
 ) -> List[np.ndarray]:
-    '''Transform kmeans parameterized latent vector into communities. Get cohort community labels for given labels, and community bags.
+    """Transform kmeans parameterized latent vector into communities. Get cohort community labels for given labels, and community bags.
 
     Args:
         files (List[str]): List of file paths (deprecated).
@@ -438,7 +438,7 @@ def get_cohort_community_labels(
 
     Returns:
         List[np.ndarray]: List of cohort community labels for each file.
-    '''
+    """
     community_labels_all = []
 
     num_comm = len(communities_all)
@@ -457,7 +457,7 @@ def get_cohort_community_labels(
 
 
 def umap_embedding(cfg: dict, file: str, model_name: str, n_cluster: int, parameterization: str) -> np.ndarray:
-    '''Perform UMAP embedding for given file and parameters.
+    """Perform UMAP embedding for given file and parameters.
 
     Args:
         cfg (dict): Configuration parameters.
@@ -468,7 +468,7 @@ def umap_embedding(cfg: dict, file: str, model_name: str, n_cluster: int, parame
 
     Returns:
         np.ndarray: UMAP embedding.
-    '''
+    """
     reducer = umap.UMAP(n_components=2, min_dist=cfg['min_dist'], n_neighbors=cfg['n_neighbors'],
                         random_state=cfg['random_state'])
 
@@ -488,7 +488,7 @@ def umap_embedding(cfg: dict, file: str, model_name: str, n_cluster: int, parame
 
 
 def umap_vis(cfg: dict, file: str, embed: np.ndarray, community_labels_all: np.ndarray) -> None:
-    '''Create plotly visualizaton of UMAP embedding.
+    """Create plotly visualizaton of UMAP embedding.
 
     Args:
         cfg (dict): Configuration parameters.
@@ -498,7 +498,7 @@ def umap_vis(cfg: dict, file: str, embed: np.ndarray, community_labels_all: np.n
 
     Returns:
         None
-    '''
+    """
     num_points = cfg['num_points']
     community_labels_all = np.asarray(community_labels_all)
     if num_points > community_labels_all.shape[0]:
@@ -515,7 +515,7 @@ def umap_vis(cfg: dict, file: str, embed: np.ndarray, community_labels_all: np.n
 
 
 def community(config: str, cohort: bool = True, show_umap: bool = False, cut_tree: int = None) -> None:
-    '''Perform community analysis.
+    """Perform community analysis.
 
     Args:
         config (str): Path to the configuration file.
@@ -525,7 +525,7 @@ def community(config: str, cohort: bool = True, show_umap: bool = False, cut_tre
 
     Returns:
         None
-    '''
+    """
     config_file = Path(config).resolve()
     cfg = read_config(config_file)
     model_name = cfg['model_name']

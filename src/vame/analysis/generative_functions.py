@@ -26,7 +26,7 @@ def random_generative_samples_motif(
     labels: np.ndarray,
     n_cluster: int
 ) -> None:
-    '''Generate random samples for motifs.
+    """Generate random samples for motifs.
 
     Args:
         cfg (dict): Configuration dictionary.
@@ -37,7 +37,7 @@ def random_generative_samples_motif(
 
     Returns:
         None: Plot of generated samples.
-    '''
+    """
     time_window = cfg['time_window']
     for j in range(n_cluster):
 
@@ -64,7 +64,7 @@ def random_generative_samples_motif(
         plt.suptitle('Generated samples for motif '+str(j))
 
 def random_generative_samples(cfg: dict, model: torch.nn.Module, latent_vector: np.ndarray) -> None:
-    '''Generate random generative samples.
+    """Generate random generative samples.
 
     Args:
         cfg (dict): Configuration dictionary.
@@ -73,7 +73,7 @@ def random_generative_samples(cfg: dict, model: torch.nn.Module, latent_vector: 
 
     Returns:
         None
-    '''
+    """
     # Latent sampling and generative model
     time_window = cfg['time_window']
     gm = GaussianMixture(n_components=10).fit(latent_vector)
@@ -97,7 +97,7 @@ def random_generative_samples(cfg: dict, model: torch.nn.Module, latent_vector: 
 
 
 def random_reconstruction_samples(cfg: dict, model: torch.nn.Module, latent_vector: np.ndarray) -> None:
-    '''Generate random reconstruction samples.
+    """Generate random reconstruction samples.
 
     Args:
         cfg (dict): Configuration dictionary.
@@ -106,7 +106,7 @@ def random_reconstruction_samples(cfg: dict, model: torch.nn.Module, latent_vect
 
     Returns:
         None
-    '''
+    """
     # random samples for reconstruction
     time_window = cfg['time_window']
 
@@ -126,7 +126,7 @@ def random_reconstruction_samples(cfg: dict, model: torch.nn.Module, latent_vect
 
 
 def visualize_cluster_center(cfg: dict, model: torch.nn.Module, cluster_center: np.ndarray) -> None:
-    '''Visualize cluster centers.
+    """Visualize cluster centers.
 
     Args:
         cfg (dict): Configuration dictionary.
@@ -135,7 +135,7 @@ def visualize_cluster_center(cfg: dict, model: torch.nn.Module, cluster_center: 
 
     Returns:
         None
-    '''
+    """
     #Cluster Center
     time_window = cfg['time_window']
     animal_centers = cluster_center
@@ -160,7 +160,7 @@ def visualize_cluster_center(cfg: dict, model: torch.nn.Module, cluster_center: 
 
 
 def load_model(cfg: dict, model_name: str) -> torch.nn.Module:
-    '''Load PyTorch model.
+    """Load PyTorch model.
 
     Args:
         cfg (dict): Configuration dictionary.
@@ -168,7 +168,7 @@ def load_model(cfg: dict, model_name: str) -> torch.nn.Module:
 
     Returns:
         torch.nn.Module: Loaded PyTorch model.
-    '''
+    """
     ZDIMS = cfg['zdims']
     FUTURE_DECODER = cfg['prediction_decoder']
     TEMPORAL_WINDOW = cfg['time_window']*2
@@ -198,7 +198,7 @@ def load_model(cfg: dict, model_name: str) -> torch.nn.Module:
 
 
 def generative_model(config: str, mode: str = "sampling") -> None:
-    '''Generative model.
+    """Generative model.
 
     Args:
         config (str): Path to the configuration file.
@@ -206,7 +206,7 @@ def generative_model(config: str, mode: str = "sampling") -> None:
 
     Returns:
         None
-    '''
+    """
     config_file = Path(config).resolve()
     cfg = read_config(config_file)
     model_name = cfg['model_name']

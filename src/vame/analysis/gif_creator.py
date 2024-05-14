@@ -33,7 +33,7 @@ def create_video(
     max_lag: int,
     num_points: int
 ) -> None:
-    '''Create video frames for the given embedding.
+    """Create video frames for the given embedding.
 
     Args:
         path_to_file (str): Path to the file.
@@ -48,7 +48,7 @@ def create_video(
 
     Returns:
         None
-    '''
+    """
     # set matplotlib colormap
     cmap = matplotlib.cm.gray
     cmap_reversed = matplotlib.cm.get_cmap('gray_r')
@@ -89,7 +89,7 @@ def gif(
     file_format: str = '.mp4',
     crop_size: Tuple[int, int] = (300,300)
 ) -> None:
-    '''Create a GIF from the given configuration.
+    """Create a GIF from the given configuration.
 
     Args:
         config (str): Path to the configuration file.
@@ -104,7 +104,7 @@ def gif(
 
     Returns:
         None
-    '''
+    """
 
     config_file = Path(config).resolve()
     cfg = read_config(config_file)

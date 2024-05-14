@@ -32,7 +32,7 @@ else:
     torch.device("cpu")
 
 def reconstruction_loss(x: torch.Tensor, x_tilde: torch.Tensor, reduction: str) -> torch.Tensor:
-    '''Compute the reconstruction loss between input and reconstructed data.
+    """Compute the reconstruction loss between input and reconstructed data.
 
     Args:
         x (torch.Tensor): Input data tensor.
@@ -41,13 +41,13 @@ def reconstruction_loss(x: torch.Tensor, x_tilde: torch.Tensor, reduction: str) 
 
     Returns:
         torch.Tensor: Reconstruction loss.
-    '''
+    """
     mse_loss = nn.MSELoss(reduction=reduction)
     rec_loss = mse_loss(x_tilde,x)
     return rec_loss
 
 def future_reconstruction_loss(x: torch.Tensor, x_tilde: torch.Tensor, reduction: str) -> torch.Tensor:
-    '''Compute the future reconstruction loss between input and predicted future data.
+    """Compute the future reconstruction loss between input and predicted future data.
 
     Args:
         x (torch.Tensor): Input future data tensor.
@@ -56,13 +56,13 @@ def future_reconstruction_loss(x: torch.Tensor, x_tilde: torch.Tensor, reduction
 
     Returns:
         torch.Tensor: Future reconstruction loss.
-    '''
+    """
     mse_loss = nn.MSELoss(reduction=reduction)
     rec_loss = mse_loss(x_tilde,x)
     return rec_loss
 
 def cluster_loss(H: torch.Tensor, kloss: int, lmbda: float, batch_size: int) -> torch.Tensor:
-    '''Compute the cluster loss.
+    """Compute the cluster loss.
 
     Args:
         H (torch.Tensor): Latent representation tensor.
@@ -72,7 +72,7 @@ def cluster_loss(H: torch.Tensor, kloss: int, lmbda: float, batch_size: int) -> 
 
     Returns:
         torch.Tensor: Cluster loss.
-    '''
+    """
     gram_matrix = (H.T @ H) / batch_size
     _ ,sv_2, _ = torch.svd(gram_matrix)
     sv = torch.sqrt(sv_2[:kloss])
@@ -81,7 +81,7 @@ def cluster_loss(H: torch.Tensor, kloss: int, lmbda: float, batch_size: int) -> 
 
 
 def kullback_leibler_loss(mu: torch.Tensor, logvar: torch.Tensor) -> torch.Tensor:
-    '''Compute the Kullback-Leibler divergence loss.
+    """Compute the Kullback-Leibler divergence loss.
     see Appendix B from VAE paper: Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014 - https://arxiv.org/abs/1312.6114
 
     Formula: 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
@@ -92,14 +92,14 @@ def kullback_leibler_loss(mu: torch.Tensor, logvar: torch.Tensor) -> torch.Tenso
 
     Returns:
         torch.Tensor: Kullback-Leibler divergence loss.
-    '''
+    """
     # I'm using torch.mean() here as the sum() version depends on the size of the latent vector
     KLD = -0.5 * torch.mean(1 + logvar - mu.pow(2) - logvar.exp())
     return KLD
 
 
 def kl_annealing(epoch: int, kl_start: int, annealtime: int, function: str) -> float:
-    '''
+    """
     Anneal the Kullback-Leibler loss to let the model learn first the reconstruction of the data
     before the KL loss term gets introduced.
 
@@ -111,7 +111,7 @@ def kl_annealing(epoch: int, kl_start: int, annealtime: int, function: str) -> f
 
     Returns:
         float: Annealed weight value for the loss.
-    '''
+    """
     if epoch > kl_start:
         if function == 'linear':
             new_weight = min(1, (epoch-kl_start)/(annealtime))
@@ -129,7 +129,7 @@ def kl_annealing(epoch: int, kl_start: int, annealtime: int, function: str) -> f
 
 
 def gaussian(ins: torch.Tensor, is_training: bool, seq_len: int, std_n: float = 0.8) -> torch.Tensor:
-    '''Add Gaussian noise to the input data.
+    """Add Gaussian noise to the input data.
 
     Args:
         ins (torch.Tensor): Input data tensor.
@@ -139,7 +139,7 @@ def gaussian(ins: torch.Tensor, is_training: bool, seq_len: int, std_n: float = 
 
     Returns:
         torch.Tensor: Noisy input data tensor.
-    '''
+    """
     if is_training:
         emp_std = ins.std(1)*std_n
         emp_std = emp_std.unsqueeze(2).repeat(1, 1, seq_len)
@@ -169,7 +169,7 @@ def train(
     bsize: int,
     noise: bool
 ) -> Tuple[float, float, float, float, float, float]:
-    '''Train the model.
+    """Train the model.
 
     Args:
         train_loader (DataLoader): Training data loader.
@@ -194,7 +194,7 @@ def train(
     Returns:
         Tuple[float, float, float, float, float, float]: Kullback-Leibler weight, train loss, K-means loss, KL loss,
         MSE loss, future loss.
-    '''
+    """
 
     model.train() # toggle model to train mode
     train_loss = 0.0
@@ -280,7 +280,7 @@ def test(
     future_decoder: bool,
     bsize: int
 ) -> Tuple[float, float, float]:
-    '''
+    """
     Evaluate the model on the test dataset.
 
     Args:
@@ -300,7 +300,7 @@ def test(
     Returns:
         Tuple[float, float, float]: Tuple containing MSE loss per item, total test loss per item,
         and K-means loss weighted by the kl_weight.
-    '''
+    """
 
     model.eval() # toggle model to inference mode
     test_loss = 0.0
@@ -348,11 +348,11 @@ def test(
 
 
 def train_model(config: str) -> None:
-    '''Train Variational Autoencoder using the configuration file values.
+    """Train Variational Autoencoder using the configuration file values.
 
     Args:
         config (str): Path to the configuration file.
-    '''
+    """
     config_file = Path(config).resolve()
     cfg = read_config(config_file)
     legacy = cfg['legacy']

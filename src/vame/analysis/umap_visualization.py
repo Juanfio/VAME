@@ -21,7 +21,7 @@ from vame.util.auxiliary import read_config
 
 
 def umap_vis(file: str, embed: np.ndarray, num_points: int) -> None:
-    '''
+    """
     Visualize UMAP embedding without labels.
 
     Args:
@@ -31,7 +31,7 @@ def umap_vis(file: str, embed: np.ndarray, num_points: int) -> None:
 
     Returns:
         None - Plot Visualization of UMAP embedding.
-    '''
+    """
     fig = plt.figure(1)
     plt.scatter(embed[:num_points,0], embed[:num_points,1], s=2, alpha=.5)
     plt.gca().set_aspect('equal', 'datalim')
@@ -39,7 +39,7 @@ def umap_vis(file: str, embed: np.ndarray, num_points: int) -> None:
 
 
 def umap_label_vis(file: str, embed: np.ndarray, label: np.ndarray, n_cluster: int, num_points: int) -> None:
-    '''
+    """
     Visualize UMAP embedding with motif labels.
 
     Args:
@@ -51,7 +51,7 @@ def umap_label_vis(file: str, embed: np.ndarray, label: np.ndarray, n_cluster: i
 
     Returns:
         None - Plot Visualization of UMAP embedding with motif labels.
-    '''
+    """
     fig = plt.figure(1)
     plt.scatter(embed[:num_points,0], embed[:num_points,1],  c=label[:num_points], cmap='Spectral', s=2, alpha=.7)
     #plt.colorbar(boundaries=np.arange(n_cluster+1)-0.5).set_ticks(np.arange(n_cluster))
@@ -60,7 +60,7 @@ def umap_label_vis(file: str, embed: np.ndarray, label: np.ndarray, n_cluster: i
 
 
 def umap_vis_comm(file: str, embed: np.ndarray, community_label: np.ndarray, num_points: int) -> None:
-    '''
+    """
     Visualize UMAP embedding with community labels.
 
     Args:
@@ -71,7 +71,7 @@ def umap_vis_comm(file: str, embed: np.ndarray, community_label: np.ndarray, num
 
     Returns:
         None - Plot Visualization of UMAP embedding with community labels.
-    '''
+    """
     num = np.unique(community_label).shape[0]
     fig = plt.figure(1)
     plt.scatter(embed[:num_points,0], embed[:num_points,1],  c=community_label[:num_points], cmap='Spectral', s=2, alpha=.7)
@@ -81,7 +81,7 @@ def umap_vis_comm(file: str, embed: np.ndarray, community_label: np.ndarray, num
 
 
 def visualization(config: Union[str, Path], label: Optional[str] = None) -> None:
-    '''
+    """
     Visualize UMAP embeddings based on configuration settings.
 
     Args:
@@ -90,7 +90,7 @@ def visualization(config: Union[str, Path], label: Optional[str] = None) -> None
 
     Returns:
         None - Plot Visualization of UMAP embeddings.
-    '''
+    """
     config_file = Path(config).resolve()
     cfg = read_config(config_file)
     model_name = cfg['model_name']

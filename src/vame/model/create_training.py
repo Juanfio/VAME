@@ -22,7 +22,7 @@ from vame.util.auxiliary import read_config
 
 
 def nan_helper(y: np.ndarray) -> Tuple:
-    '''
+    """
     Identifies indices of NaN values in an array and provides a function to convert them to non-NaN indices.
 
     Args:
@@ -32,11 +32,11 @@ def nan_helper(y: np.ndarray) -> Tuple:
         Tuple[np.ndarray, Union[np.ndarray, None]]: A tuple containing two elements:
             - An array of boolean values indicating the positions of NaN values.
             - A lambda function to convert NaN indices to non-NaN indices.
-    '''
+    """
     return np.isnan(y), lambda z: z.nonzero()[0]
 
 def interpol(arr: np.ndarray) -> np.ndarray:
-    '''
+    """
     Interpolates all NaN values in the given array.
 
     Args:
@@ -44,7 +44,7 @@ def interpol(arr: np.ndarray) -> np.ndarray:
 
     Returns:
         np.ndarray: Array with NaN values replaced by interpolated values.
-    '''
+    """
     y = np.transpose(arr)
     nans, x = nan_helper(y)
     y[nans]= np.interp(x(nans), x(~nans), y[~nans])
@@ -60,7 +60,7 @@ def plot_check_parameter(
     anchor_1: int,
     anchor_2: int
 ) -> None:
-    '''
+    """
     Plot the check parameter - z-scored data and the filtered data.
 
     Args:
@@ -74,7 +74,7 @@ def plot_check_parameter(
 
     Returns:
         None - Plot the z-scored data and the filtered data.
-    '''
+    """
     plot_X_orig = np.concatenate(X_true, axis=0).T
     plot_X_med = X_med.copy()
     iqr_cutoff = cfg['iqr_factor']*iqr_val
@@ -141,7 +141,7 @@ def traindata_aligned(
     savgol_filter: bool,
     check_parameter: bool
 ) -> None:
-    '''
+    """
     Create training dataset for aligned data.
 
     Args:
@@ -154,7 +154,7 @@ def traindata_aligned(
 
     Returns:
         None - Save numpy arrays with the test/train info to the project folder.
-    '''
+    """
 
     X_train = []
     pos = []
@@ -267,7 +267,7 @@ def traindata_fixed(
     check_parameter: bool,
     pose_ref_index: Optional[List[int]]
 ) -> None:
-    '''
+    """
     Create training dataset for fixed data.
 
     Args:
@@ -281,7 +281,7 @@ def traindata_fixed(
 
     Returns:
         None - Save numpy arrays with the test/train info to the project folder.
-    '''
+    """
     X_train = []
     pos = []
     pos_temp = 0
@@ -372,13 +372,13 @@ def create_trainset(
     pose_ref_index: Optional[List] = None,
     check_parameter: bool =False
 ) -> None:
-    '''Creates a training dataset for the VAME model.
+    """Creates a training dataset for the VAME model.
 
     Args:
         config (str): Path to the config file.
         pose_ref_index (Optional[List], optional): List of reference coordinate indices for alignment. Defaults to None.
         check_parameter (bool, optional): If True, the function will plot the z-scored data and the filtered data. Defaults to False.
-    '''
+    """
     config_file = Path(config).resolve()
     cfg = read_config(config_file)
     legacy = cfg['legacy']

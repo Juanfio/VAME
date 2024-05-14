@@ -25,7 +25,7 @@ from vame.model.rnn_model import RNN_VAE
 
 
 def load_model(cfg: dict, model_name: str, fixed: bool) -> RNN_VAE:
-    '''Load the VAME model.
+    """Load the VAME model.
 
     Args:
         cfg (dict): Configuration dictionary.
@@ -34,7 +34,7 @@ def load_model(cfg: dict, model_name: str, fixed: bool) -> RNN_VAE:
 
     Returns:
         RNN_VAE: Loaded VAME model.
-    '''
+    """
     use_gpu = torch.cuda.is_available()
     if use_gpu:
         pass
@@ -75,7 +75,7 @@ def load_model(cfg: dict, model_name: str, fixed: bool) -> RNN_VAE:
 
 
 def embedd_latent_vectors(cfg: dict, files: List[str], model: RNN_VAE, fixed: bool) -> List[np.ndarray]:
-    '''Embed latent vectors for the given files using the VAME model.
+    """Embed latent vectors for the given files using the VAME model.
 
     Args:
         cfg (dict): Configuration dictionary.
@@ -85,7 +85,7 @@ def embedd_latent_vectors(cfg: dict, files: List[str], model: RNN_VAE, fixed: bo
 
     Returns:
         List[np.ndarray]: List of latent vectors for each file.
-    '''
+    """
     project_path = cfg['project_path']
     temp_win = cfg['time_window']
     num_features = cfg['num_features']
@@ -123,7 +123,7 @@ def embedd_latent_vectors(cfg: dict, files: List[str], model: RNN_VAE, fixed: bo
 
 
 def consecutive(data: np.ndarray, stepsize: int = 1) -> List[np.ndarray]:
-    '''Find consecutive sequences in the data array.
+    """Find consecutive sequences in the data array.
 
     Args:
         data (np.ndarray): Input array.
@@ -131,20 +131,20 @@ def consecutive(data: np.ndarray, stepsize: int = 1) -> List[np.ndarray]:
 
     Returns:
         List[np.ndarray]: List of consecutive sequences.
-    '''
+    """
     data = data[:]
     return np.split(data, np.where(np.diff(data) != stepsize)[0]+1)
 
 
 def get_motif_usage(label: np.ndarray) -> np.ndarray:
-    '''Compute motif usage from the label array.
+    """Compute motif usage from the label array.
 
     Args:
         label (np.ndarray): Label array.
 
     Returns:
         np.ndarray: Array of motif usage counts.
-    '''
+    """
     motif_usage = np.unique(label, return_counts=True)
     cons = consecutive(motif_usage[0])
     if len(cons) != 1:
@@ -171,7 +171,7 @@ def same_parameterization(
     states: int,
     parameterization: str
 ) -> Tuple[List[np.ndarray], List[np.ndarray], List[np.ndarray]]:
-    '''Apply the same parameterization to all animals.
+    """Apply the same parameterization to all animals.
 
     Args:
         cfg (dict): Configuration dictionary.
@@ -182,7 +182,7 @@ def same_parameterization(
 
     Returns:
         Tuple: Tuple of labels, cluster centers, and motif usages.
-    '''
+    """
     random_state = cfg['random_state_kmeans']
     n_init = cfg['n_init_kmeans']
 
@@ -233,7 +233,7 @@ def individual_parameterization(
     latent_vector_files: List[np.ndarray],
     cluster: int
 ) -> Tuple:
-    '''Apply individual parameterization to each animal.
+    """Apply individual parameterization to each animal.
 
     Args:
         cfg (dict): Configuration dictionary.
@@ -243,7 +243,7 @@ def individual_parameterization(
 
     Returns:
         Tuple: Tuple of labels, cluster centers, and motif usages.
-    '''
+    """
     random_state = cfg['random_state_kmeans: ']
     n_init = cfg['n_init_kmeans']
 
@@ -264,14 +264,14 @@ def individual_parameterization(
 
 
 def pose_segmentation(config: str) -> None:
-    '''Perform pose segmentation using the VAME model.
+    """Perform pose segmentation using the VAME model.
 
     Args:
         config (str): Path to the configuration file.
 
     Returns:
         None
-    '''
+    """
     config_file = Path(config).resolve()
     cfg = read_config(config_file)
     legacy = cfg['legacy']
