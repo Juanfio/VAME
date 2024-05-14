@@ -13,9 +13,7 @@ jobs:
     permissions:
       contents: write
       pages: write
-      actions: write
       id-token: write
-      pull-requests: write
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
