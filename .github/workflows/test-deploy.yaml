@@ -1,9 +1,6 @@
 name: Test deployment
 
 on:
-  push: # todo remove
-    branches:
-      - docs/adding-docs-app
   pull_request:
     branches:
       - docs
