@@ -17,6 +17,7 @@ jobs:
           node-version: 18
           cache: yarn
           working-directory: docs/vame-docs-app
+          cache-dependency-path: docs/vame-docs/app/yarn.lock
 
       - name: Install dependencies
         run: cd docs/vame-docs-app && yarn install --frozen-lockfile
