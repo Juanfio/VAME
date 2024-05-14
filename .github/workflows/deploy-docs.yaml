@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - docs/adding-docs-app # todo remove
+      - docs
 
 jobs:
   deploy:
