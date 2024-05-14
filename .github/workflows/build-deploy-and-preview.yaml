@@ -40,3 +40,7 @@ jobs:
         uses: chvmvd/build-deploy-and-preview-action@v1.2.0
         with:
           type: docusaurus
+          package-manager: yarn
+          rootDir: ./docs/vame-docs-app/
+          folder: ./docs/vame-docs-app/build
+          pr-preview: true
