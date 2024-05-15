@@ -1,0 +1,48 @@
+{
+  "items": [
+    {
+      "items": [
+        "reference/vame/analysis/community_analysis",
+        "reference/vame/analysis/generative_functions",
+        "reference/vame/analysis/gif_creator",
+        "reference/vame/analysis/pose_segmentation",
+        "reference/vame/analysis/segment_behavior",
+        "reference/vame/analysis/tree_hierarchy",
+        "reference/vame/analysis/umap_visualization",
+        "reference/vame/analysis/videowriter"
+      ],
+      "label": "vame.analysis",
+      "type": "category"
+    },
+    {
+      "items": [
+        "reference/vame/initialize_project/new"
+      ],
+      "label": "vame.initialize_project",
+      "type": "category"
+    },
+    {
+      "items": [
+        "reference/vame/model/create_training",
+        "reference/vame/model/dataloader",
+        "reference/vame/model/evaluate",
+        "reference/vame/model/rnn_model",
+        "reference/vame/model/rnn_vae"
+      ],
+      "label": "vame.model",
+      "type": "category"
+    },
+    {
+      "items": [
+        "reference/vame/util/align_egocentrical",
+        "reference/vame/util/auxiliary",
+        "reference/vame/util/csv_to_npy",
+        "reference/vame/util/gif_pose_helper"
+      ],
+      "label": "vame.util",
+      "type": "category"
+    }
+  ],
+  "label": "vame",
+  "type": "category"
+}
