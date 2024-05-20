@@ -8,7 +8,14 @@ sidebar_position: 2
 
 To get started we recommend using [Anaconda](https://www.anaconda.com/distribution/) or [Virtual Environment](https://docs.python.org/3/library/venv.html) with Python 3.11 or higher.
 
-To install VAME, follow these steps:
+
+### Install with pip (Recommended)
+```python
+pip install vame-py
+```
+
+
+### Install from Github repository
 
 1. Clone the VAME repository to your local machine by running
 ```bash
@@ -16,13 +23,13 @@ git clone https://github.com/LINCellularNeuroscience/VAME.git
 ```
 
 
-2. Installing VAME
+2. Installing VAME from local source
 
 **Option 1:** Using VAME.yaml file to create a conda environment and install VAME in it by running
 ```bash
 conda env create -f VAME.yaml
 ```
-**Option 2:**  Installing VAME with pip in your active virtual environment by running
+**Option 2:**  Installing local VAME with pip in your active virtual environment by running
 ```bash
 cd VAME
 pip install .
