@@ -122,7 +122,7 @@ Get cluster labels for given videos files.
 - `files` _List[str]_ - List of video files paths.
 - `model_name` _str_ - Model name.
 - `n_cluster` _int_ - Number of clusters.
-- `parametrization` _str_ - Parameterization.
+- `parametrization` _str_ - parametrization.
   
 
 **Returns**:
@@ -144,7 +144,7 @@ Get community labels for given files.
 - `files` _List[str]_ - List of files paths.
 - `model_name` _str_ - Model name.
 - `n_cluster` _int_ - Number of clusters.
-- `parametrization` _str_ - Parameterization.
+- `parametrization` _str_ - parametrization.
   
 
 **Returns**:
@@ -251,7 +251,7 @@ Transform kmeans parameterized latent vector into communities. Get cohort commun
 
 **Arguments**:
 
-- `files` _List[str]_ - List of file paths (deprecated).
+- `files` _List[str], deprecated_ - List of file paths.
 - `labels` _List[np.ndarray]_ - List of label arrays.
 - `communities_all` _List[List[List[int]]]_ - List of community bags.
   
@@ -264,7 +264,7 @@ Transform kmeans parameterized latent vector into communities. Get cohort commun
 
 ```python
 def umap_embedding(cfg: dict, file: str, model_name: str, n_cluster: int,
-                   parameterization: str) -> np.ndarray
+                   parametrization: str) -> np.ndarray
 ```
 
 Perform UMAP embedding for given file and parameters.
@@ -275,7 +275,7 @@ Perform UMAP embedding for given file and parameters.
 - `file` _str_ - File path.
 - `model_name` _str_ - Model name.
 - `n_cluster` _int_ - Number of clusters.
-- `parameterization` _str_ - Parameterization.
+- `parametrization` _str_ - parametrization.
   
 
 **Returns**:
