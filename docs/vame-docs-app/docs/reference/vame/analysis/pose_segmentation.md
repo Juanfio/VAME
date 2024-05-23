@@ -85,16 +85,16 @@ Compute motif usage from the label array.
 
 - `np.ndarray` - Array of motif usage counts.
 
-#### same\_parameterization
+#### same\_parametrization
 
 ```python
-def same_parameterization(
+def same_parametrization(
     cfg: dict, files: List[str], latent_vector_files: List[np.ndarray],
-    states: int, parameterization: str
+    states: int, parametrization: str
 ) -> Tuple[List[np.ndarray], List[np.ndarray], List[np.ndarray]]
 ```
 
-Apply the same parameterization to all animals.
+Apply the same parametrization to all animals.
 
 **Arguments**:
 
@@ -102,22 +102,22 @@ Apply the same parameterization to all animals.
 - `files` _List[str]_ - List of file names.
 - `latent_vector_files` _List[np.ndarray]_ - List of latent vector arrays.
 - `states` _int_ - Number of states.
-- `parameterization` _str_ - Parameterization method.
+- `parametrization` _str_ - parametrization method.
   
 
 **Returns**:
 
 - `Tuple` - Tuple of labels, cluster centers, and motif usages.
 
-#### individual\_parameterization
+#### individual\_parametrization
 
 ```python
-def individual_parameterization(cfg: dict, files: List[str],
-                                latent_vector_files: List[np.ndarray],
-                                cluster: int) -> Tuple
+def individual_parametrization(cfg: dict, files: List[str],
+                               latent_vector_files: List[np.ndarray],
+                               cluster: int) -> Tuple
 ```
 
-Apply individual parameterization to each animal.
+Apply individual parametrization to each animal.
 
 **Arguments**:
 

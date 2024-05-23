@@ -49,7 +49,7 @@ Visualize UMAP embedding with motif labels.
 
 **Returns**:
 
-  None - Plot Visualization of UMAP embedding with motif labels.
+  fig - Plot figure of UMAP visualization embedding with motif labels.
 
 #### umap\_vis\_comm
 
@@ -70,7 +70,7 @@ Visualize UMAP embedding with community labels.
 
 **Returns**:
 
-  None - Plot Visualization of UMAP embedding with community labels.
+  fig - Plot figure of UMAP visualization embedding with community labels.
 
 #### visualization
 
