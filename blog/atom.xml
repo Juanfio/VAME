@@ -6,7 +6,6 @@
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://ethoml.github.io/VAME/blog"/>
     <subtitle>VAME Blog</subtitle>
-    <icon>https://ethoml.github.io/VAME/img/favicon.ico</icon>
     <entry>
         <title type="html"><![CDATA[Welcome]]></title>
         <id>https://ethoml.github.io/VAME/blog/welcome</id>
