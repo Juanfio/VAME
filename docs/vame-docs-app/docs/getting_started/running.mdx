@@ -1,0 +1,171 @@
+---
+title: Running VAME Workflow
+sidebar_position: 2
+---
+
+
+
+## Workflow Overview
+The below diagram shows the workflow of the VAME application, which consists of four main steps and optional steps to analyse your data.
+![Workflow Overview](/img/workflow_overview.png)
+1. Initialize project: This is step is responsible by starting the project, getting your data into the right format and creating a training dataset for the VAME deep learning model.
+2. Train neural network: Train a variational autoencoder which is parameterized with recurrent neural network to embed behavioural dynamics
+3. Evaluate performance: Evaluate the trained model based on its reconstruction capabilities
+4. Segment behavior: Segment behavioural motifs/poses/states from the input time series
+5. Quantify behavior:
+    - Optional: Create motif videos to get insights about the fine grained poses.
+    - Optional: Investigate the hierarchical order of your behavioural states by detecting communities in the resulting markov chain.
+    - Optional: Create community videos to get more insights about behaviour on a hierarchical scale.
+    - Optional: Visualization and projection of latent vectors onto a 2D plane via UMAP.
+    - Optional: Use the generative model (reconstruction decoder) to sample from the learned data distribution, reconstruct random real samples or visualize the cluster centre for validation.
+    - Optional: Create a video of an egocentrically aligned animal + path through the community space (similar to our gif on github readme).
+
+:::tip
+⚠️ Check out also the published VAME Workflow Guide, including more hands-on recommendations and tricks [HERE](https://www.nature.com/articles/s42003-022-04080-7#Sec8).
+:::
+
+
+## Running a demo workflow
+In our github in `/examples` folder there is a demo script called `demo.py` that you can use to run a simple example of the VAME workflow. To run this workflow you will need to do the following:
+
+
+### 1. Download the necessary resources:
+To run the demo you will need a video and a csv file with the pose estimation results. You can use the following files links:
+- `video-1.mp4`: Video file [link](https://drive.google.com/file/d/1w6OW9cN_-S30B7rOANvSaR9c3O5KeF0c/view)
+- `video-1.csv`: Pose estimation results [link](https://github.com/EthoML/VAME/blob/master/examples/video-1.csv)
+
+### 2. Running the demo main pipeline
+We will now show you how to run the main pipeline of the VAME workflow using  snnipets of code. We suggest you to run these snippets in a jupyter notebook.
+
+#### 2.1 Setting the demo variables
+To start the demo you must define 4 variables:
+```python
+import vame
+
+
+# The directory where the project will be saved
+working_directory = '.'
+
+# The name you want for the project
+project = 'my-vame-project'
+
+# A list of paths to the videos file
+videos = ['video-1.mp4']
+
+# A list of paths to the poses estimations files.
+# Important: The name (without the extension) of the video file and the pose estimation file must be the same. E.g. `video-1.mp4` and `video-1.csv`
+poses_estimations = ['video-1.csv']
+```
+
+#### 2.2 Initializing the project
+With the variables set, you can initialize the project by running the following code:
+
+```python
+config = vame.init_new_project(
+    project=project,
+    videos=videos,
+    poses_estimations=poses_estimations,
+    working_directory=working_directory,
+    videotype='.mp4'
+)
+```
+This command will create a project folder in the defined working directory with the name you set in the `project` variable and a date suffix, e.g: `my-vame-project-May-9-2024`.
+In this folder you can find a config file called `config.yaml` where you can set the parameters for the VAME algorithm.
+The videos and poses estimations files will be copied to the project videos folder. It is really important to define in the `config.yaml` file if your data is egocentrically aligned or not before running the rest of the workflow.
+
+
+#### 2.3 Egocentric alignment
+If your data is not egocentrically aligned, you can align it by running the following code:
+
+```python
+vame.egocentric_alignment(config, pose_ref_index=[0, 5])
+```
+
+But if your experiment is by design egocentrical (e.g. head-fixed experiment on treadmill etc) you can use the following to convert your .csv to a .npy array, ready to train vame on it.
+
+```python
+vame.csv_to_numpy(config)
+```
+
+#### 2.4 Creating the training dataset
+
+To create the training dataset you can run the following code:
+
+```python
+vame.create_trainset(config, pose_ref_index=[0,5])
+```
+
+
+#### 2.5 Training the model
+Training the vame model might take a while depending on the size of your dataset and your machine settings. To train the model you can run the following code:
+```python
+vame.train_model(config)
+```
+
+#### 2.6 Evaluate the model
+THe model evaluation produces two plots, one showing the loss of the model during training and the other showing the reconstruction and future prediction of input sequence.
+```python
+vame.evaluate_model(config)
+```
+
+#### 2.7 Segmenting the behavior
+To perform pose segmentation you can run the following code:
+```python
+vame.pose_segmentation(config)
+```
+
+
+### 3. Running Optional Steps of the Pipeline
+:::tip
+The following steps are optional and can be run if you want to create motif VideoColorSpace, communities/hierarchies of behavior and community VideoColorSpace.
+:::
+
+#### 3.1 Creating motif videos
+To create motif videos and get insights about the fine grained poses you can run:
+```python
+vame.motif_videos(config, videoType='.mp4')
+```
+
+#### 3.2 Run community detection
+To create behavioral hierarchies and communities detection run:
+```python
+vame.community(config, show_umap=False, cut_tree=2, cohort=False)
+```
+It will produce a tree plot of the behavioural hierarchies
+
+#### 3.3 Community Videos
+Create community videos to get insights about behavior on a hierarchical scale.
+```python
+vame.community_videos(config)
+```
+
+#### 3.4 UMAP Visualization
+ Down projection of latent vectors and visualization via UMAP.
+```python
+fig = vame.visualization(config, label=None) #options: label: None, "motif", "community"
+```
+
+
+#### 3.5 Generative Model (Reconstruction decoder)
+Use the generative model (reconstruction decoder) to sample from the learned data distribution, reconstruct random real samples or visualize
+the cluster center for validation.
+```python
+vame.generative_model(config, mode="centers") #options: mode: "sampling", "reconstruction", "centers", "motifs"
+```
+
+#### 3.6 Create output video
+Create a video of an egocentrically aligned mouse + path through
+the community space (similar to our gif on github) to learn more about your representation
+and have something cool to show around.
+
+:::warning
+This function is currently very slow.
+:::
+
+```python
+vame.gif(config, pose_ref_index=[0,5], subtract_background=True, start=None,
+         length=500, max_lag=30, label='community', file_format='.mp4', crop_size=(300,300))
+```
+:::tip
+Once the frames are saved you can create a video or gif via e.g. ImageJ or other tools
+:::
