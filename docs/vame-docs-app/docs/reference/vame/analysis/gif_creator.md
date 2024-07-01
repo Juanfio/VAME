@@ -44,7 +44,7 @@ def gif(
     config: str,
     pose_ref_index: int,
     subtract_background: bool = True,
-    start: int = None,
+    start: int | None = None,
     length: int = 500,
     max_lag: int = 30,
     label: str = 'community',
@@ -62,7 +62,7 @@ Create a GIF from the given configuration.
 - `start` _int, optional_ - Starting index. Defaults to None.
 - `length` _int, optional_ - Length of the video. Defaults to 500.
 - `max_lag` _int, optional_ - Maximum lag. Defaults to 30.
-- `label` _str, optional_ - Label type. Defaults to &#x27;community&#x27;.
+- `label` _str, optional_ - Label type [None, community, motif]. Defaults to &#x27;community&#x27;.
 - `file_format` _str, optional_ - File format. Defaults to &#x27;.mp4&#x27;.
 - `crop_size` _Tuple[int, int], optional_ - Crop size. Defaults to (300,300).
   

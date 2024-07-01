@@ -115,7 +115,10 @@ Load PyTorch model.
 #### generative\_model
 
 ```python
-def generative_model(config: str, mode: str = "sampling") -> None
+@save_state(model=GenerativeModelFunctionSchema)
+def generative_model(config: str,
+                     mode: str = "sampling",
+                     save_logs: bool = False) -> plt.Figure
 ```
 
 Generative model.
@@ -128,5 +131,5 @@ Generative model.
 
 **Returns**:
 
-  None
+- `plt.Figure` - Plot of generated samples.
 

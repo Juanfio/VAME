@@ -75,8 +75,10 @@ Visualize UMAP embedding with community labels.
 #### visualization
 
 ```python
+@save_state(model=VisualizationFunctionSchema)
 def visualization(config: Union[str, Path],
-                  label: Optional[str] = None) -> None
+                  label: Optional[str] = None,
+                  save_logs: bool = False) -> None
 ```
 
 Visualize UMAP embeddings based on configuration settings.

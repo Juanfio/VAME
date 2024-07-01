@@ -103,7 +103,8 @@ def align_mouse(
     pose_flip_ref: Tuple[int, int],
     bg: np.ndarray,
     frame_count: int,
-    use_video: bool = True
+    use_video: bool = True,
+    tqdm_stream: TqdmToLogger = None
 ) -> Tuple[List[np.ndarray], List[List[np.ndarray]], np.ndarray]
 ```
 
@@ -154,7 +155,9 @@ def alignment(
         crop_size: Tuple[int, int],
         confidence: float,
         use_video: bool = False,
-        check_video: bool = False) -> Tuple[np.ndarray, List[np.ndarray]]
+        check_video: bool = False,
+        tqdm_stream: TqdmToLogger = None
+) -> Tuple[np.ndarray, List[np.ndarray]]
 ```
 
 Perform alignment of egocentric data.
@@ -178,12 +181,14 @@ Perform alignment of egocentric data.
 #### egocentric\_alignment
 
 ```python
+@save_state(model=EgocentricAlignmentFunctionSchema)
 def egocentric_alignment(config: str,
                          pose_ref_index: list = [5, 6],
                          crop_size: tuple = (300, 300),
                          use_video: bool = False,
                          video_format: str = '.mp4',
-                         check_video: bool = False) -> None
+                         check_video: bool = False,
+                         save_logs: bool = False) -> None
 ```
 
 Aligns egocentric data for VAME training

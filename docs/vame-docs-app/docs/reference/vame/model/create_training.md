@@ -49,9 +49,13 @@ Interpolates all NaN values in the given array.
 #### plot\_check\_parameter
 
 ```python
-def plot_check_parameter(cfg: dict, iqr_val: float, num_frames: int,
-                         X_true: List[np.ndarray], X_med: np.ndarray,
-                         anchor_1: int, anchor_2: int) -> None
+def plot_check_parameter(cfg: dict,
+                         iqr_val: float,
+                         num_frames: int,
+                         X_true: List[np.ndarray],
+                         X_med: np.ndarray,
+                         anchor_1: int | None = None,
+                         anchor_2: int | None = None) -> None
 ```
 
 Plot the check parameter - z-scored data and the filtered data.
@@ -124,9 +128,11 @@ Create training dataset for fixed data.
 #### create\_trainset
 
 ```python
+@save_state(model=CreateTrainsetFunctionSchema)
 def create_trainset(config: str,
                     pose_ref_index: Optional[List] = None,
-                    check_parameter: bool = False) -> None
+                    check_parameter: bool = False,
+                    save_logs: bool = False) -> None
 ```
 
 Creates a training dataset for the VAME model.

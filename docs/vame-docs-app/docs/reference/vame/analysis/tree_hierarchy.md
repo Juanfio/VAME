@@ -14,7 +14,7 @@ Licensed under GNU General Public License v3.0
 
 ```python
 def hierarchy_pos(G: nx.Graph,
-                  root: str = None,
+                  root: str | None = None,
                   width: float = 0.5,
                   vert_gap: float = 0.2,
                   vert_loc: float = 0,
@@ -112,7 +112,7 @@ Draw a tree.
 #### traverse\_tree
 
 ```python
-def traverse_tree(T: nx.Graph, root_node: str = None) -> str
+def traverse_tree(T: nx.Graph, root_node: str | None = None) -> str
 ```
 
 Traverse a tree and return the traversal sequence.
@@ -130,7 +130,7 @@ Traverse a tree and return the traversal sequence.
 #### traverse\_tree
 
 ```python
-def traverse_tree(T: nx.Graph, root_node: str = None) -> str
+def traverse_tree(T: nx.Graph, root_node: str | None = None) -> str
 ```
 
 Traverse a tree and return the traversal sequence.
@@ -149,7 +149,7 @@ Traverse a tree and return the traversal sequence.
 
 ```python
 def traverse_tree_cutline(T: nx.Graph,
-                          root_node: str = None,
+                          root_node: str | None = None,
                           cutline: int = 2) -> List[List[str]]
 ```
 

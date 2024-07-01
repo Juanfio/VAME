@@ -32,8 +32,9 @@ Load the VAME model.
 #### embedd\_latent\_vectors
 
 ```python
-def embedd_latent_vectors(cfg: dict, files: List[str], model: RNN_VAE,
-                          fixed: bool) -> List[np.ndarray]
+def embedd_latent_vectors(
+        cfg: dict, files: List[str], model: RNN_VAE, fixed: bool,
+        tqdm_stream: TqdmToLogger | None) -> List[np.ndarray]
 ```
 
 Embed latent vectors for the given files using the VAME model.
@@ -44,6 +45,7 @@ Embed latent vectors for the given files using the VAME model.
 - `files` _List[str]_ - List of files names.
 - `model` _RNN_VAE_ - VAME model.
 - `fixed` _bool_ - Whether the model is fixed.
+- `tqdm_stream` _TqdmToLogger_ - TQDM Stream to redirect the tqdm output to logger.
   
 
 **Returns**:
@@ -134,7 +136,8 @@ Apply individual parametrization to each animal.
 #### pose\_segmentation
 
 ```python
-def pose_segmentation(config: str) -> None
+@save_state(model=PoseSegmentationFunctionSchema)
+def pose_segmentation(config: str, save_logs: bool = False) -> None
 ```
 
 Perform pose segmentation using the VAME model.

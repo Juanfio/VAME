@@ -213,7 +213,8 @@ Evaluate the model on the test dataset.
 #### train\_model
 
 ```python
-def train_model(config: str) -> None
+@save_state(model=TrainModelFunctionSchema)
+def train_model(config: str, save_logs: bool = False) -> None
 ```
 
 Train Variational Autoencoder using the configuration file values.

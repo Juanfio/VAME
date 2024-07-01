@@ -6,7 +6,6 @@
         "reference/vame/analysis/generative_functions",
         "reference/vame/analysis/gif_creator",
         "reference/vame/analysis/pose_segmentation",
-        "reference/vame/analysis/segment_behavior",
         "reference/vame/analysis/tree_hierarchy",
         "reference/vame/analysis/umap_visualization",
         "reference/vame/analysis/videowriter"
@@ -23,6 +22,13 @@
     },
     {
       "items": [
+        "reference/vame/logging/logger"
+      ],
+      "label": "vame.logging",
+      "type": "category"
+    },
+    {
+      "items": [
         "reference/vame/model/create_training",
         "reference/vame/model/dataloader",
         "reference/vame/model/evaluate",
@@ -30,6 +36,13 @@
         "reference/vame/model/rnn_vae"
       ],
       "label": "vame.model",
+      "type": "category"
+    },
+    {
+      "items": [
+        "reference/vame/schemas/states"
+      ],
+      "label": "vame.schemas",
       "type": "category"
     },
     {

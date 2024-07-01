@@ -37,7 +37,7 @@ Crop and flip an image based on a rectangle and reference points.
 def background(path_to_file: str,
                filename: str,
                file_format: str = '.mp4',
-               num_frames: int = 1000) -> np.ndarray
+               num_frames: int = 100) -> np.ndarray
 ```
 
 Compute background image from fixed camera.
@@ -53,27 +53,6 @@ Compute background image from fixed camera.
 **Returns**:
 
 - `np.ndarray` - Background image.
-
-#### get\_rotation\_matrix
-
-```python
-def get_rotation_matrix(
-    adjacent: float, opposite: float,
-    crop_size: tuple = (300, 300)) -> np.ndarray
-```
-
-Compute the rotation matrix based on the adjacent and opposite sides.
-
-**Arguments**:
-
-- `adjacent` _float_ - Length of the adjacent side.
-- `opposite` _float_ - Length of the opposite side.
-- `crop_size` _tuple, optional_ - Size of the cropped area. Defaults to (300, 300).
-  
-
-**Returns**:
-
-- `np.ndarray` - Rotation matrix.
 
 #### nan\_helper
 

@@ -19,8 +19,8 @@ class SEQUENCE_DATASET(Dataset)
 #### \_\_init\_\_
 
 ```python
-def __init__(path_to_file: str, data: str, train: bool,
-             temporal_window: int) -> None
+def __init__(path_to_file: str, data: str, train: bool, temporal_window: int,
+             **kwargs) -> None
 ```
 
 Initialize the Sequence Dataset.

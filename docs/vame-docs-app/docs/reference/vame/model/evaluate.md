@@ -75,7 +75,10 @@ Evaluate the temporal aspects of the trained model.
 #### evaluate\_model
 
 ```python
-def evaluate_model(config: str, use_snapshots: bool = False) -> None
+@save_state(model=EvaluateModelFunctionSchema)
+def evaluate_model(config: str,
+                   use_snapshots: bool = False,
+                   save_logs: bool = False) -> None
 ```
 
 Evaluate the trained model.

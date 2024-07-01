@@ -61,16 +61,3 @@ Write structured config file.
 - `configname` _str_ - Path to the config file.
 - `cfg` _dict_ - Dictionary containing the config data.
 
-#### update\_config
-
-```python
-def update_config(config: str, force_update: bool = False) -> None
-```
-
-Updates the configuration file with default values.
-
-**Arguments**:
-
-- `config` _str_ - Path to the config file.
-- `force_update` _bool, optional_ - Whether to force the update even if the user declines. Defaults to False.
-

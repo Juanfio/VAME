@@ -286,7 +286,7 @@ Perform UMAP embedding for given file and parameters.
 
 ```python
 def umap_vis(cfg: dict, file: str, embed: np.ndarray,
-             community_labels_all: np.ndarray) -> None
+             community_labels_all: np.ndarray, save_path: str | None) -> None
 ```
 
 Create plotly visualizaton of UMAP embedding.
@@ -297,6 +297,7 @@ Create plotly visualizaton of UMAP embedding.
 - `file` _str_ - File path.
 - `embed` _np.ndarray_ - UMAP embedding.
 - `community_labels_all` _np.ndarray_ - Community labels.
+- `save_path` - Path to save the plot. If None it will not save the plot.
   
 
 **Returns**:
@@ -306,10 +307,13 @@ Create plotly visualizaton of UMAP embedding.
 #### community
 
 ```python
+@save_state(model=CommunityFunctionSchema)
 def community(config: str,
               cohort: bool = True,
               show_umap: bool = False,
-              cut_tree: int = None) -> None
+              cut_tree: int | None = None,
+              save_umap_figure: bool = True,
+              save_logs: bool = False) -> None
 ```
 
 Perform community analysis.
