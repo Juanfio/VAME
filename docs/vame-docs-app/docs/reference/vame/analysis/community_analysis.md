@@ -51,24 +51,6 @@ Compute the transition matrix from the adjacency matrix.
 
 - `np.ndarray` - Transition matrix.
 
-#### consecutive
-
-```python
-def consecutive(data: np.ndarray, stepsize: int = 1) -> List[np.ndarray]
-```
-
-Identifies location of missing motif finding consecutive elements in an array and returns array(s) at the split.
-
-**Arguments**:
-
-- `data` _np.ndarray_ - Input array.
-- `stepsize` _int, optional_ - Step size. Defaults to 1.
-  
-
-**Returns**:
-
-- `List[np.ndarray]` - List of arrays containing consecutive elements.
-
 #### find\_zero\_labels
 
 ```python
@@ -197,7 +179,7 @@ Create community bag for given files and labels (Markov chain to tree -&gt; comm
 #### create\_cohort\_community\_bag
 
 ```python
-def create_cohort_community_bag(files: List[str], labels: List[np.ndarray],
+def create_cohort_community_bag(labels: List[np.ndarray],
                                 trans_mat_full: np.ndarray, cut_tree: int,
                                 n_cluster: int) -> Tuple
 ```
@@ -207,7 +189,6 @@ Create cohort community bag for given labels, transition matrix, cut tree, and n
 
 **Arguments**:
 
-- `files` _List[str]_ - List of files paths (deprecated).
 - `labels` _List[np.ndarray]_ - List of label arrays.
 - `trans_mat_full` _np.ndarray_ - Full transition matrix.
 - `cut_tree` _int_ - Cut line for tree.
@@ -260,59 +241,13 @@ Transform kmeans parameterized latent vector into communities. Get cohort commun
 
 - `List[np.ndarray]` - List of cohort community labels for each file.
 
-#### umap\_embedding
-
-```python
-def umap_embedding(cfg: dict, file: str, model_name: str, n_cluster: int,
-                   parametrization: str) -> np.ndarray
-```
-
-Perform UMAP embedding for given file and parameters.
-
-**Arguments**:
-
-- `cfg` _dict_ - Configuration parameters.
-- `file` _str_ - File path.
-- `model_name` _str_ - Model name.
-- `n_cluster` _int_ - Number of clusters.
-- `parametrization` _str_ - parametrization.
-  
-
-**Returns**:
-
-- `np.ndarray` - UMAP embedding.
-
-#### umap\_vis
-
-```python
-def umap_vis(cfg: dict, file: str, embed: np.ndarray,
-             community_labels_all: np.ndarray, save_path: str | None) -> None
-```
-
-Create plotly visualizaton of UMAP embedding.
-
-**Arguments**:
-
-- `cfg` _dict_ - Configuration parameters.
-- `file` _str_ - File path.
-- `embed` _np.ndarray_ - UMAP embedding.
-- `community_labels_all` _np.ndarray_ - Community labels.
-- `save_path` - Path to save the plot. If None it will not save the plot.
-  
-
-**Returns**:
-
-  None
-
 #### community
 
 ```python
 @save_state(model=CommunityFunctionSchema)
 def community(config: str,
               cohort: bool = True,
-              show_umap: bool = False,
               cut_tree: int | None = None,
-              save_umap_figure: bool = True,
               save_logs: bool = False) -> None
 ```
 
@@ -322,7 +257,6 @@ Perform community analysis.
 
 - `config` _str_ - Path to the configuration file.
 - `cohort` _bool, optional_ - Flag indicating cohort analysis. Defaults to True.
-- `show_umap` _bool, optional_ - Flag indicating weather to show UMAP visualization. Defaults to False.
 - `cut_tree` _int, optional_ - Cut line for tree. Defaults to None.
   
 

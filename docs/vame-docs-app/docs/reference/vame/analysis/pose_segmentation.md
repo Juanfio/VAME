@@ -10,25 +10,6 @@ Leibniz Institute for Neurobiology, Magdeburg, Germany
 https://github.com/LINCellularNeuroscience/VAME
 Licensed under GNU General Public License v3.0
 
-#### load\_model
-
-```python
-def load_model(cfg: dict, model_name: str, fixed: bool) -> RNN_VAE
-```
-
-Load the VAME model.
-
-**Arguments**:
-
-- `cfg` _dict_ - Configuration dictionary.
-- `model_name` _str_ - Name of the model.
-- `fixed` _bool_ - Fixed or variable length sequences.
-  
-
-**Returns**:
-
-- `RNN_VAE` - Loaded VAME model.
-
 #### embedd\_latent\_vectors
 
 ```python
@@ -51,24 +32,6 @@ Embed latent vectors for the given files using the VAME model.
 **Returns**:
 
 - `List[np.ndarray]` - List of latent vectors for each file.
-
-#### consecutive
-
-```python
-def consecutive(data: np.ndarray, stepsize: int = 1) -> List[np.ndarray]
-```
-
-Find consecutive sequences in the data array.
-
-**Arguments**:
-
-- `data` _np.ndarray_ - Input array.
-- `stepsize` _int, optional_ - Step size. Defaults to 1.
-  
-
-**Returns**:
-
-- `List[np.ndarray]` - List of consecutive sequences.
 
 #### get\_motif\_usage
 

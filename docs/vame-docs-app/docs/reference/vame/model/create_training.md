@@ -10,52 +10,11 @@ Leibniz Institute for Neurobiology, Magdeburg, Germany
 https://github.com/LINCellularNeuroscience/VAME
 Licensed under GNU General Public License v3.0
 
-#### nan\_helper
-
-```python
-def nan_helper(y: np.ndarray) -> Tuple
-```
-
-Identifies indices of NaN values in an array and provides a function to convert them to non-NaN indices.
-
-**Arguments**:
-
-- `y` _np.ndarray_ - Input array containing NaN values.
-  
-
-**Returns**:
-
-  Tuple[np.ndarray, Union[np.ndarray, None]]: A tuple containing two elements:
-  - An array of boolean values indicating the positions of NaN values.
-  - A lambda function to convert NaN indices to non-NaN indices.
-
-#### interpol
-
-```python
-def interpol(arr: np.ndarray) -> np.ndarray
-```
-
-Interpolates all NaN values in the given array.
-
-**Arguments**:
-
-- `arr` _np.ndarray_ - Input array containing NaN values.
-  
-
-**Returns**:
-
-- `np.ndarray` - Array with NaN values replaced by interpolated values.
-
 #### plot\_check\_parameter
 
 ```python
-def plot_check_parameter(cfg: dict,
-                         iqr_val: float,
-                         num_frames: int,
-                         X_true: List[np.ndarray],
-                         X_med: np.ndarray,
-                         anchor_1: int | None = None,
-                         anchor_2: int | None = None) -> None
+def plot_check_parameter(cfg: dict, iqr_val: float, num_frames: int,
+                         X_true: List[np.ndarray], X_med: np.ndarray) -> None
 ```
 
 Plot the check parameter - z-scored data and the filtered data.
@@ -79,8 +38,7 @@ Plot the check parameter - z-scored data and the filtered data.
 
 ```python
 def traindata_aligned(cfg: dict, files: List[str], testfraction: float,
-                      num_features: int, savgol_filter: bool,
-                      check_parameter: bool) -> None
+                      savgol_filter: bool, check_parameter: bool) -> None
 ```
 
 Create training dataset for aligned data.

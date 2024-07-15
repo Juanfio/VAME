@@ -65,8 +65,7 @@ Lambda module for computing the latent space parameters.
 #### \_\_init\_\_
 
 ```python
-def __init__(ZDIMS: int, hidden_size_layer_1: int, hidden_size_layer_2: int,
-             softplus: bool)
+def __init__(ZDIMS: int, hidden_size_layer_1: int, softplus: bool)
 ```
 
 Initialize the Lambda module.

@@ -7,7 +7,7 @@
         "reference/vame/analysis/gif_creator",
         "reference/vame/analysis/pose_segmentation",
         "reference/vame/analysis/tree_hierarchy",
-        "reference/vame/analysis/umap_visualization",
+        "reference/vame/analysis/umap",
         "reference/vame/analysis/videowriter"
       ],
       "label": "vame.analysis",
@@ -50,7 +50,9 @@
         "reference/vame/util/align_egocentrical",
         "reference/vame/util/auxiliary",
         "reference/vame/util/csv_to_npy",
-        "reference/vame/util/gif_pose_helper"
+        "reference/vame/util/data_manipulation",
+        "reference/vame/util/gif_pose_helper",
+        "reference/vame/util/model_util"
       ],
       "label": "vame.util",
       "type": "category"

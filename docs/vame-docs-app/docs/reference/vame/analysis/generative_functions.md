@@ -94,24 +94,6 @@ Visualize cluster centers.
 
   None
 
-#### load\_model
-
-```python
-def load_model(cfg: dict, model_name: str) -> torch.nn.Module
-```
-
-Load PyTorch model.
-
-**Arguments**:
-
-- `cfg` _dict_ - Configuration dictionary.
-- `model_name` _str_ - Name of the model.
-  
-
-**Returns**:
-
-- `torch.nn.Module` - Loaded PyTorch model.
-
 #### generative\_model
 
 ```python

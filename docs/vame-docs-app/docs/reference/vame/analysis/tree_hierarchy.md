@@ -109,42 +109,6 @@ Draw a tree.
 
   None
 
-#### traverse\_tree
-
-```python
-def traverse_tree(T: nx.Graph, root_node: str | None = None) -> str
-```
-
-Traverse a tree and return the traversal sequence.
-
-**Arguments**:
-
-- `T` _nx.Graph_ - The tree to be traversed.
-- `root_node` _str, optional_ - The root node of the tree. If None, traversal starts from the root.
-  
-
-**Returns**:
-
-- `str` - The traversal sequence.
-
-#### traverse\_tree
-
-```python
-def traverse_tree(T: nx.Graph, root_node: str | None = None) -> str
-```
-
-Traverse a tree and return the traversal sequence.
-
-**Arguments**:
-
-- `T` _nx.Graph_ - The tree to be traversed.
-- `root_node` _str, optional_ - The root node of the tree. If None, traversal starts from the root.
-  
-
-**Returns**:
-
-- `str` - The traversal sequence.
-
 #### traverse\_tree\_cutline
 
 ```python

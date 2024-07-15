@@ -181,10 +181,10 @@ Train the model.
 #### test
 
 ```python
-def test(test_loader: Data.DataLoader, epoch: int, model: nn.Module,
-         optimizer: torch.optim.Optimizer, BETA: float, kl_weight: float,
-         seq_len: int, mse_red: str, kloss: str, klmbda: float,
-         future_decoder: bool, bsize: int) -> Tuple[float, float, float]
+def test(test_loader: Data.DataLoader, model: nn.Module, BETA: float,
+         kl_weight: float, seq_len: int, mse_red: str, kloss: str,
+         klmbda: float, future_decoder: bool,
+         bsize: int) -> Tuple[float, float, float]
 ```
 
 Evaluate the model on the test dataset.
