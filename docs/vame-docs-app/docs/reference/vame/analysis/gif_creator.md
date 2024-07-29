@@ -43,6 +43,7 @@ Create video frames for the given embedding.
 def gif(
     config: str,
     pose_ref_index: int,
+    parametrization: Parametrizations,
     subtract_background: bool = True,
     start: int | None = None,
     length: int = 500,

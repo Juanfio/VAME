@@ -19,6 +19,7 @@ def get_cluster_vid(cfg: dict,
                     n_cluster: int,
                     videoType: str,
                     flag: str,
+                    param: Parametrizations,
                     output_video_type: str = ".mp4",
                     tqdm_logger_stream: TqdmToLogger | None = None) -> None
 ```
@@ -44,6 +45,7 @@ Generate cluster videos.
 ```python
 @save_state(model=MotifVideosFunctionSchema)
 def motif_videos(config: Union[str, Path],
+                 parametrization: Parametrizations,
                  videoType: str = '.mp4',
                  output_video_type: str = '.mp4',
                  save_logs: bool = False) -> None
@@ -67,8 +69,10 @@ Generate motif videos.
 ```python
 @save_state(model=CommunityVideosFunctionSchema)
 def community_videos(config: Union[str, Path],
+                     parametrization: Parametrizations,
                      videoType: str = '.mp4',
-                     save_logs: bool = False) -> None
+                     save_logs: bool = False,
+                     output_video_type: str = '.mp4') -> None
 ```
 
 Generate community videos.

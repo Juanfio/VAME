@@ -246,6 +246,7 @@ Transform kmeans parameterized latent vector into communities. Get cohort commun
 ```python
 @save_state(model=CommunityFunctionSchema)
 def community(config: str,
+              parametrization: Parametrizations,
               cohort: bool = True,
               cut_tree: int | None = None,
               save_logs: bool = False) -> None

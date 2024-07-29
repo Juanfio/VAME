@@ -99,8 +99,9 @@ Visualize cluster centers.
 ```python
 @save_state(model=GenerativeModelFunctionSchema)
 def generative_model(config: str,
+                     parametrization: Parametrizations,
                      mode: str = "sampling",
-                     save_logs: bool = False) -> plt.Figure
+                     save_logs: bool = False) -> Dict[str, plt.Figure]
 ```
 
 Generative model.
@@ -113,5 +114,5 @@ Generative model.
 
 **Returns**:
 
-- `plt.Figure` - Plot of generated samples.
+  Dict[str, plt.Figure]: Plots of generated samples for each parametrization.
 

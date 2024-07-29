@@ -75,6 +75,8 @@ def alignment(
         video_format: str,
         crop_size: Tuple[int, int],
         confidence: float,
+        pose_estimation_filetype: PoseEstimationFiletype,
+        path_to_pose_nwb_series_data: str = None,
         use_video: bool = False,
         check_video: bool = False,
         tqdm_stream: TqdmToLogger = None

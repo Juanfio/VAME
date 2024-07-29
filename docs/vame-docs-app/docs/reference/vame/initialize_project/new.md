@@ -22,11 +22,13 @@ Licensed under GNU Lesser General Public License v3.0
 #### init\_new\_project
 
 ```python
-def init_new_project(project: str,
-                     videos: List[str],
-                     poses_estimations: List[str],
-                     working_directory: str = None,
-                     videotype: str = '.mp4') -> str
+def init_new_project(
+        project: str,
+        videos: List[str],
+        poses_estimations: List[str],
+        working_directory: str = '.',
+        videotype: str = '.mp4',
+        paths_to_pose_nwb_series_data: Optional[str] = None) -> str
 ```
 
 Creates a new VAME project with the given parameters.
