@@ -1,6 +1,20 @@
 from pydantic import BaseModel, Field, ConfigDict
-from typing import List
+from typing import List, Optional
+from enum import Enum
 
+class Parametrizations(str, Enum):
+    hmm = 'hmm'
+    kmeans = 'kmeans'
+
+    class Config:
+        use_enum_values = True
+
+class PoseEstimationFiletype(str, Enum):
+    csv = 'csv'
+    nwb = 'nwb'
+
+    class Config:
+        use_enum_values = True
 
 class ProjectSchema(BaseModel):
     # Project attributes
@@ -12,6 +26,8 @@ class ProjectSchema(BaseModel):
     # Project path and videos
     project_path: str = Field(..., title='Project path')
     video_sets: List[str] = Field(..., title='Video sets')
+    pose_estimation_filetype: PoseEstimationFiletype = Field(title='Pose estimation filetype')
+    paths_to_pose_nwb_series_data: Optional[List[str]] = Field(title='Paths to pose series data in nwb files', default=None)
 
     # Data
     all_data: str = Field(default='yes', title='All data')
@@ -47,8 +63,12 @@ class ProjectSchema(BaseModel):
     scheduler_threshold: float = Field(default=None, title='Scheduler threshold')
     softplus: bool = Field(default=False, title='Softplus')
 
+
     # Segmentation:
-    parametrization: str = Field(default='hmm', title='Parametrization')
+    parametrizations: List[Parametrizations] = Field(
+        title='Parametrizations',
+        default_factory=lambda: [Parametrizations.hmm.value, Parametrizations.kmeans.value]
+    )
     hmm_trained: bool = Field(default=False, title='HMM trained')
     load_data: str = Field(default='-PE-seq-clean', title='Load data')
     individual_parametrization: bool = Field(default=False, title='Individual parametrization')
@@ -87,4 +107,4 @@ class ProjectSchema(BaseModel):
     kl_start: int = Field(default=2, title='KL start')
     annealtime: int = Field(default=4, title='Annealtime')
 
-    model_config: ConfigDict = ConfigDict(protected_namespaces=())
+    model_config: ConfigDict = ConfigDict(protected_namespaces=(), use_enum_values=True)

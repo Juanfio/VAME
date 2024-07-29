@@ -4,6 +4,7 @@ from typing import Optional, Dict
 from pathlib import Path
 import json
 from enum import Enum
+from vame.schemas.project import Parametrizations
 
 class StatesEnum(str, Enum):
     success = 'success'
@@ -31,7 +32,7 @@ class EgocentricAlignmentFunctionSchema(BaseStateSchema):
     check_video: bool = Field(title='Check video', default=False)
 
 
-class CsvToNumpyFunctionSchema(BaseStateSchema):
+class PoseToNumpyFunctionSchema(BaseStateSchema):
     ...
 
 
@@ -53,26 +54,32 @@ class PoseSegmentationFunctionSchema(BaseStateSchema):
 
 class MotifVideosFunctionSchema(BaseStateSchema):
     videoType: str = Field(title='Type of video', default='.mp4')
+    parametrization: Parametrizations = Field(title='Parametrization')
+    output_video_type: str = Field(title='Type of output video', default='.mp4')
 
 
 class CommunityFunctionSchema(BaseStateSchema):
     cohort: bool = Field(title='Cohort', default=True)
+    parametrization: Parametrizations = Field(title='Parametrization')
     cut_tree: int | None = Field(title='Cut tree', default=None)
 
 
 class CommunityVideosFunctionSchema(BaseStateSchema):
+    parametrization: Parametrizations = Field(title='Parametrization')
     videoType: str = Field(title='Type of video', default='.mp4')
 
 
 class VisualizationFunctionSchema(BaseStateSchema):
+    parametrization: Parametrizations = Field(title='Parametrization')
     label: Optional[str] = Field(title='Type of labels to visualize', default=None)
 
 class GenerativeModelFunctionSchema(BaseStateSchema):
+    parametrization: Parametrizations = Field(title='Parametrization')
     mode: GenerativeModelModeEnum = Field(title='Mode for generating samples', default=GenerativeModelModeEnum.sampling)
 
 class VAMEPipelineStatesSchema(BaseModel):
     egocentric_alignment: Optional[EgocentricAlignmentFunctionSchema | Dict] = Field(title='Egocentric alignment', default={})
-    csv_to_numpy: Optional[CsvToNumpyFunctionSchema | Dict] = Field(title='CSV to numpy', default={})
+    pose_to_numpy: Optional[PoseToNumpyFunctionSchema | Dict] = Field(title='CSV to numpy', default={})
     create_trainset: Optional[CreateTrainsetFunctionSchema | Dict] = Field(title='Create trainset', default={})
     train_model: Optional[TrainModelFunctionSchema | Dict] = Field(title='Train model', default={})
     evaluate_model: Optional[EvaluateModelFunctionSchema | Dict] = Field(title='Evaluate model', default={})
