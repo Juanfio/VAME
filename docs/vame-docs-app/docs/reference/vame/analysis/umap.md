@@ -32,28 +32,6 @@ Perform UMAP embedding for given file and parameters.
 
 - `np.ndarray` - UMAP embedding.
 
-#### umap\_vis\_community\_labels
-
-```python
-def umap_vis_community_labels(cfg: dict, embed: np.ndarray,
-                              community_labels_all: np.ndarray,
-                              save_path: str | None) -> None
-```
-
-Create plotly visualizaton of UMAP embedding with community labels.
-
-**Arguments**:
-
-- `cfg` _dict_ - Configuration parameters.
-- `embed` _np.ndarray_ - UMAP embedding.
-- `community_labels_all` _np.ndarray_ - Community labels.
-- `save_path` - Path to save the plot. If None it will not save the plot.
-  
-
-**Returns**:
-
-  None
-
 #### umap\_vis
 
 ```python
@@ -118,6 +96,7 @@ Visualize UMAP embedding with community labels.
 ```python
 @save_state(model=VisualizationFunctionSchema)
 def visualization(config: Union[str, Path],
+                  parametrization: Parametrizations,
                   label: Optional[str] = None,
                   save_logs: bool = False) -> None
 ```

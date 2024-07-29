@@ -10,11 +10,11 @@ Leibniz Institute for Neurobiology, Magdeburg, Germany
 https://github.com/LINCellularNeuroscience/VAME
 Licensed under GNU General Public License v3.0
 
-#### csv\_to\_numpy
+#### pose\_to\_numpy
 
 ```python
-@save_state(model=CsvToNumpyFunctionSchema)
-def csv_to_numpy(config: str, save_logs=False) -> None
+@save_state(model=PoseToNumpyFunctionSchema)
+def pose_to_numpy(config: str, save_logs=False) -> None
 ```
 
 Converts a pose-estimation.csv file to a numpy array. Note that this code is only useful for data which is a priori egocentric, i.e. head-fixed

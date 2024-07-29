@@ -3,6 +3,25 @@ sidebar_label: data_manipulation
 title: vame.util.data_manipulation
 ---
 
+#### get\_pose\_data\_from\_nwb\_file
+
+```python
+def get_pose_data_from_nwb_file(
+        nwbfile: NWBFile, path_to_pose_nwb_series_data: str) -> LabelledDict
+```
+
+Get pose data from nwb file using a inside path to the nwb data.
+
+**Arguments**:
+
+- `nwbfile` _NWBFile_ - NWB file object.
+- `path_to_pose_nwb_series_data` _str_ - Path to the pose data inside the nwb file.
+  
+
+**Returns**:
+
+- `LabelledDict` - Pose data.
+
 #### consecutive
 
 ```python
