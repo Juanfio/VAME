@@ -25,8 +25,6 @@ We are focused on the expanding the analytical capabilities of VAME segmentation
 * Addition of mouse behavioral videos for practicing VAME and for benchmarking purposes
 * Refined output filename structure
 
-[Insert open field videos]
-
 
 ## Authors and Code Contributors
 VAME was developed by Kevin Luxem and Pavol Bauer (Luxem et. al., 2022). The original VAME repository was deprecated, forked, and is now being maintained here at https://github.com/EthoML/VAME.
