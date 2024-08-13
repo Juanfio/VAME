@@ -6,7 +6,11 @@ on:
       - main
       - dev
       - fix/conditional-cuda-gm #todo remove
-
+  pull_request:
+    branches:
+      - main
+      - dev
+  
 
 jobs:
   run:
