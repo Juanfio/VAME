@@ -371,7 +371,8 @@ def egocentric_alignment(
             - video2/
                 - filename-PE-seq.npy
 
-    Parameters:
+    Parameters
+    ----------
     config : str
         Path for the project config file.
     pose_ref_index : list, optional

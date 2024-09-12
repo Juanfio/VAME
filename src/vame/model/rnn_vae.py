@@ -540,7 +540,7 @@ def train_model(config: str, save_logs: bool = False) -> None:
                     'Hint: Set "model_convergence" in your config.yaml to a higher value. \n'
                     '\n'
                     'Next: \n'
-                    'Use vame.pose_segmentation() to identify behavioral motifs in your dataset!')
+                    'Use vame.segment_session() to identify behavioral motifs in your dataset!')
                 break
 
             # save logged losses
@@ -559,7 +559,7 @@ def train_model(config: str, save_logs: bool = False) -> None:
             logger.info('Finished training...')
             logger.info('Model seems to have not reached convergence. You may want to check your model \n'
                 'with vame.evaluate_model(). If your satisfied you can continue. \n'
-                'Use vame.pose_segmentation() to identify behavioral motifs! \n'
+                'Use vame.segment_session() to identify behavioral motifs! \n'
                 'OPTIONAL: You can re-run vame.train_model() to improve performance.')
 
     except Exception as e:

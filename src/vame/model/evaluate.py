@@ -258,7 +258,7 @@ def evaluate_model(config: str, use_snapshots: bool = False, save_logs: bool = F
 
         logger.info("You can find the results of the evaluation in '/Your-VAME-Project-Apr30-2020/model/evaluate/' \n"
             "OPTIONS:\n"
-            "- vame.pose_segmentation() to identify behavioral motifs.\n"
+            "- vame.segment_session() to identify behavioral motifs.\n"
             "- re-run the model for further fine tuning. Check again with vame.evaluate_model()")
     except Exception as e:
         logger.exception(f"An error occurred during model evaluation: {e}")

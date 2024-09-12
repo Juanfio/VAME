@@ -203,7 +203,7 @@ def individual_parametrization(
     return labels, cluster_centers, motif_usages
 
 @save_state(model=PoseSegmentationFunctionSchema)
-def pose_segmentation(config: str, save_logs: bool = False) -> None:
+def segment_session(config: str, save_logs: bool = False) -> None:
     """Perform pose segmentation using the VAME model.
 
     Args:
