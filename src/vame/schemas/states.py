@@ -145,7 +145,7 @@ class VAMEPipelineStatesSchema(BaseModel):
         title="Evaluate model",
         default={},
     )
-    segment_session: Optional[PoseSegmentationFunctionSchema | Dict] = Field(
+    segment_session: Optional[SegmentSessionFunctionSchema | Dict] = Field(
         title="Segment session",
         default={},
     )

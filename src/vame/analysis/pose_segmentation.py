@@ -19,7 +19,7 @@ from typing import List, Tuple
 from vame.util.data_manipulation import consecutive
 from hmmlearn import hmm
 from sklearn.cluster import KMeans
-from vame.schemas.states import save_state, PoseSegmentationFunctionSchema
+from vame.schemas.states import save_state, SegmentSessionFunctionSchema
 from vame.logging.logger import VameLogger, TqdmToLogger
 from vame.util.auxiliary import read_config
 from vame.model.rnn_model import RNN_VAE
@@ -202,7 +202,7 @@ def individual_parametrization(
 
     return labels, cluster_centers, motif_usages
 
-@save_state(model=PoseSegmentationFunctionSchema)
+@save_state(model=SegmentSessionFunctionSchema)
 def segment_session(config: str, save_logs: bool = False) -> None:
     """Perform pose segmentation using the VAME model.
 
