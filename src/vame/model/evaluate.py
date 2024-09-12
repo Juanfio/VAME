@@ -371,6 +371,7 @@ def evaluate_model(
 ) -> None:
     """
     Evaluate the trained model.
+    Fills in the values in the "evaluate_model" key of the states.json file.
     Saves the evaluation results to:
     - project_name/
         - model/
