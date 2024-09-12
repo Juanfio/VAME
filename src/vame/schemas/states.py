@@ -76,7 +76,7 @@ class EvaluateModelFunctionSchema(BaseStateSchema):
     )
 
 
-class PoseSegmentationFunctionSchema(BaseStateSchema): ...
+class SegmentSessionFunctionSchema(BaseStateSchema): ...
 
 
 class MotifVideosFunctionSchema(BaseStateSchema):
@@ -145,8 +145,8 @@ class VAMEPipelineStatesSchema(BaseModel):
         title="Evaluate model",
         default={},
     )
-    pose_segmentation: Optional[PoseSegmentationFunctionSchema | Dict] = Field(
-        title="Pose segmentation",
+    segment_session: Optional[PoseSegmentationFunctionSchema | Dict] = Field(
+        title="Segment session",
         default={},
     )
     motif_videos: Optional[MotifVideosFunctionSchema | Dict] = Field(
