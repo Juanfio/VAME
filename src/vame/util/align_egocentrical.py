@@ -370,6 +370,8 @@ def egocentric_alignment(
                 - filename-PE-seq.npy
             - video2/
                 - filename-PE-seq.npy
+    The produced .npy files contain the aligned time series data in the
+    shape of (num_dlc_features, num_video_frames).
 
     Parameters
     ----------
