@@ -32,7 +32,7 @@ logger = logger_config.logger
 
 def get_adjacency_matrix(
     labels: np.ndarray,
-    n_cluster: int,
+    n_clusters: int,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Calculate the adjacency matrix, transition matrix, and temporal matrix.
@@ -41,7 +41,7 @@ def get_adjacency_matrix(
     ----------
     labels : np.ndarray
         Array of cluster labels.
-    n_cluster : int
+    n_clusters : int
         Number of clusters.
 
     Returns
@@ -49,12 +49,12 @@ def get_adjacency_matrix(
     Tuple[np.ndarray, np.ndarray, np.ndarray]
         Tuple containing: adjacency matrix, transition matrix, and temporal matrix.
     """
-    temp_matrix = np.zeros((n_cluster, n_cluster), dtype=np.float64)
-    adjacency_matrix = np.zeros((n_cluster, n_cluster), dtype=np.float64)
-    cntMat = np.zeros((n_cluster))
+    temp_matrix = np.zeros((n_clusters, n_clusters), dtype=np.float64)
+    adjacency_matrix = np.zeros((n_clusters, n_clusters), dtype=np.float64)
+    cntMat = np.zeros((n_clusters))
     steps = len(labels)
 
-    for i in range(n_cluster):
+    for i in range(n_clusters):
         for k in range(steps - 1):
             idx = labels[k]
             if idx == i:
@@ -64,7 +64,7 @@ def get_adjacency_matrix(
                 else:
                     cntMat[idx2] = cntMat[idx2] + 1
         temp_matrix[i] = cntMat
-        cntMat = np.zeros((n_cluster))
+        cntMat = np.zeros((n_clusters))
 
     for k in range(steps - 1):
         idx = labels[k]
@@ -190,7 +190,8 @@ def augment_motif_timeseries(
     -------
     Tuple[np.ndarray, np.ndarray]
         Tuple with:
-            - Array of labels augmented with motifs that never occurred, artificially inputed at the end of the labels array
+            - Array of labels augmented with motifs that never occurred, artificially inputed
+            at the end of the original labels array
             - Indices of the motifs that never occurred.
     """
     augmented_labels = labels.copy()
@@ -293,7 +294,7 @@ def get_community_labels(
     cfg: dict,
     files: List[str],
     model_name: str,
-    n_cluster: int,
+    n_clusters: int,
     parametrization: str,
 ) -> np.ndarray:
     """
@@ -307,7 +308,7 @@ def get_community_labels(
         List of files paths.
     model_name : str
         Model name.
-    n_cluster : int
+    n_clusters : int
         Number of clusters.
     parametrization : str
         Which parametrization to use. Options are 'hmm' or 'kmeans'.
@@ -326,13 +327,13 @@ def get_community_labels(
             "results",
             file,
             model_name,
-            parametrization + "-" + str(n_cluster),
+            parametrization + "-" + str(n_clusters),
             "",
         )
         file_labels = np.load(
             os.path.join(
                 path_to_dir,
-                str(n_cluster) + "_" + parametrization + "_label_" + file + ".npy",
+                str(n_clusters) + "_" + parametrization + "_label_" + file + ".npy",
             )
         )
         shape = len(file_labels)
@@ -347,13 +348,13 @@ def get_community_labels(
             "results",
             file,
             model_name,
-            parametrization + "-" + str(n_cluster),
+            parametrization + "-" + str(n_clusters),
             "",
         )
         file_labels = np.load(
             os.path.join(
                 path_to_dir,
-                str(n_cluster) + "_" + parametrization + "_label_" + file + ".npy",
+                str(n_clusters) + "_" + parametrization + "_label_" + file + ".npy",
             )
         )[:min_frames]
         community_label.extend(file_labels)
@@ -451,26 +452,33 @@ def create_cohort_community_bag(
     labels: List[np.ndarray],
     trans_mat_full: np.ndarray,
     cut_tree: int,
-    n_cluster: int,
+    n_clusters: int,
 ) -> Tuple:
-    """Create cohort community bag for given labels, transition matrix, cut tree, and number of clusters.
+    """
+    Create cohort community bag for given labels, transition matrix, cut tree, and number of clusters.
     (markov chain to tree -> community detection)
 
-    Args:
-        labels (List[np.ndarray]): List of label arrays.
-        trans_mat_full (np.ndarray): Full transition matrix.
-        cut_tree (int): Cut line for tree.
-        n_cluster (int): Number of clusters.
+    Parameters
+    ----------
+    labels : List[np.ndarray]
+        List of label arrays.
+    trans_mat_full : np.ndarray
+        Full transition matrix.
+    cut_tree : int
+        Cut line for tree.
+    n_cluster : int
+        Number of clusters.
 
-    Returns:
-        Tuple: Tuple containing list of community bags and list of trees.
+    Returns
+    -------
+    Tuple
+        Tuple containing: list of community bags and list of trees.
     """
-
     trees = []
     communities_all = []
     # for i, file in enumerate(files):
     _, usage_full = np.unique(labels, return_counts=True)
-    T = graph_to_tree(usage_full, trans_mat_full, n_cluster, merge_sel=1)
+    T = graph_to_tree(usage_full, trans_mat_full, n_clusters, merge_sel=1)
     # nx.write_gpickle(T, 'T.gpickle')
     trees.append(T)
 
@@ -663,11 +671,11 @@ def community(
                 path_to_dir.mkdir(parents=True, exist_ok=True)
 
             labels = get_community_labels(
-                cfg,
-                files,
-                model_name,
-                n_cluster,
-                parametrization,
+                cfg=cfg,
+                files=files,
+                model_name=model_name,
+                n_clusters=n_cluster,
+                parametrization=parametrization,
             )
             augmented_labels, motifs_with_zero_counts = augment_motif_timeseries(
                 labels=labels,
@@ -675,7 +683,7 @@ def community(
             )
             _, trans_mat_full, _ = get_adjacency_matrix(
                 augmented_labels,
-                n_cluster=n_cluster,
+                n_clusters=n_cluster,
             )
             _, usage_full = np.unique(augmented_labels, return_counts=True)
             communities_all, trees = create_cohort_community_bag(
