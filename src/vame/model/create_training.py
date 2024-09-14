@@ -400,18 +400,23 @@ def create_trainset(
     """
     Creates a training and test datasets for the VAME model.
     Fills in the values in the "create_trainset" key of the states.json file.
-    Modifies the training dataset for VAME at:
+    Creates the training dataset for VAME at:
     - project_name/
         - data/
             - filename/
-                - filename-PE-seq.npy
                 - filename-PE-seq-clean.npy
             - filename/
-                - filename-PE-seq.npy
                 - filename-PE-seq-clean.npy
-        - train/
-            - test_seq.npy
-            - train_seq.npy
+            - train/
+                - test_seq.npy
+                - train_seq.npy
+
+    The produced -clean.npy files contain the aligned time series data in the
+    shape of (num_dlc_features - 2, num_video_frames).
+
+    The produced test_seq.npy contains the combined data in the shape of (num_dlc_features - 2, num_video_frames * test_fraction).
+
+    The produced train_seq.npy contains the combined data in the shape of (num_dlc_features - 2, num_video_frames * (1 - test_fraction)).
 
     Parameters
     ----------
