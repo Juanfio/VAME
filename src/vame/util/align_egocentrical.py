@@ -366,9 +366,9 @@ def egocentric_alignment(
     Creates training dataset for VAME at:
     - project_name/
         - data/
-            - video1/
+            - filename/
                 - filename-PE-seq.npy
-            - video2/
+            - filename/
                 - filename-PE-seq.npy
     The produced .npy files contain the aligned time series data in the
     shape of (num_dlc_features, num_video_frames).
@@ -445,6 +445,7 @@ def egocentric_alignment(
             )
 
             # Shifiting section added 2/29/2024 PN
+            # TODO - should this be hardcoded like that?
             egocentric_time_series_shifted = egocentric_time_series
             belly_Y_shift = egocentric_time_series[belly_Y_ind, :]
             belly_X_shift = egocentric_time_series[belly_X_ind, :]
