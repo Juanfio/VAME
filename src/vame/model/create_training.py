@@ -239,7 +239,6 @@ def traindata_aligned(
             X_true=X_true,
             X_med=X_med,
         )
-
     else:
         # save numpy arrays the the test/train info:
         np.save(
@@ -299,7 +298,6 @@ def traindata_fixed(
 
     if check_parameter:
         X_true = []
-        # rnd_file = np.random.choice(len(files))
         files = [files[0]]
 
     for file in files:
@@ -308,6 +306,7 @@ def traindata_fixed(
             cfg["project_path"], "data", file, file + "-PE-seq.npy"
         )
         data = np.load(path_to_file)
+
         X_mean = np.mean(data, axis=None)
         X_std = np.std(data, axis=None)
         X_z = (data.T - X_mean) / X_std
@@ -401,15 +400,23 @@ def create_trainset(
     """
     Creates a training and test datasets for the VAME model.
     Fills in the values in the "create_trainset" key of the states.json file.
-    Modifies the training dataset for VAME at:
+    Creates the training dataset for VAME at:
     - project_name/
         - data/
-            - video1/
-                - filename-PE-seq.npy
+            - filename/
                 - filename-PE-seq-clean.npy
-        - train/
-            - test_seq.npy
-            - train_seq.npy
+            - filename/
+                - filename-PE-seq-clean.npy
+            - train/
+                - test_seq.npy
+                - train_seq.npy
+
+    The produced -clean.npy files contain the aligned time series data in the
+    shape of (num_dlc_features - 2, num_video_frames).
+
+    The produced test_seq.npy contains the combined data in the shape of (num_dlc_features - 2, num_video_frames * test_fraction).
+
+    The produced train_seq.npy contains the combined data in the shape of (num_dlc_features - 2, num_video_frames * (1 - test_fraction)).
 
     Parameters
     ----------
@@ -462,7 +469,11 @@ def create_trainset(
                 "Creating trainset from the vame.egocentrical_alignment() output "
             )
             traindata_aligned(
-                cfg, files, cfg["test_fraction"], cfg["savgol_filter"], check_parameter
+                cfg,
+                files,
+                cfg["test_fraction"],
+                cfg["savgol_filter"],
+                check_parameter,
             )
         else:
             logger.info("Creating trainset from the vame.pose_to_numpy() output ")

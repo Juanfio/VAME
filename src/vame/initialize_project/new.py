@@ -41,6 +41,7 @@ def init_new_project(
     working_directory: str = ".",
     videotype: str = ".mp4",
     paths_to_pose_nwb_series_data: Optional[str] = None,
+    config_kwargs: Optional[dict] = None,
 ) -> str:
     """
     Creates a new VAME project with the given parameters.
@@ -81,6 +82,8 @@ def init_new_project(
         Video extension (.mp4 or .avi). Defaults to '.mp4'.
     paths_to_pose_nwb_series_data : Optional[str], optional
         List of paths to the pose series data in nwb files. Defaults to None.
+    config_kwargs : Optional[dict], optional
+        Additional configuration parameters. Defaults to None.
 
     Returns
     -------
@@ -207,12 +210,16 @@ def init_new_project(
         logger.info(f"Copying {src} to {dst}")
         shutil.copy(os.fspath(src), os.fspath(dst))
 
+    if config_kwargs is None:
+        config_kwargs = {}
+
     new_project = ProjectSchema(
         Project=str(project),
         project_path=str(project_path),
         video_sets=video_names,
         pose_estimation_filetype=pose_estimation_filetype,
         paths_to_pose_nwb_series_data=paths_to_pose_nwb_series_data,
+        **config_kwargs,
     )
     cfg_data = new_project.model_dump()
 
