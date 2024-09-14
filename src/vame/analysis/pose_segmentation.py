@@ -336,7 +336,6 @@ def segment_session(
                     "yes/no/filename "
                 )
                 file = all_flag
-
             else:
                 all_flag = "yes"
 
@@ -377,7 +376,11 @@ def segment_session(
                 new = True
                 model = load_model(cfg, model_name, fixed)
                 latent_vectors = embedd_latent_vectors(
-                    cfg, files, model, fixed, tqdm_stream=tqdm_stream
+                    cfg,
+                    files,
+                    model,
+                    fixed,
+                    tqdm_stream=tqdm_stream,
                 )
 
                 if not ind_param:
