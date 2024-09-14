@@ -191,3 +191,25 @@ def write_config(
         for key in cfg.keys():
             cfg_file[key] = cfg[key]
         ruamelFile.dump(cfg_file, cf)
+
+
+def update_config_file(
+    configname: str,
+    key: str,
+    value: str,
+) -> None:
+    """
+    Update structured config file.
+
+    Parameters
+    ----------
+    configname : str
+        Path to the config file.
+    key : str
+        Key to update.
+    value : str
+        Value to update.
+    """
+    cfg = read_config(configname)
+    cfg[key] = value
+    write_config(configname, cfg)
