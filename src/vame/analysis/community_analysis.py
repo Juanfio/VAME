@@ -726,14 +726,26 @@ def community(
             ) as fp:  # Pickling
                 pickle.dump(communities_all, fp)
 
-        # Work in Progress
-        elif not cohort:
+        # Work in Progress - cohort is False
+        else:
             labels = get_labels(cfg, files, model_name, n_cluster, parametrization)
-            transition_matrices = compute_transition_matrices(files, labels, n_cluster)
-            communities_all, trees = create_community_bag(
-                files, labels, transition_matrices, cut_tree, n_cluster
+            transition_matrices = compute_transition_matrices(
+                files,
+                labels,
+                n_cluster,
             )
-            community_labels_all = get_community_labels_2(files, labels, communities_all)
+            communities_all, trees = create_community_bag(
+                files,
+                labels,
+                transition_matrices,
+                cut_tree,
+                n_cluster,
+            )
+            community_labels_all = get_community_labels_2(
+                files,
+                labels,
+                communities_all,
+            )
 
             for idx, file in enumerate(files):
                 path_to_dir = os.path.join(
