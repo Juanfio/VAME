@@ -265,6 +265,16 @@ def community_videos(
     """
     Generate community videos and save them to filesystem on project community_videos folder.
     Fills in the values in the "community_videos" key of the states.json file.
+    Files are saved at:
+    - project_name/
+        - results/
+            - file_name/
+                - model_name/
+                    - parametrization-n_cluster/
+                        - community_videos/
+                            - file_name-community_0.mp4
+                            - file_name-community_1.mp4
+                            - ...
 
     Parameters:
     -----------
