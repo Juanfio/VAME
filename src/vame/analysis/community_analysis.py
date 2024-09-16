@@ -595,6 +595,8 @@ def community(
     Perform community analysis.
     Fills in the values in the "community" key of the states.json file.
     Saves results files at:
+
+    1. If cohort is True:
     - project_name/
         - results/
             - community_cohort/
@@ -604,6 +606,17 @@ def community(
                     - cohort_parametrization_label.npy
                     - cohort_transition_matrix.npy
                     - hierarchy.pkl
+
+    2. If cohort is False:
+    - project_name/
+        - results/
+            - file_name/
+                - model_name/
+                    - parametrization-n_cluster/
+                        - community/
+                            - transition_matrix_file_name.npy
+                            - community_label_file_name.npy
+                            - hierarchy_file_name.pkl
 
     Parameters
     ----------
@@ -693,9 +706,8 @@ def community(
                 n_cluster,
             )
             community_labels_all = get_cohort_community_labels(
-                files,
-                labels,
-                communities_all,
+                labels=labels,
+                communities_all=communities_all,
             )
             # community_bag = traverse_tree_cutline(trees, cutline=cut_tree)
 
