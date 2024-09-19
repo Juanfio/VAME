@@ -535,11 +535,11 @@ def train_model(config: str, save_logs: bool = False) -> None:
     try:
         tqdm_logger_stream = None
         config_file = Path(config).resolve()
-        cfg = read_config(config_file)
+        cfg = read_config(str(config_file))
         if save_logs:
             tqdm_logger_stream = TqdmToLogger(logger)
             log_path = Path(cfg["project_path"]) / "logs" / "train_model.log"
-            logger_config.add_file_handler(log_path)
+            logger_config.add_file_handler(str(log_path))
 
         model_name = cfg["model_name"]
         pretrained_weights = cfg["pretrained_weights"]
