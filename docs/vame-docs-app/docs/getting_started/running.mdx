@@ -168,9 +168,9 @@ vame.motif_videos(config, videoType='.mp4')
 #### 3.2 Run community detection
 To create behavioral hierarchies and communities detection run:
 ```python
-vame.community(config, show_umap=False, cut_tree=2, cohort=False)
+vame.community(config, parametrization='hmm', cut_tree=2, cohort=False)
 ```
-It will produce a tree plot of the behavioural hierarchies
+It will produce a tree plot of the behavioural hierarchies using hmm motifs. 
 
 #### 3.3 Community Videos
 Create community videos to get insights about behavior on a hierarchical scale.
