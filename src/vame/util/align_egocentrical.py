@@ -173,7 +173,10 @@ def align_mouse(
 
         # crop image
         out, shifted_points = crop_and_flip(
-            rect, img, pose_list_bordered, pose_flip_ref
+            rect,
+            img,
+            pose_list_bordered,
+            pose_flip_ref,
         )
 
         if use_video:  # for memory optimization, just save images when video is used.
