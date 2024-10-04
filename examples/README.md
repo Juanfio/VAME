@@ -4,10 +4,11 @@ The first demo is a simple example of how to use the library.
 
 ## 1. Downloading the necessary resources:
 
-To run the demo you will need vame package installed, follow the installation guide [here](/README.md#Installation) .
-Also you will need two files to properly run the demo:
-- `video-1.mp4`: A video file that will be used as input, for the demo you can download from [this link](https://drive.google.com/file/d/1w6OW9cN_-S30B7rOANvSaR9c3O5KeF0c/view)
-- `video-1.csv`: the pose estimation results for the video file. You can use the video-1.csv file that is in the examples folder [video](/examples/video-1.csv)
+To run the demo you will need the VAME package installed, follow the installation guide [here](/README.md#Installation).
+You will also need videos and csv files to properly run the demo:
+- `['./Session001.avi']`: A list of video file path(s) will be used as input. You can use the sample video data provided [here](https://github.com/EthoML/VAME/tree/main/examples/sample-videos). Videos in the 'sample-videos' folder has DeepLabCut-labeled videos. Videos in the 'sample-videos-original' folder has videos without pose estimation labels. VAME can support multiple video file types (.mp4, .avi, etc)
+- `['./Session001.csv']`: A list of csv file path(s) will be used as input. You can use the sample pose estimation results provided [here](https://github.com/EthoML/VAME/tree/main/examples/sample-csvs).
+Note: If you use the provided sample data to conduct any research beyond this VAME demo, be sure to cite the data set publication [DOI](https://zenodo.org/) 
 
 ## 2. Setting the demo variables
 To start the demo you must define 4 variables. In order to do that, open the `demo.py` file and edit the following:
@@ -21,11 +22,11 @@ working_directory = './'
 project = 'first_vame_project'
 
 # A list of paths to the videos file
-videos =  ['./video-1.mp4']
+videos =  ['./Session001.avi']
 
 # A list of paths to the poses estimations files.
 # Important: The name (without the extension) of the video file and the pose estimation file must be the same. E.g. `video-1.mp4` and `video-1.csv`
-poses_estimations = ['./video-1.csv']
+poses_estimations = ['./Session001.csv']
 ```
 
 ## 3. Running the demo
