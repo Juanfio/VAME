@@ -167,7 +167,7 @@ def eval_temporal(
     NUM_FEATURES = cfg['num_features']
     if not fixed:
         NUM_FEATURES = NUM_FEATURES - 2
-    TEST_BATCH_SIZE = 64
+    TEST_BATCH_SIZE = int(cfg['batch_size']/4)
     hidden_size_layer_1 = cfg['hidden_size_layer_1']
     hidden_size_layer_2 = cfg['hidden_size_layer_2']
     hidden_size_rec = cfg['hidden_size_rec']
