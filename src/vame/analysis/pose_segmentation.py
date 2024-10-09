@@ -283,6 +283,15 @@ def segment_session(
                         - n_cluster_label_file.npy
                         - cluster_center_file.npy
 
+    latent_vector_file.npy contains the projection of the data into the latent space,
+    for each frame of the video. Dimmentions: (n_frames, n_latent_features)
+
+    motif_usage_file.npy contains the number of times each motif was used in the video.
+    Dimmentions: (n_motifs,)
+
+    n_cluster_label_file.npy contains the label of the cluster assigned to each frame.
+    Dimmentions: (n_frames,)
+
     Parameters
     ----------
     config : str

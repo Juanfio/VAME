@@ -306,8 +306,6 @@ def alignment(
     # list of reference coordinate indices for alignment
     # 0: snout, 1: forehand_left, 2: forehand_right,
     # 3: hindleft, 4: hindright, 5: tail
-    pose_ref_index = pose_ref_index
-
     # list of 2 reference coordinate indices for avoiding flipping
     pose_flip_ref = pose_ref_index
 
