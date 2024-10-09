@@ -738,57 +738,58 @@ def community(
             ) as fp:  # Pickling
                 pickle.dump(communities_all, fp)
 
-        # Work in Progress - cohort is False
+        # # Work in Progress - cohort is False
         else:
-            labels = get_labels(cfg, files, model_name, n_cluster, parametrization)
-            transition_matrices = compute_transition_matrices(
-                files,
-                labels,
-                n_cluster,
-            )
-            communities_all, trees = create_community_bag(
-                files,
-                labels,
-                transition_matrices,
-                cut_tree,
-                n_cluster,
-            )
-            community_labels_all = get_community_labels_2(
-                files,
-                labels,
-                communities_all,
-            )
+            raise NotImplementedError("Community analysis for cohort=False is not supported yet.")
+        #     labels = get_labels(cfg, files, model_name, n_cluster, parametrization)
+        #     transition_matrices = compute_transition_matrices(
+        #         files,
+        #         labels,
+        #         n_cluster,
+        #     )
+        #     communities_all, trees = create_community_bag(
+        #         files,
+        #         labels,
+        #         transition_matrices,
+        #         cut_tree,
+        #         n_cluster,
+        #     )
+        #     community_labels_all = get_community_labels_2(
+        #         files,
+        #         labels,
+        #         communities_all,
+        #     )
 
-            for idx, file in enumerate(files):
-                path_to_dir = os.path.join(
-                    cfg["project_path"],
-                    "results",
-                    file,
-                    model_name,
-                    parametrization + "-" + str(n_cluster),
-                    "",
-                )
-                if not os.path.exists(os.path.join(path_to_dir, "community")):
-                    os.mkdir(os.path.join(path_to_dir, "community"))
+        #     for idx, file in enumerate(files):
+        #         path_to_dir = os.path.join(
+        #             cfg["project_path"],
+        #             "results",
+        #             file,
+        #             model_name,
+        #             parametrization + "-" + str(n_cluster),
+        #             "",
+        #         )
+        #         if not os.path.exists(os.path.join(path_to_dir, "community")):
+        #             os.mkdir(os.path.join(path_to_dir, "community"))
 
-                np.save(
-                    os.path.join(
-                        path_to_dir, "community", "transition_matrix_" + file + ".npy"
-                    ),
-                    transition_matrices[idx],
-                )
-                np.save(
-                    os.path.join(
-                        path_to_dir, "community", "community_label_" + file + ".npy"
-                    ),
-                    community_labels_all[idx],
-                )
+        #         np.save(
+        #             os.path.join(
+        #                 path_to_dir, "community", "transition_matrix_" + file + ".npy"
+        #             ),
+        #             transition_matrices[idx],
+        #         )
+        #         np.save(
+        #             os.path.join(
+        #                 path_to_dir, "community", "community_label_" + file + ".npy"
+        #             ),
+        #             community_labels_all[idx],
+        #         )
 
-                with open(
-                    os.path.join(path_to_dir, "community", "hierarchy" + file + ".pkl"),
-                    "wb",
-                ) as fp:  # Pickling
-                    pickle.dump(communities_all[idx], fp)
+        #         with open(
+        #             os.path.join(path_to_dir, "community", "hierarchy" + file + ".pkl"),
+        #             "wb",
+        #         ) as fp:  # Pickling
+        #             pickle.dump(communities_all[idx], fp)
 
     except Exception as e:
         logger.exception(f"Error in community_analysis: {e}")
