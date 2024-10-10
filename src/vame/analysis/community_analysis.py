@@ -495,6 +495,9 @@ def create_cohort_community_bag(
     if cut_tree is not None:
         community_bag = traverse_tree_cutline(T, cutline=cut_tree)
         communities_all = community_bag
+        logger.info("Communities bag:")
+        for ci, comm in enumerate(communities_all):
+            logger.info(f"Community {ci}: {comm}")
     else:
         plt.pause(0.5)
         flag_1 = "no"

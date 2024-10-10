@@ -386,6 +386,7 @@ def draw_tree(
             node_sizes.append(100 + size * 6000)
             node_colors.append("#46a7e8")
 
+    fig_width = min(max(fig_width, 10.0), 30.0)
     fig = plt.figure(
         num=2,
         figsize=(fig_width, 10.0),
