@@ -254,11 +254,10 @@ def graph_to_tree(
         if merge_sel == 1:
             motif_norm_1 = motif_norm_temp[nodes[0]]
             motif_norm_2 = motif_norm_temp[nodes[1]]
-
             new_motif = motif_norm_1 + motif_norm_2
 
             motif_norm_temp[nodes[0]] = 0
-            motif_norm_temp[nodes[1]] = 0
+            # motif_norm_temp[nodes[1]] = 0
             motif_norm_temp[nodes[1]] = new_motif
 
     merge = np.array(merging_nodes)
@@ -345,7 +344,8 @@ def graph_to_tree(
 
 def draw_tree(
     T: nx.Graph,
-    fig_width: float = 10.,
+    fig_width: float = 10.0,
+    usage_dict: Dict[str, float] = dict(),
 ) -> None:
     """
     Draw a tree.
@@ -370,14 +370,33 @@ def draw_tree(
         vert_loc=0,
         xcenter=50,
     )
+    # Nodes appearances
+    # Nodes sizes are mapped to a scale between 100 and 61prin00, depending on the usage of the node
+    node_labels = dict()
+    node_sizes = []
+    node_colors = []
+    for k in list(T.nodes):
+        if isinstance(k, str):
+            node_labels[k] = ""
+            node_sizes.append(50)
+            node_colors.append("#000000")
+        else:
+            node_labels[k] = str(k)
+            size = usage_dict.get(str(k), 0.5)
+            node_sizes.append(100 + size * 6000)
+            node_colors.append("#46a7e8")
+
     fig = plt.figure(
         num=2,
-        figsize=(fig_width, 10.),
+        figsize=(fig_width, 10.0),
     )
     nx.draw_networkx(
         G=T,
         pos=pos,
         with_labels=True,
+        labels=node_labels,
+        node_size=node_sizes,
+        node_color=node_colors,
     )
     figManager = plt.get_current_fig_manager()
     # figManager.window.showMaximized()
@@ -471,7 +490,9 @@ def _traverse_tree_cutline(
 
 
 def traverse_tree_cutline(
-    T: nx.Graph, root_node: str | None = None, cutline: int = 2
+    T: nx.Graph,
+    root_node: str | None = None,
+    cutline: int = 2,
 ) -> List[List[str]]:
     """
     Traverse a tree with a cutline and return the community bags.
@@ -484,7 +505,7 @@ def traverse_tree_cutline(
     Returns:
         List[List[str]]: List of community bags.
     """
-    if root_node == None:
+    if root_node is None:
         node = ["Root"]
     else:
         node = [root_node]
@@ -493,7 +514,13 @@ def traverse_tree_cutline(
     community_bag = []
     level = 0
     community_bag = _traverse_tree_cutline(
-        T, node, traverse_list, cutline, level, color_map, community_bag
+        T,
+        node,
+        traverse_list,
+        cutline,
+        level,
+        color_map,
+        community_bag,
     )
 
     return community_bag

@@ -475,13 +475,22 @@ def create_cohort_community_bag(
         List of community bags.
     """
     communities_all = []
-    _, usage_full = np.unique(labels, return_counts=True)
-    T = graph_to_tree(usage_full, trans_mat_full, n_clusters, merge_sel=1)
-    # nx.write_gpickle(T, 'T.gpickle')
+    unique_labels, usage_full = np.unique(labels, return_counts=True)
+    labels_usage = dict()
+    for la, u in zip(unique_labels, usage_full):
+        labels_usage[str(la)] = u / np.sum(usage_full)
+    T = graph_to_tree(
+        motif_usage=usage_full,
+        transition_matrix=trans_mat_full,
+        n_cluster=n_clusters,
+        merge_sel=1,
+    )
     draw_tree(
         T=T,
         fig_width=n_clusters,
+        usage_dict=labels_usage,
     )
+    # nx.write_gpickle(T, 'T.gpickle')
 
     if cut_tree is not None:
         community_bag = traverse_tree_cutline(T, cutline=cut_tree)
@@ -739,7 +748,9 @@ def community(
 
         # # Work in Progress - cohort is False
         else:
-            raise NotImplementedError("Community analysis for cohort=False is not supported yet.")
+            raise NotImplementedError(
+                "Community analysis for cohort=False is not supported yet."
+            )
         #     labels = get_labels(cfg, files, model_name, n_cluster, parametrization)
         #     transition_matrices = compute_transition_matrices(
         #         files,
