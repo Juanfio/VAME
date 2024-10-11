@@ -496,7 +496,6 @@ def _traverse_tree_cutline(
                 community_bag,
                 community_list,
             )
-
     return community_bag
 
 
@@ -539,5 +538,4 @@ def traverse_tree_cutline(
         color_map,
         community_bag,
     )
-
     return community_bag
