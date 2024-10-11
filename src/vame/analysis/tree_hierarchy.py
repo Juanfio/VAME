@@ -415,17 +415,27 @@ def _traverse_tree_cutline(
     """
     Helper function for tree traversal with a cutline.
 
-    Args:
-        T (nx.Graph): The tree to be traversed.
-        node (List[str]): Current node being traversed.
-        traverse_list (List[str]): List of traversed nodes.
-        cutline (int): The cutline level.
-        level (int): The current level in the tree.
-        community_bag (List[List[str]]): List of community bags.
-        community_list (List[str], optional): List of nodes in the current community bag.
+    Parameters:
+    -----------
+    T : nx.Graph
+        The tree to be traversed.
+    node : List[str]
+        Current node being traversed.
+    traverse_list : List[str]
+        List of traversed nodes.
+    cutline : int
+        The cutline level.
+    level : int
+        The current level in the tree.
+    community_bag : List[List[str]]
+        List of community bags.
+    community_list : List[str], optional
+        List of nodes in the current community bag.
 
     Returns:
-        List[List[str]]: List of lists community bags.
+    --------
+    List[List[str]]
+        List of lists community bags.
     """
     cmap = plt.get_cmap("tab10")
     traverse_list.append(node[0])
@@ -498,13 +508,19 @@ def traverse_tree_cutline(
     """
     Traverse a tree with a cutline and return the community bags.
 
-    Args:
-        T (nx.Graph): The tree to be traversed.
-        root_node (str, optional): The root node of the tree. If None, traversal starts from the root.
-        cutline (int, optional): The cutline level.
+    Parameters:
+    -----------
+    T : nx.Graph
+        The tree to be traversed.
+    root_node : str, optional
+        The root node of the tree. If None, traversal starts from the root.
+    cutline : int, optional
+        The cutline level.
 
     Returns:
-        List[List[str]]: List of community bags.
+    --------
+    List[List[str]]
+        List of community bags.
     """
     if root_node is None:
         node = ["Root"]

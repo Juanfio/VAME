@@ -121,7 +121,10 @@ def get_cluster_vid(
             video_writer = cv.VideoWriter(output, codec, fps, (int(width), int(height)))
         elif output_video_type == ".mp4":
             video_writer = imageio.get_writer(
-                output, fps=fps, codec="h264", macro_block_size=None
+                output,
+                fps=fps,
+                codec="h264",
+                macro_block_size=None,
             )
 
         if len(cluster_lbl) < cfg["length_of_motif_video"]:
@@ -258,6 +261,7 @@ def motif_videos(
 def community_videos(
     config: Union[str, Path],
     parametrization: Parametrizations,
+    cohort: bool = True,
     videoType: str = ".mp4",
     save_logs: bool = False,
     output_video_type: str = ".mp4",
@@ -266,6 +270,11 @@ def community_videos(
     Generate community videos and save them to filesystem on project community_videos folder.
     Fills in the values in the "community_videos" key of the states.json file.
     Files are saved at:
+
+    1. If cohort is True:
+    TODO: Add cohort analysis
+
+    2. If cohort is False:
     - project_name/
         - results/
             - file_name/
@@ -282,6 +291,8 @@ def community_videos(
         Path to the configuration file.
     parametrization : Parametrizations
         Which parametrization to use. Options are 'hmm' or 'kmeans'.
+    cohort : bool, optional
+        Flag indicating cohort analysis. Defaults to True.
     videoType : str, optional
         Type of video. Default is '.mp4'.
     save_logs : bool, optional
@@ -345,13 +356,13 @@ def community_videos(
                 os.mkdir(os.path.join(path_to_file, "community_videos"))
 
             get_cluster_vid(
-                cfg,
-                path_to_file,
-                file,
-                n_cluster,
-                videoType,
-                flag,
-                parametrization,
+                cfg=cfg,
+                path_to_file=path_to_file,
+                file=file,
+                n_cluster=n_cluster,
+                videoType=videoType,
+                flag=flag,
+                param=parametrization,
                 tqdm_logger_stream=tqdm_logger_stream,
                 output_video_type=output_video_type,
             )

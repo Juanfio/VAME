@@ -102,8 +102,13 @@ class CommunityFunctionSchema(BaseStateSchema):
 
 class CommunityVideosFunctionSchema(BaseStateSchema):
     parametrization: Parametrizations = Field(title="Parametrization")
+    cohort: bool = Field(title="Cohort", default=True)
     videoType: str = Field(
         title="Type of video",
+        default=".mp4",
+    )
+    output_video_type: str = Field(
+        title="Type of output video",
         default=".mp4",
     )
 
