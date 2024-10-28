@@ -88,10 +88,11 @@ def get_motif_usage(label: np.ndarray) -> np.ndarray:
     Returns:
         np.ndarray: Array of motif usage counts.
     """
-    motif_usage = np.unique(label, return_counts=True)
+    #[SRM, 10/28/24] initialize motif_usage of length n_cluster
+    motif_usage = np.unique(label, return_counts=True) #warning doesn't catch motif's with no usage 
     cons = consecutive(motif_usage[0])
     if len(cons) != 1:
-        usage_list = list(motif_usage[1])
+        usage_list = list(motif_usage[1]) 
         for i in range(len(cons)-1):
             a = cons[i+1][0]
             b = cons[i][-1]
@@ -126,16 +127,16 @@ def same_parametrization(
     Returns:
         Tuple: Tuple of labels, cluster centers, and motif usages.
     """
-    labels = []
-    cluster_centers = []
-    motif_usages = []
+    labels = [] #List of arrays containing each session's motif labels #[SRM, 10/28/24], recommend rename this and similar variables to allsessions_labels
+    cluster_centers = [] #List of arrays containing each session's cluster centers
+    motif_usages = [] #List of arrays containing each session's motif usages
 
     latent_vector_cat = np.concatenate(latent_vector_files, axis=0)
     if parametrization == "kmeans":
         logger.info("Using kmeans as parametrization!")
         kmeans = KMeans(init='k-means++', n_clusters=states, random_state=42, n_init=20).fit(latent_vector_cat)
         clust_center = kmeans.cluster_centers_
-        label = kmeans.predict(latent_vector_cat)
+        label = kmeans.predict(latent_vector_cat) #1D, vector of all labels for the entire cohort
 
     elif parametrization == "hmm":
         if not cfg['hmm_trained']:
@@ -153,16 +154,16 @@ def same_parametrization(
                 hmm_model = pickle.load(file)
             label = hmm_model.predict(latent_vector_cat)
 
-    idx = 0
-    for i, file in enumerate(files):
-        file_len = latent_vector_files[i].shape[0]
-        labels.append(label[idx:idx+file_len])
+    idx = 0 #start index for each session 
+    for i, file in enumerate(files): 
+        file_len = latent_vector_files[i].shape[0] #stop index of the session
+        labels.append(label[idx:idx+file_len]) #append session's label
         if parametrization == "kmeans":
             cluster_centers.append(clust_center)
 
-        motif_usage = get_motif_usage(label[idx:idx+file_len])
+        motif_usage = get_motif_usage(label[idx:idx+file_len]) #session's motif usage 
         motif_usages.append(motif_usage)
-        idx += file_len
+        idx += file_len #updating the session start index
 
     return labels, cluster_centers, motif_usages
 
@@ -303,17 +304,17 @@ def pose_segmentation(config: str, save_logs: bool = False) -> None:
 
                     if not ind_param:
                         logger.info("For all animals the same parametrization of latent vectors is applied for %d cluster" %n_cluster)
-                        labels, cluster_center, motif_usages = same_parametrization(cfg, files, latent_vectors, n_cluster, parametrization)
+                        labels, cluster_center, motif_usages = same_parametrization(cfg, files, latent_vectors, n_cluster, parametrization) #[SRM, 10/28/24] rename to cluster_centers
                     else:
                         logger.info("Individual parametrization of latent vectors for %d cluster" %n_cluster)
-                        labels, cluster_center, motif_usages = individual_parametrization(cfg, files, latent_vectors, n_cluster)
+                        labels, cluster_center, motif_usages = individual_parametrization(cfg, files, latent_vectors, n_cluster) #[SRM, 10/28/24] rename to cluster_centers
 
                 else:
                     logger.info('No new parametrization has been calculated.')
                     new = False
 
             if new:
-                for idx, file in enumerate(files):
+                for idx, file in enumerate(files): #saving session data
                     logger.info(os.path.join(cfg['project_path'],"results",file,"",model_name,parametrization+'-'+str(n_cluster),""))
                     if not os.path.exists(os.path.join(cfg['project_path'],"results",file,model_name,parametrization+'-'+str(n_cluster),"")):
                         try:
@@ -321,10 +322,10 @@ def pose_segmentation(config: str, save_logs: bool = False) -> None:
                         except OSError as error:
                             logger.error(error)
 
-                    save_data = os.path.join(cfg['project_path'],"results",file,model_name,parametrization+'-'+str(n_cluster),"")
+                    save_data = os.path.join(cfg['project_path'],"results",file,model_name,parametrization+'-'+str(n_cluster),"") 
                     np.save(os.path.join(save_data,str(n_cluster)+'_' + parametrization + '_label_'+file), labels[idx])
                     if parametrization=="kmeans":
-                        np.save(os.path.join(save_data,'cluster_center_'+file), cluster_center[idx])
+                        np.save(os.path.join(save_data,'cluster_center_'+file), cluster_center[idx]) #[SRM, 10/28/24] rename to cluster_centers
                     np.save(os.path.join(save_data,'latent_vector_'+file), latent_vectors[idx])
                     np.save(os.path.join(save_data,'motif_usage_'+file), motif_usages[idx])
 
