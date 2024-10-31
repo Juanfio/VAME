@@ -40,17 +40,15 @@ The workflow of VAME consists of 5 steps and we explain them in detail [here](ht
 
 ## Installation
 
-To get started we recommend using [Anaconda](https://www.anaconda.com/distribution/) with Python 3.6 or higher. Here, you can create a [virtual enviroment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) to store all the dependencies necessary for VAME. You can also use the VAME.yaml file supplied here, by simply opening the terminal, running git clone https://github.com/LINCellularNeuroscience/VAME.git, then typ cd VAME then run: conda env create -f VAME.yaml).
+To get started we recommend using [Anaconda](https://www.anaconda.com/distribution/) with Python 3.11 or higher. Here, you can create a [virtual enviroment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) to store all the dependencies necessary for VAME. You can also use the VAME.yaml file supplied here, by simply opening the terminal, running git clone https://github.com/LINCellularNeuroscience/VAME.git, then typ cd VAME then run: conda env create -f VAME.yaml).
 
 * Go to the locally cloned VAME directory and run python setup.py install in order to install VAME in your active conda environment.
-* Install the current stable Pytorch release using the OS-dependent instructions from the [Pytorch website](https://pytorch.org/get-started/locally/). Currently, VAME is tested on PyTorch 1.5. (Note, if you use the conda file we supply, PyTorch is already installed and you don't need to do this step.)
+* Install the current stable Pytorch release using the OS-dependent instructions from the [Pytorch website](https://pytorch.org/get-started/locally/). Currently, VAME is tested on PyTorch 2.2.2. (Note, if you use the conda file we supply, PyTorch is already installed and you don't need to do this step.)
 
 ## Getting Started
 First, you should make sure that you have a GPU powerful enough to train deep learning networks. In our original 2022 paper, we were using a single Nvidia GTX 1080 Ti GPU to train our network. A hardware guide can be found [here](https://timdettmers.com/2018/12/16/deep-learning-hardware-guide/). VAME can also be trained in Google Colab or on a HPC cluster. Once you have your computing setup ready, begin using VAME by following the [workflow guide](https://github.com/LINCellularNeuroscience/VAME/wiki/1.-VAME-Workflow).
 
-If you want to follow an example first, you can download video-1 [video-1](https://drive.google.com/file/d/1w6OW9cN_-S30B7rOANvSaR9c3O5KeF0c/view?usp=sharing) and find the .csv file in our [example folder](https://github.com/LINCellularNeuroscience/VAME/tree/master/examples)
-
-Once you are up and running, you can try VAME out on a set of mouse behavioral videos and .csv files publicly available at https://github.com/VAMETools/Miller2024_Data. (coming soon in April 2024)
+Once you have VAME installed, you can try VAME out on a set of mouse behavioral videos and .csv files publicly available in the [examples folder](https://github.com/LINCellularNeuroscience/VAME/tree/master/examples).
 
 ## References
 Original VAME publication: [Identifying Behavioral Structure from Deep Variational Embeddings of Animal Motion](https://www.biorxiv.org/content/10.1101/2020.05.14.095430v2) <br/>

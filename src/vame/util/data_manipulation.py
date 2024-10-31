@@ -108,7 +108,7 @@ def read_pose_estimation_file(
     """
     if filetype == PoseEstimationFiletype.csv:
         file_path = Path(folder_path) / f"{filename}.{filetype}"
-        data = pd.read_csv(file_path, skiprows=2)
+        data = pd.read_csv(file_path, skiprows=2, index_col=0)
         if "coords" in data:
             data = data.drop(columns=["coords"], axis=1)
         data_mat = pd.DataFrame.to_numpy(data)
