@@ -40,6 +40,7 @@ def init_new_project(
     poses_estimations: List[str],
     working_directory: str = ".",
     videotype: str = ".mp4",
+    copy_videos: bool = False,
     paths_to_pose_nwb_series_data: Optional[str] = None,
     config_kwargs: Optional[dict] = None,
 ) -> str:
@@ -80,6 +81,8 @@ def init_new_project(
         Working directory. Defaults to '.'.
     videotype : str, optional
         Video extension (.mp4 or .avi). Defaults to '.mp4'.
+    copy_videos : bool, optional
+        If True, the videos will be copied to the project directory. If False, symbolic links will be created instead. Defaults to False.
     paths_to_pose_nwb_series_data : Optional[str], optional
         List of paths to the pose series data in nwb files. Defaults to None.
     config_kwargs : Optional[dict], optional
@@ -195,9 +198,14 @@ def init_new_project(
     os.mkdir(str(project_path) + "/" + "videos/pose_estimation/")
     os.mkdir(str(project_path) + "/model/pretrained_model")
 
-    logger.info("Copying the videos \n")
+    logger.info("Copying / linking the video files... \n")
     for src, dst in zip(videos_paths, destinations):
-        shutil.copy(os.fspath(src), os.fspath(dst))
+        if copy_videos:
+            logger.info(f"Copying {src} to {dst}")
+            shutil.copy(os.fspath(src), os.fspath(dst))
+        else:
+            logger.info(f"Creating symbolic link from {src} to {dst}")
+            os.symlink(os.fspath(src), os.fspath(dst))
 
     logger.info("Copying pose estimation files\n")
     for src, dst in zip(
