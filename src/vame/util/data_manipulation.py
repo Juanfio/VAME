@@ -82,9 +82,8 @@ def get_dataframe_from_pose_nwb_file(
 
 
 def read_pose_estimation_file(
-    folder_path: str,
-    filename: str,
-    filetype: PoseEstimationFiletype,
+    file_path: str,
+    file_type: PoseEstimationFiletype,
     path_to_pose_nwb_series_data: Optional[str] = None,
 ) -> Tuple[pd.DataFrame, np.ndarray]:
     """
@@ -92,11 +91,9 @@ def read_pose_estimation_file(
 
     Parameters
     ----------
-    folder_path : str
-        Path to the folder containing the pose estimation file.
-    filename : str
-        Name of the pose estimation file.
-    filetype : PoseEstimationFiletype
+    file_path : str
+        Path to the pose estimation file.
+    file_type : PoseEstimationFiletype
         Type of the pose estimation file. Supported types are 'csv' and 'nwb'.
     path_to_pose_nwb_series_data : str, optional
         Path to the pose data inside the nwb file, by default None
@@ -106,24 +103,22 @@ def read_pose_estimation_file(
     Tuple[pd.DataFrame, np.ndarray]
         Tuple containing the pose estimation data as a pandas DataFrame and a numpy array.
     """
-    if filetype == PoseEstimationFiletype.csv:
-        file_path = Path(folder_path) / f"{filename}.{filetype}"
+    if file_type == PoseEstimationFiletype.csv:
         data = pd.read_csv(file_path, skiprows=2, index_col=0)
         if "coords" in data:
             data = data.drop(columns=["coords"], axis=1)
         data_mat = pd.DataFrame.to_numpy(data)
         return data, data_mat
-    elif filetype == PoseEstimationFiletype.nwb:
-        file_path = Path(folder_path) / f"{filename}.{filetype}"
+    elif file_type == PoseEstimationFiletype.nwb:
         if not path_to_pose_nwb_series_data:
             raise ValueError("Path to pose nwb series data is required.")
         data = get_dataframe_from_pose_nwb_file(
-            file_path=str(file_path),
+            file_path=file_path,
             path_to_pose_nwb_series_data=path_to_pose_nwb_series_data,
         )
         data_mat = pd.DataFrame.to_numpy(data)
         return data, data_mat
-    raise ValueError(f"Filetype {filetype} not supported")
+    raise ValueError(f"Filetype {file_type} not supported")
 
 
 def consecutive(

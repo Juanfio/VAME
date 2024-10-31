@@ -245,7 +245,7 @@ def play_aligned_video(
 def alignment(
     path_to_file: str,
     filename: str,
-    pose_ref_index: List[int],
+    pose_ref_index: Tuple[int, int],
     video_format: str,
     crop_size: Tuple[int, int],
     confidence: float,
@@ -290,16 +290,15 @@ def alignment(
     """
     # read out data
     folder_path = os.path.join(path_to_file, "videos", "pose_estimation")
+    file_path = os.path.join(folder_path, filename + "." + pose_estimation_filetype)
     data, data_mat = read_pose_estimation_file(
-        folder_path=folder_path,
-        filename=filename,
-        filetype=pose_estimation_filetype,
+        file_path=file_path,
+        file_type=pose_estimation_filetype,
         path_to_pose_nwb_series_data=path_to_pose_nwb_series_data,
     )
 
     # get the coordinates for alignment from data table
     pose_list = []
-
     for i in range(int(data_mat.shape[1] / 3)):
         pose_list.append(data_mat[:, i * 3 : (i + 1) * 3])
 
@@ -321,7 +320,6 @@ def alignment(
                     os.path.join(path_to_file, "videos", filename + video_format)
                 )
             )
-
         frame_count = int(capture.get(cv.CAP_PROP_FRAME_COUNT))
         capture.release()
     else:
@@ -331,18 +329,18 @@ def alignment(
         )  # Change this to an abitrary number if you first want to test the code
 
     frames, n, time_series = align_mouse(
-        path_to_file,
-        filename,
-        video_format,
-        crop_size,
-        pose_list,
-        pose_ref_index,
-        confidence,
-        pose_flip_ref,
-        bg,
-        frame_count,
-        use_video,
-        tqdm_stream,
+        path_to_file=path_to_file,
+        filename=filename,
+        video_format=video_format,
+        crop_size=crop_size,
+        pose_list=pose_list,
+        pose_ref_index=pose_ref_index,
+        confidence=confidence,
+        pose_flip_ref=pose_flip_ref,
+        bg=bg,
+        frame_count=frame_count,
+        use_video=use_video,
+        tqdm_stream=tqdm_stream,
     )
 
     if check_video:
@@ -354,8 +352,8 @@ def alignment(
 @save_state(model=EgocentricAlignmentFunctionSchema)
 def egocentric_alignment(
     config: str,
-    pose_ref_index: list = [5, 6],
-    crop_size: tuple = (300, 300),
+    pose_ref_index: Tuple[int, int] = (5, 6),
+    crop_size: Tuple[int, int] = (300, 300),
     use_video: bool = False,
     video_format: str = ".mp4",
     check_video: bool = False,
@@ -397,7 +395,12 @@ def egocentric_alignment(
     try:
         config_file = Path(config).resolve()
         cfg = read_config(str(config_file))
+        if cfg["egocentric_data"]:
+            raise ValueError(
+                "The config.yaml indicates that the data is egocentric. Please check the parameter 'egocentric_data'."
+            )
         tqdm_stream = None
+
         if save_logs:
             log_path = Path(cfg["project_path"]) / "logs" / "egocentric_alignment.log"
             logger_config.add_file_handler(str(log_path))
@@ -415,11 +418,6 @@ def egocentric_alignment(
         x_shifted_indices = np.arange(1, num_features, 2)
         belly_Y_ind = pose_ref_index[0] * 2
         belly_X_ind = (pose_ref_index[0] * 2) + 1
-
-        if cfg["egocentric_data"]:
-            raise ValueError(
-                "The config.yaml indicates that the data is egocentric. Please check the parameter egocentric_data"
-            )
 
         # call function and save into your VAME data folder
         paths_to_pose_nwb_series_data = cfg["paths_to_pose_nwb_series_data"]
