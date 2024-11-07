@@ -78,8 +78,23 @@ def embedd_latent_vectors(cfg: dict, files: List[str], model: RNN_VAE, fixed: bo
 
     return latent_vector_files
 
+def get_motif_usage(session_labels: np.ndarray, n_cluster: int) -> np.ndarray:
+    """
+    Count motif usage from label array.
 
-def get_motif_usage(session_labels, n_cluster):
+    Parameters
+    ----------
+    session_labels : np.ndarray
+        Array of session labels.
+    n_cluster : int
+        Number of clusters.
+
+    Returns
+    -------
+    np.ndarray
+        Array of motif usage counts.
+    """
+
     motif_usage = np.zeros(n_cluster)
     for i in range(0, len(motif_usage)):
         motif_count = np.sum(session_labels == i)
@@ -90,7 +105,7 @@ def get_motif_usage(session_labels, n_cluster):
     if unused_motifs.size > 0:
         logger.info(f"Warning: The following motifs are unused: {unused_motifs}")
     # print(motif_usage)
-
+        
     return motif_usage
 
 
