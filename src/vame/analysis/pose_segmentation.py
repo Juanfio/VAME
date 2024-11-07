@@ -102,36 +102,34 @@ def embedd_latent_vectors(
     return latent_vector_files
 
 
-def get_motif_usage(label: np.ndarray) -> np.ndarray:
+def get_motif_usage(session_labels: np.ndarray, n_cluster: int) -> np.ndarray:
     """
-    Compute motif usage from the label array.
+    Count motif usage from session label array.
 
     Parameters
     ----------
-    label : np.ndarray
-        Label array.
+    session_labels : np.ndarray
+        Array of session labels.
+    n_cluster : int
+        Number of clusters.
 
     Returns
     -------
     np.ndarray
         Array of motif usage counts.
     """
-    #[SRM, 10/28/24] initialize motif_usage of length n_cluster
-    motif_usage = np.unique(label, return_counts=True) #warning doesn't catch motif's with no usage 
-    cons = consecutive(motif_usage[0])
-    if len(cons) != 1:
-        usage_list = list(motif_usage[1])
-        for i in range(len(cons) - 1):
-            a = cons[i + 1][0]
-            b = cons[i][-1]
-            d = (a - b) - 1
-            for j in range(1, d + 1):
-                index = cons[i][-1] + j
-                usage_list.insert(index, 0)
-        usage = np.array(usage_list)
-        motif_usage = usage
-    else:
-        motif_usage = motif_usage[1]
+    
+    motif_usage = np.zeros(n_cluster)
+    for i in range(n_cluster):
+        motif_count = np.sum(session_labels == i)
+        motif_usage[i] = motif_count
+
+    #include warning if any unused motifs are present
+    unused_motifs = np.where(motif_usage == 0)[0]
+    if unused_motifs.size > 0:
+        logger.info(f"Warning: The following motifs are unused: {unused_motifs}")
+    # print(motif_usage)
+        
     return motif_usage
 
 
@@ -200,13 +198,14 @@ def same_parametrization(
             label = hmm_model.predict(latent_vector_cat)
 
     idx = 0 #start index for each session 
-    for i, file in enumerate(files): 
+    for i, file in enumerate(files):
+        logger.info(f"Getting motif usage for {file}") 
         file_len = latent_vector_files[i].shape[0] #stop index of the session
         labels.append(label[idx:idx+file_len]) #append session's label
         if parametrization == "kmeans":
             cluster_centers.append(clust_center)
 
-        motif_usage = get_motif_usage(label[idx:idx+file_len]) #session's motif usage 
+        motif_usage = get_motif_usage(label[idx:idx+file_len], states) #session's motif usage 
         motif_usages.append(motif_usage)
         idx += file_len #updating the session start index
 
