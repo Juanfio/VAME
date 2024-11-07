@@ -344,7 +344,7 @@ def graph_to_tree(
 
 def draw_tree(
     T: nx.Graph,
-    fig_width: float = 10.0,
+    fig_width: float = 200.0,
     usage_dict: Dict[str, float] = dict(),
 ) -> None:
     """
@@ -365,7 +365,7 @@ def draw_tree(
     pos = hierarchy_pos(
         G=T,
         root="Root",
-        width=0.5,
+        width=10.,
         vert_gap=0.1,
         vert_loc=0,
         xcenter=50,
@@ -389,7 +389,7 @@ def draw_tree(
     fig_width = min(max(fig_width, 10.0), 30.0)
     fig = plt.figure(
         num=2,
-        figsize=(fig_width, 10.0),
+        figsize=(fig_width, 20.0),
     )
     nx.draw_networkx(
         G=T,
