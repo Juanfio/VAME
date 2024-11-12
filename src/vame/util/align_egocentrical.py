@@ -324,9 +324,8 @@ def alignment(
         capture.release()
     else:
         bg = 0
-        frame_count = len(
-            data
-        )  # Change this to an abitrary number if you first want to test the code
+        # Change this to an abitrary number if you first want to test the code
+        frame_count = len(data)
 
     frames, n, time_series = align_mouse(
         path_to_file=path_to_file,

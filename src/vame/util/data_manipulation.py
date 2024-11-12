@@ -68,7 +68,6 @@ def get_dataframe_from_pose_nwb_file(
     """
     with NWBHDF5IO(file_path, "r") as io:
         nwbfile = io.read()
-        # TODO - change to use variable as path to pose estimation in nwb
         pose = get_pose_data_from_nwb_file(nwbfile, path_to_pose_nwb_series_data)
         dataframes = []
         for label, pose_series in pose.items():
