@@ -101,7 +101,10 @@ def align_mouse(
             )
 
     for idx in tqdm.tqdm(
-        range(frame_count), disable=not True, file=tqdm_stream, desc="Align frames"
+        range(frame_count),
+        disable=not True,
+        file=tqdm_stream,
+        desc="Align frames",
     ):
         if use_video:
             # Read frame
