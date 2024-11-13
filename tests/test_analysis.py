@@ -312,7 +312,11 @@ def test_gif_frames_files_exists(setup_project_and_evaluate_model, label):
     ):
         num_frames = 100
         return background(
-            path_to_file, filename, file_format, num_frames, save_background
+            path_to_file,
+            filename,
+            file_format,
+            num_frames,
+            save_background,
         )
 
     PARAMETRIZATION = "hmm"
