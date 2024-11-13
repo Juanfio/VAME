@@ -180,7 +180,7 @@ def init_new_project(
             "If the pose estimation file is in nwb format, you must provide the path to the pose series data for each nwb file."
         )
 
-    videos_paths = [Path(vp) for vp in videos]
+    videos_paths = [Path(vp).resolve() for vp in videos]
     video_names = []
     dirs_data = [data_path / Path(i.stem) for i in videos_paths]
     for p in dirs_data:

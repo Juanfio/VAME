@@ -102,13 +102,13 @@ def get_cluster_vid(
                 )
             )
 
-    capture = cv.VideoCapture(
-        os.path.join(cfg["project_path"], "videos", file + videoType)
-    )
-    if capture.isOpened():
-        width = capture.get(cv.CAP_PROP_FRAME_WIDTH)
-        height = capture.get(cv.CAP_PROP_FRAME_HEIGHT)
-        fps = 25  # capture.get(cv.CAP_PROP_FPS)
+    video_file_path = os.path.join(cfg["project_path"], "videos", file + videoType)
+    capture = cv.VideoCapture(video_file_path)
+    if not capture.isOpened():
+        raise ValueError(f"Video capture could not be opened. Ensure the video file is valid.\n {video_file_path}")
+    width = capture.get(cv.CAP_PROP_FRAME_WIDTH)
+    height = capture.get(cv.CAP_PROP_FRAME_HEIGHT)
+    fps = 25  # capture.get(cv.CAP_PROP_FPS)
 
     cluster_start = cfg["time_window"] / 2
     unique_labels, count_labels = np.unique(labels, return_counts=True)
