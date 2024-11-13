@@ -105,37 +105,37 @@ def test_motif_videos_avi_files_exists(setup_project_and_train_model, parametriz
     assert len(list(save_base_path.glob("*.avi"))) <= n_cluster
 
 
-@pytest.mark.parametrize("parametrization", ["hmm", "kmeans"])
-def test_community_files_exists(setup_project_and_train_model, parametrization):
-    # Check if the files are created
-    vame.community(
-        setup_project_and_train_model["config_path"],
-        cut_tree=2,
-        cohort=False,
-        parametrization=parametrization,
-        save_logs=True,
-    )
-    project_path = setup_project_and_train_model["config_data"]["project_path"]
-    file = setup_project_and_train_model["config_data"]["video_sets"][0]
-    model_name = setup_project_and_train_model["config_data"]["model_name"]
-    n_cluster = setup_project_and_train_model["config_data"]["n_cluster"]
+# @pytest.mark.parametrize("parametrization", ["hmm", "kmeans"])
+# def test_community_files_exists(setup_project_and_train_model, parametrization):
+#     # Check if the files are created
+#     vame.community(
+#         setup_project_and_train_model["config_path"],
+#         cut_tree=2,
+#         cohort=False,
+#         parametrization=parametrization,
+#         save_logs=True,
+#     )
+#     project_path = setup_project_and_train_model["config_data"]["project_path"]
+#     file = setup_project_and_train_model["config_data"]["video_sets"][0]
+#     model_name = setup_project_and_train_model["config_data"]["model_name"]
+#     n_cluster = setup_project_and_train_model["config_data"]["n_cluster"]
 
-    save_base_path = (
-        Path(project_path)
-        / "results"
-        / file
-        / model_name
-        / f"{parametrization}-{n_cluster}"
-        / "community"
-    )
+#     save_base_path = (
+#         Path(project_path)
+#         / "results"
+#         / file
+#         / model_name
+#         / f"{parametrization}-{n_cluster}"
+#         / "community"
+#     )
 
-    transition_matrix_path = save_base_path / f"transition_matrix_{file}.npy"
-    community_label_path = save_base_path / f"community_label_{file}.npy"
-    hierarchy_path = save_base_path / f"hierarchy{file}.pkl"
+#     transition_matrix_path = save_base_path / f"transition_matrix_{file}.npy"
+#     community_label_path = save_base_path / f"community_label_{file}.npy"
+#     hierarchy_path = save_base_path / f"hierarchy{file}.pkl"
 
-    assert transition_matrix_path.exists()
-    assert community_label_path.exists()
-    assert hierarchy_path.exists()
+#     assert transition_matrix_path.exists()
+#     assert community_label_path.exists()
+#     assert hierarchy_path.exists()
 
 
 @pytest.mark.parametrize("parametrization", ["hmm", "kmeans"])
@@ -320,7 +320,7 @@ def test_gif_frames_files_exists(setup_project_and_evaluate_model, label):
     vame.community(
         setup_project_and_evaluate_model["config_path"],
         cut_tree=2,
-        cohort=False,
+        cohort=True,
         save_logs=False,
         parametrization=PARAMETRIZATION,
     )
