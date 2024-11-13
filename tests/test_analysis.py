@@ -287,6 +287,19 @@ def test_generative_model_figures(setup_project_and_train_model, mode, parametri
     assert isinstance(generative_figure, Figure)
 
 
+@pytest.mark.parametrize(
+    "parametrization",
+    ["hmm", "kmeans"],
+)
+def test_report(setup_project_and_train_model, parametrization):
+    from vame.util.report import report
+
+    report(
+        config=setup_project_and_train_model["config_path"],
+        parametrization=parametrization,
+    )
+
+
 def test_generative_kmeans_wrong_mode(setup_project_and_train_model):
     with pytest.raises(ValueError):
         vame.generative_model(
