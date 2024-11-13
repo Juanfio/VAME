@@ -365,7 +365,7 @@ def draw_tree(
     pos = hierarchy_pos(
         G=T,
         root="Root",
-        width=10.,
+        width=10.0,
         vert_gap=0.1,
         vert_loc=0,
         xcenter=50,
@@ -548,7 +548,7 @@ def traverse_tree_cutline(
 def bag_nodes_by_cutline(
     tree: nx.Graph,
     cutline: int = 2,
-    root: str = 'Root',
+    root: str = "Root",
 ):
     """
     Bag nodes of a tree by a cutline.

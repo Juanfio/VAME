@@ -435,7 +435,9 @@ def get_cohort_community_labels(
         for j in range(len(clust)):
             find_clust = np.where(motif_labels == clust[j])[0]
             community_labels[find_clust] = i
-    community_labels = np.int64(scipy.signal.medfilt(community_labels, median_filter_size))
+    community_labels = np.int64(
+        scipy.signal.medfilt(community_labels, median_filter_size)
+    )
     community_labels_all.append(community_labels)
     return community_labels_all
 

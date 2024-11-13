@@ -200,6 +200,7 @@ def save_state(model: BaseModel):
     Decorator responsible for validating function arguments using pydantic and
     saving the state of the called function to the project states json file.
     """
+
     def decorator(func: callable):
         @wraps(func)
         def wrapper(*args, **kwargs):
