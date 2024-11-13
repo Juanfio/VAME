@@ -82,26 +82,26 @@ def setup_project_not_aligned_data():
 
 
 # # TODO change to test fixed (already egocentrically aligned) data when have it
-# @fixture(scope="session")
-# def setup_project_fixed_data():
-#     project = "test_project_fixed"
-#     videos = ["./tests/tests_project_sample_data/cropped_video.mp4"]
-#     poses_estimations = ["./tests/tests_project_sample_data/cropped_video.csv"]
-#     working_directory = "./tests"
+@fixture(scope="session")
+def setup_project_fixed_data():
+    project = "test_project_fixed"
+    videos = ["./tests/tests_project_sample_data/cropped_video.mp4"]
+    poses_estimations = ["./tests/tests_project_sample_data/cropped_video.csv"]
+    working_directory = "./tests"
 
-#     # Initialize project
-#     config, project_data = init_project(
-#         project,
-#         videos,
-#         poses_estimations,
-#         working_directory,
-#         egocentric_data=True,
-#     )
+    # Initialize project
+    config, project_data = init_project(
+        project,
+        videos,
+        poses_estimations,
+        working_directory,
+        egocentric_data=True,
+    )
 
-#     yield project_data
+    yield project_data
 
-#     # Clean up
-#     shutil.rmtree(Path(config).parent)
+    # Clean up
+    shutil.rmtree(Path(config).parent)
 
 
 @fixture(scope="session")
