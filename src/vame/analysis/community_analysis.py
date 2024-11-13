@@ -476,7 +476,7 @@ def save_cohort_community_labels_per_file(
                 "community",
                 f"cohort_community_label_{file}.npy",
             ),
-            np.array(community_labels),
+            np.array(community_labels[0]),
         )
 
 

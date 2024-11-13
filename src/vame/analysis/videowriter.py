@@ -38,6 +38,7 @@ def get_cluster_vid(
     videoType: str,
     flag: str,
     param: Parametrizations,
+    cohort: bool = True,
     output_video_type: str = ".mp4",
     tqdm_logger_stream: Union[TqdmToLogger, None] = None,
 ) -> None:
@@ -60,6 +61,8 @@ def get_cluster_vid(
         Flag indicating the type of video (motif or community).
     param : Parametrizations
         Which parametrization to use. Options are 'hmm' or 'kmeans'.
+    cohort : bool, optional
+        Flag indicating cohort analysis. Defaults to True.
     output_video_type : str, optional
         Type of output video. Default is '.mp4'.
     tqdm_logger_stream : TqdmToLogger, optional
@@ -80,22 +83,37 @@ def get_cluster_vid(
             )
         )
     if flag == "community":
-        logger.info("Community videos getting created for " + file + " ...")
-        labels = np.load(
-            os.path.join(path_to_file, "community", "community_label_" + file + ".npy")
-        )
+        if cohort:
+            logger.info("Cohort community videos getting created for " + file + " ...")
+            labels = np.load(
+                os.path.join(
+                    path_to_file,
+                    "community",
+                    "cohort_community_label_" + file + ".npy",
+                )
+            )
+        else:
+            logger.info("Community videos getting created for " + file + " ...")
+            labels = np.load(
+                os.path.join(
+                    path_to_file,
+                    "community",
+                    "community_label_" + file + ".npy",
+                )
+            )
+
     capture = cv.VideoCapture(
         os.path.join(cfg["project_path"], "videos", file + videoType)
     )
-
     if capture.isOpened():
         width = capture.get(cv.CAP_PROP_FRAME_WIDTH)
         height = capture.get(cv.CAP_PROP_FRAME_HEIGHT)
         fps = 25  # capture.get(cv.CAP_PROP_FPS)
 
     cluster_start = cfg["time_window"] / 2
+    unique_labels, count_labels = np.unique(labels, return_counts=True)
 
-    for cluster in range(n_cluster):
+    for cluster in unique_labels:
         logger.info("Cluster: %d" % (cluster))
         cluster_lbl = np.where(labels == cluster)
         cluster_lbl = cluster_lbl[0]
@@ -359,6 +377,7 @@ def community_videos(
                 cfg=cfg,
                 path_to_file=path_to_file,
                 file=file,
+                cohort=cohort,
                 n_cluster=n_cluster,
                 videoType=videoType,
                 flag=flag,
