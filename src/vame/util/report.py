@@ -40,7 +40,7 @@ def report(
 
     ml = np.load(
         project_path
-        / f"results/community_cohort/{parametrization}-{n_clusters}/cohort_hmm_label.npy",
+        / f"results/community_cohort/{parametrization}-{n_clusters}/cohort_{parametrization}_label.npy",
         allow_pickle=True,
     )
     motif_labels = dict()
