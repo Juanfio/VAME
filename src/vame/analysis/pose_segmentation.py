@@ -218,8 +218,8 @@ def same_parametrization(
 def individual_parametrization(
     cfg: dict,
     files: List[str],
-    latent_vector_files: List[np.ndarray],
-    cluster: int,
+    latent_vectors: List[np.ndarray],
+    n_cluster: int,
 ) -> Tuple:
     """
     Apply individual parametrization to each animal.
@@ -230,9 +230,9 @@ def individual_parametrization(
         Configuration dictionary.
     files : List[str]
         List of file names.
-    latent_vector_files : List[np.ndarray]
+    latent_vectors : List[np.ndarray]
         List of latent vector arrays.
-    cluster : int
+    n_cluster : int
         Number of clusters.
 
     Returns
@@ -249,13 +249,16 @@ def individual_parametrization(
         logger.info(f"Processing file: {file}")
         kmeans = KMeans(
             init="k-means++",
-            n_clusters=cluster,
+            n_clusters=n_cluster,
             random_state=random_state,
             n_init=n_init,
-        ).fit(latent_vector_files[i])
+        ).fit(latent_vectors[i])
         clust_center = kmeans.cluster_centers_
-        label = kmeans.predict(latent_vector_files[i])
-        motif_usage = get_motif_usage(label)
+        label = kmeans.predict(latent_vectors[i])
+        motif_usage = get_motif_usage(
+            session_labels=label,
+            n_cluster=n_cluster,
+        )
         motif_usages.append(motif_usage)
         labels.append(label)
         cluster_centers.append(clust_center)
@@ -413,10 +416,10 @@ def segment_session(
                         % n_cluster
                     )
                     labels, cluster_center, motif_usages = individual_parametrization(
-                        cfg,
-                        files,
-                        latent_vectors,
-                        n_cluster,
+                        cfg=cfg,
+                        files=files,
+                        latent_vectors=latent_vectors,
+                        n_cluster=n_cluster,
                     )
 
             else:
@@ -484,10 +487,10 @@ def segment_session(
                         # [SRM, 10/28/24] rename to cluster_centers
                         labels, cluster_center, motif_usages = (
                             individual_parametrization(
-                                cfg,
-                                files,
-                                latent_vectors,
-                                n_cluster,
+                                cfg=cfg,
+                                files=files,
+                                latent_vectors=latent_vectors,
+                                n_cluster=n_cluster,
                             )
                         )
                 else:
