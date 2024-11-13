@@ -65,7 +65,7 @@ def pose_to_numpy(
             )
 
         folder_path = os.path.join(path_to_file, "videos", "pose_estimation")
-        file_type = cfg["file_type"]
+        file_type = cfg["pose_estimation_filetype"]
         file_path = os.path.join(folder_path, filename[0] + "." + file_type)
         paths_to_pose_nwb_series_data = cfg["paths_to_pose_nwb_series_data"]
         for i, file in enumerate(filename):

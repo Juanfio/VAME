@@ -18,7 +18,11 @@ import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
 from vame.util.auxiliary import read_config
-from vame.analysis.tree_hierarchy import graph_to_tree, draw_tree, traverse_tree_cutline
+from vame.analysis.tree_hierarchy import (
+    graph_to_tree,
+    draw_tree,
+    bag_nodes_by_cutline,
+)
 from vame.util.data_manipulation import consecutive
 from typing import List, Tuple
 from vame.schemas.states import save_state, CommunityFunctionSchema
@@ -354,7 +358,12 @@ def create_cohort_community_bag(
     # nx.write_gpickle(T, 'T.gpickle')
 
     if cut_tree is not None:
-        communities_all = traverse_tree_cutline(T, cutline=cut_tree)
+        # communities_all = traverse_tree_cutline(T, cutline=cut_tree)
+        communities_all = bag_nodes_by_cutline(
+            tree=T,
+            cutline=cut_tree,
+            root="Root",
+        )
         logger.info("Communities bag:")
         for ci, comm in enumerate(communities_all):
             logger.info(f"Community {ci}: {comm}")
@@ -363,7 +372,12 @@ def create_cohort_community_bag(
         flag_1 = "no"
         while flag_1 == "no":
             cutline = int(input("Where do you want to cut the Tree? 0/1/2/3/..."))
-            community_bag = traverse_tree_cutline(T, cutline=cutline)
+            # community_bag = traverse_tree_cutline(T, cutline=cutline)
+            community_bag = bag_nodes_by_cutline(
+                tree=T,
+                cutline=cutline,
+                root="Root",
+            )
             logger.info(community_bag)
             flag_2 = input("\nAre all motifs in the list? (yes/no/restart)")
             if flag_2 == "no":
@@ -421,7 +435,9 @@ def get_cohort_community_labels(
         for j in range(len(clust)):
             find_clust = np.where(motif_labels == clust[j])[0]
             community_labels[find_clust] = i
-    community_labels = np.int64(scipy.signal.medfilt(community_labels, median_filter_size))
+    community_labels = np.int64(
+        scipy.signal.medfilt(community_labels, median_filter_size)
+    )
     community_labels_all.append(community_labels)
     return community_labels_all
 
@@ -462,7 +478,7 @@ def save_cohort_community_labels_per_file(
                 "community",
                 f"cohort_community_label_{file}.npy",
             ),
-            np.array(community_labels),
+            np.array(community_labels[0]),
         )
 
 

@@ -384,7 +384,7 @@ def visualization(
                         "",
                         "community",
                         "",
-                        "community_label_" + file + ".npy",
+                        "cohort_community_label_" + file + ".npy",
                     )
                 )
                 output_figure = umap_vis_comm(embed, community_label, num_points)

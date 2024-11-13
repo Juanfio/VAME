@@ -118,18 +118,18 @@ def get_motif_usage(session_labels: np.ndarray, n_cluster: int) -> np.ndarray:
     np.ndarray
         Array of motif usage counts.
     """
-    
+
     motif_usage = np.zeros(n_cluster)
     for i in range(n_cluster):
         motif_count = np.sum(session_labels == i)
         motif_usage[i] = motif_count
 
-    #include warning if any unused motifs are present
+    # include warning if any unused motifs are present
     unused_motifs = np.where(motif_usage == 0)[0]
     if unused_motifs.size > 0:
         logger.info(f"Warning: The following motifs are unused: {unused_motifs}")
     # print(motif_usage)
-        
+
     return motif_usage
 
 
@@ -161,9 +161,10 @@ def same_parametrization(
     Tuple
         Tuple of labels, cluster centers, and motif usages.
     """
-    labels = [] #List of arrays containing each session's motif labels #[SRM, 10/28/24], recommend rename this and similar variables to allsessions_labels
-    cluster_centers = [] #List of arrays containing each session's cluster centers
-    motif_usages = [] #List of arrays containing each session's motif usages
+    # List of arrays containing each session's motif labels #[SRM, 10/28/24], recommend rename this and similar variables to allsessions_labels
+    labels = []
+    cluster_centers = []  # List of arrays containing each session's cluster centers
+    motif_usages = []  # List of arrays containing each session's motif usages
 
     latent_vector_cat = np.concatenate(latent_vector_files, axis=0)
     if parametrization == "kmeans":
@@ -175,7 +176,8 @@ def same_parametrization(
             n_init=20,
         ).fit(latent_vector_cat)
         clust_center = kmeans.cluster_centers_
-        label = kmeans.predict(latent_vector_cat) #1D, vector of all labels for the entire cohort
+        # 1D, vector of all labels for the entire cohort
+        label = kmeans.predict(latent_vector_cat)
 
     elif parametrization == "hmm":
         if not cfg["hmm_trained"]:
@@ -197,17 +199,18 @@ def same_parametrization(
                 hmm_model = pickle.load(file)
             label = hmm_model.predict(latent_vector_cat)
 
-    idx = 0 #start index for each session 
+    idx = 0  # start index for each session
     for i, file in enumerate(files):
-        logger.info(f"Getting motif usage for {file}") 
-        file_len = latent_vector_files[i].shape[0] #stop index of the session
-        labels.append(label[idx:idx+file_len]) #append session's label
+        logger.info(f"Getting motif usage for {file}")
+        file_len = latent_vector_files[i].shape[0]  # stop index of the session
+        labels.append(label[idx : idx + file_len])  # append session's label
         if parametrization == "kmeans":
             cluster_centers.append(clust_center)
 
-        motif_usage = get_motif_usage(label[idx:idx+file_len], states) #session's motif usage 
+        # session's motif usage
+        motif_usage = get_motif_usage(label[idx : idx + file_len], states)
         motif_usages.append(motif_usage)
-        idx += file_len #updating the session start index
+        idx += file_len  # updating the session start index
 
     return labels, cluster_centers, motif_usages
 
@@ -215,8 +218,8 @@ def same_parametrization(
 def individual_parametrization(
     cfg: dict,
     files: List[str],
-    latent_vector_files: List[np.ndarray],
-    cluster: int,
+    latent_vectors: List[np.ndarray],
+    n_cluster: int,
 ) -> Tuple:
     """
     Apply individual parametrization to each animal.
@@ -227,9 +230,9 @@ def individual_parametrization(
         Configuration dictionary.
     files : List[str]
         List of file names.
-    latent_vector_files : List[np.ndarray]
+    latent_vectors : List[np.ndarray]
         List of latent vector arrays.
-    cluster : int
+    n_cluster : int
         Number of clusters.
 
     Returns
@@ -246,13 +249,16 @@ def individual_parametrization(
         logger.info(f"Processing file: {file}")
         kmeans = KMeans(
             init="k-means++",
-            n_clusters=cluster,
+            n_clusters=n_cluster,
             random_state=random_state,
             n_init=n_init,
-        ).fit(latent_vector_files[i])
+        ).fit(latent_vectors[i])
         clust_center = kmeans.cluster_centers_
-        label = kmeans.predict(latent_vector_files[i])
-        motif_usage = get_motif_usage(label)
+        label = kmeans.predict(latent_vectors[i])
+        motif_usage = get_motif_usage(
+            session_labels=label,
+            n_cluster=n_cluster,
+        )
         motif_usages.append(motif_usage)
         labels.append(label)
         cluster_centers.append(clust_center)
@@ -410,10 +416,10 @@ def segment_session(
                         % n_cluster
                     )
                     labels, cluster_center, motif_usages = individual_parametrization(
-                        cfg,
-                        files,
-                        latent_vectors,
-                        n_cluster,
+                        cfg=cfg,
+                        files=files,
+                        latent_vectors=latent_vectors,
+                        n_cluster=n_cluster,
                     )
 
             else:
@@ -465,7 +471,7 @@ def segment_session(
                             "For all animals the same parametrization of latent vectors is applied for %d cluster"
                             % n_cluster
                         )
-                        #[SRM, 10/28/24] rename to cluster_centers
+                        # [SRM, 10/28/24] rename to cluster_centers
                         labels, cluster_center, motif_usages = same_parametrization(
                             cfg,
                             files,
@@ -478,13 +484,13 @@ def segment_session(
                             "Individual parametrization of latent vectors for %d cluster"
                             % n_cluster
                         )
-                        #[SRM, 10/28/24] rename to cluster_centers
+                        # [SRM, 10/28/24] rename to cluster_centers
                         labels, cluster_center, motif_usages = (
                             individual_parametrization(
-                                cfg,
-                                files,
-                                latent_vectors,
-                                n_cluster,
+                                cfg=cfg,
+                                files=files,
+                                latent_vectors=latent_vectors,
+                                n_cluster=n_cluster,
                             )
                         )
                 else:
@@ -492,7 +498,7 @@ def segment_session(
                     new = False
 
             if new:
-                #saving session data
+                # saving session data
                 for idx, file in enumerate(files):
                     logger.info(
                         os.path.join(
