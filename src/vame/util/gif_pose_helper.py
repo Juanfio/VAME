@@ -10,9 +10,7 @@ Licensed under GNU General Public License v3.0
 """
 
 import os
-import h5py
 import tqdm
-import scipy
 import cv2 as cv
 import numpy as np
 import pandas as pd
@@ -41,25 +39,41 @@ def get_animal_frames(
     """
     Extracts frames of an animal from a video file and returns them as a list.
 
-    Args:
-        cfg (dict): Configuration dictionary containing project information.
-        filename (str): Name of the video file.
-        pose_ref_index (list): List of reference coordinate indices for alignment.
-        start (int): Starting frame index.
-        length (int): Number of frames to extract.
-        subtract_background (bool): Whether to subtract background or not.
-        file_format (str, optional): Format of the video file. Defaults to '.mp4'.
-        crop_size (tuple, optional): Size of the cropped area. Defaults to (300, 300).
+    Parameters:
+    -----------
+    cfg : dict
+        Configuration dictionary containing project information.
+    filename : str
+        Name of the video file.
+    pose_ref_index : list
+        List of reference coordinate indices for alignment.
+    start : int
+        Starting frame index.
+    length : int
+        Number of frames to extract.
+    subtract_background : bool
+        Whether to subtract background or not.
+    file_format : str, optional
+        Format of the video file. Defaults to '.mp4'.
+    crop_size : tuple, optional
+        Size of the cropped area. Defaults to (300, 300).
 
     Returns:
-        list: List of extracted frames.
+    --------
+    list:
+        List of extracted frames.
     """
     path_to_file = cfg["project_path"]
     time_window = cfg["time_window"]
     lag = int(time_window / 2)
     # read out data
     data = pd.read_csv(
-        os.path.join(path_to_file, "videos", "pose_estimation", filename + ".csv"),
+        os.path.join(
+            path_to_file,
+            "videos",
+            "pose_estimation",
+            filename + ".csv",
+        ),
         skiprows=2,
     )
     data_mat = pd.DataFrame.to_numpy(data)
@@ -85,11 +99,20 @@ def get_animal_frames(
         try:
             logger.info("Loading background image ...")
             bg = np.load(
-                os.path.join(path_to_file, "videos", filename + "-background.npy")
+                os.path.join(
+                    path_to_file,
+                    "videos",
+                    filename + "-background.npy",
+                )
             )
         except Exception:
             logger.info("Can't find background image... Calculate background image...")
-            bg = background(path_to_file, filename, file_format, save_background=True)
+            bg = background(
+                path_to_file,
+                filename,
+                file_format,
+                save_background=True,
+            )
 
     images = []
     points = []
@@ -103,12 +126,20 @@ def get_animal_frames(
         i = interpol_first_rows_nans(i)
 
     capture = cv.VideoCapture(
-        os.path.join(path_to_file, "videos", filename + file_format)
+        os.path.join(
+            path_to_file,
+            "videos",
+            filename + file_format,
+        )
     )
     if not capture.isOpened():
         raise Exception(
             "Unable to open video file: {0}".format(
-                os.path.join(path_to_file, "videos", filename + +file_format)
+                os.path.join(
+                    path_to_file,
+                    "videos",
+                    filename + +file_format,
+                )
             )
         )
 
@@ -170,9 +201,11 @@ def get_animal_frames(
 
         # crop image
         out, shifted_points = crop_and_flip(
-            rect, img, pose_list_bordered, pose_flip_ref
+            rect,
+            img,
+            pose_list_bordered,
+            pose_flip_ref,
         )
-
         images.append(out)
         points.append(shifted_points)
 
