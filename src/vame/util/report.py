@@ -60,7 +60,12 @@ def report(
         for jj in bag:
             print(f"    Motif {jj}: {motif_labels[jj]} counts")
 
-    plot_community_motifs(motif_labels, community_labels, community_bag)
+    plot_community_motifs(
+        motif_labels,
+        community_labels,
+        community_bag,
+        title="Community and Motif Counts - Cohort",
+    )
 
     # Per session file
     for f in pose_estimation_files:
@@ -195,11 +200,11 @@ def plot_community_motifs(
         for bar, percentage in zip(bars, motif_percentages):
             ax1.text(
                 bar.get_x() + bar.get_width() / 2,
-                bar.get_height() - max(community_counts) * 0.03,
-                f"{percentage:.0f}%",
+                bar.get_height() - max(community_counts) * 0.05,
+                f"{percentage:.0f}\n%",
                 ha='center',
                 va='bottom',
-                fontsize=7,
+                fontsize=8,
                 color='white' if bar.get_facecolor()[0] < 0.5 else 'black'  # Contrast with bar color
             )
 
