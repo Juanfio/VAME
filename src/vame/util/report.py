@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import json
 from pathlib import Path
@@ -22,7 +23,7 @@ def report(
         project_states = json.load(f)
 
     pose_estimation_files = list(
-        (project_path / "videos/pose_estimation").glob("*.csv")
+        (project_path / "videos" / "pose_estimation").glob("*.csv")
     )
     video_files = list((project_path / "videos").glob("*.mp4"))
 
@@ -39,7 +40,10 @@ def report(
 
     ml = np.load(
         project_path
-        / f"results/community_cohort/{segmentation_algorithm}-{n_clusters}/cohort_{segmentation_algorithm}_label.npy",
+        / "results"
+        / "community_cohort"
+        / f"{segmentation_algorithm}-{n_clusters}"
+        / f"cohort_{segmentation_algorithm}_label.npy",
         allow_pickle=True,
     )
     motif_labels = dict()
@@ -49,7 +53,10 @@ def report(
 
     cl = np.load(
         project_path
-        / f"results/community_cohort/{segmentation_algorithm}-{n_clusters}/cohort_community_label.npy",
+        / "results"
+        / "community_cohort"
+        / f"{segmentation_algorithm}-{n_clusters}"
+        / "cohort_community_label.npy",
         allow_pickle=True,
     )
     community_labels = dict()
@@ -59,7 +66,10 @@ def report(
 
     community_bag = np.load(
         project_path
-        / f"results/community_cohort/{segmentation_algorithm}-{n_clusters}/cohort_community_bag.npy",
+        / "results"
+        / "community_cohort"
+        / f"{segmentation_algorithm}-{n_clusters}"
+        / "cohort_community_bag.npy",
         allow_pickle=True,
     )
 
@@ -82,7 +92,11 @@ def report(
 
         fml = np.load(
             project_path
-            / f"results/{file_name}/VAME/{segmentation_algorithm}-{n_clusters}/{n_clusters}_{segmentation_algorithm}_label_{file_name}.npy",
+            / "results"
+            / f"{file_name}"
+            / "VAME"
+            / f"{segmentation_algorithm}-{n_clusters}"
+            / f"{n_clusters}_{segmentation_algorithm}_label_{file_name}.npy",
             allow_pickle=True,
         )
         file_motif_labels = dict()
@@ -92,7 +106,12 @@ def report(
 
         fcl = np.load(
             project_path
-            / f"results/{file_name}/VAME/{segmentation_algorithm}-{n_clusters}/community/cohort_community_label_{file_name}.npy",
+            / "results"
+            / f"{file_name}"
+            / "VAME"
+            / f"{segmentation_algorithm}-{n_clusters}"
+            / "community"
+            / f"cohort_community_label_{file_name}.npy",
             allow_pickle=True,
         )
         file_community_labels = dict()
