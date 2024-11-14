@@ -275,7 +275,7 @@ def eval_temporal(
                     cfg["project_path"],
                     "model",
                     "best_model",
-                    model_name + "_" + cfg["Project"] + ".pkl",
+                    model_name + "_" + cfg["project_name"] + ".pkl",
                 )
             )
         )
@@ -302,7 +302,7 @@ def eval_temporal(
                         cfg["project_path"],
                         "model",
                         "best_model",
-                        model_name + "_" + cfg["Project"] + ".pkl",
+                        model_name + "_" + cfg["project_name"] + ".pkl",
                     ),
                     map_location=torch.device("cpu"),
                 )
@@ -423,7 +423,7 @@ def evaluate_model(
                 )
 
         logger.info(
-            "You can find the results of the evaluation in '/Your-VAME-Project-Apr30-2020/model/evaluate/' \n"
+            "You can find the results of the evaluation in '/Your-VAME-Project/model/evaluate/' \n"
             "OPTIONS:\n"
             "- vame.segment_session() to identify behavioral motifs.\n"
             "- re-run the model for further fine tuning. Check again with vame.evaluate_model()"

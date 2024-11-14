@@ -17,7 +17,7 @@ def test_project_name_config(setup_project_not_aligned_data):
     """
     config = Path(setup_project_not_aligned_data["config_path"])
     config_values = read_config(config)
-    assert config_values["Project"] == setup_project_not_aligned_data["project_name"]
+    assert config_values["project_name"] == setup_project_not_aligned_data["project_name"]
 
 
 def test_existing_project():
@@ -45,5 +45,5 @@ def test_existing_project():
 def test_existing_project_from_folder(setup_project_from_folder):
     config = Path(setup_project_from_folder["config_path"])
     config_values = read_config(config)
-    assert config_values["Project"] == setup_project_from_folder["project_name"]
+    assert config_values["project_name"] == setup_project_from_folder["project_name"]
     assert Path(setup_project_from_folder["config_path"]).exists()

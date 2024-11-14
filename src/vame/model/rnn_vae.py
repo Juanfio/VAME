@@ -661,7 +661,7 @@ def train_model(config: str, save_logs: bool = False) -> None:
                         cfg["project_path"],
                         "model",
                         "best_model",
-                        pretrained_model + "_" + cfg["Project"] + ".pkl",
+                        pretrained_model + "_" + cfg["project_name"] + ".pkl",
                     )
                 )
                 model.load_state_dict(
@@ -670,7 +670,7 @@ def train_model(config: str, save_logs: bool = False) -> None:
                             cfg["project_path"],
                             "model",
                             "best_model",
-                            pretrained_model + "_" + cfg["Project"] + ".pkl",
+                            pretrained_model + "_" + cfg["project_name"] + ".pkl",
                         )
                     )
                 )
@@ -683,7 +683,7 @@ def train_model(config: str, save_logs: bool = False) -> None:
                         cfg["project_path"],
                         "model",
                         "best_model",
-                        pretrained_model + "_" + cfg["Project"] + ".pkl",
+                        pretrained_model + "_" + cfg["project_name"] + ".pkl",
                     )
                 )
                 try:
@@ -801,7 +801,7 @@ def train_model(config: str, save_logs: bool = False) -> None:
                         cfg["project_path"],
                         "model",
                         "best_model",
-                        model_name + "_" + cfg["Project"] + ".pkl",
+                        model_name + "_" + cfg["project_name"] + ".pkl",
                     ),
                 )
                 convergence = 0
@@ -819,7 +819,7 @@ def train_model(config: str, save_logs: bool = False) -> None:
                         "snapshots",
                         model_name
                         + "_"
-                        + cfg["Project"]
+                        + cfg["project_name"]
                         + "_epoch_"
                         + str(epoch)
                         + ".pkl",
