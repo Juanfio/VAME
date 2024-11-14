@@ -1,10 +1,13 @@
-import os
 import numpy as np
 import json
 from pathlib import Path
+import matplotlib
 import matplotlib.pyplot as plt
 
 from vame.util.auxiliary import read_config
+
+
+matplotlib.use('Agg')  # For headless rendering
 
 
 def report(
@@ -259,3 +262,4 @@ def plot_community_motifs(
     ax1.legend()
     plt.tight_layout()
     plt.show()
+    plt.close()
