@@ -165,7 +165,7 @@ def gif(
         all_flag = "yes"
 
     if all_flag == "yes" or all_flag == "Yes":
-        for session in cfg["sessions"]:
+        for session in cfg["session_names"]:
             sessions.append(session)
 
     elif all_flag == "no" or all_flag == "No":
