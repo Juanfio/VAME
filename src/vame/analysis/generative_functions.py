@@ -22,7 +22,7 @@ def random_generative_samples_motif(
     latent_vector: np.ndarray,
     labels: np.ndarray,
     n_cluster: int,
-) -> plt.figure.Figure:
+) -> plt.Figure:
     """
     Generate random samples for motifs.
 
@@ -41,7 +41,7 @@ def random_generative_samples_motif(
 
     Returns:
     --------
-    plt.figure.Figure
+    plt.Figure
         Figure of generated samples.
     """
     logger.info("Generate random generative samples for motifs...")
@@ -80,7 +80,7 @@ def random_generative_samples(
     cfg: dict,
     model: torch.nn.Module,
     latent_vector: np.ndarray,
-) -> plt.figure.Figure:
+) -> plt.Figure:
     """
     Generate random generative samples.
 
@@ -95,7 +95,7 @@ def random_generative_samples(
 
     Returns:
     --------
-    plt.figure.Figure
+    plt.Figure
         Figure of generated samples.
     """
     logger.info("Generate random generative samples...")
@@ -131,7 +131,7 @@ def random_reconstruction_samples(
     cfg: dict,
     model: torch.nn.Module,
     latent_vector: np.ndarray,
-) -> plt.figure.Figure:
+) -> plt.Figure:
     """
     Generate random reconstruction samples.
 
@@ -146,7 +146,7 @@ def random_reconstruction_samples(
 
     Returns:
     --------
-    plt.figure.Figure
+    plt.Figure
         Figure of reconstructed samples.
     """
     logger.info("Generate random reconstruction samples...")
@@ -178,7 +178,7 @@ def visualize_cluster_center(
     cfg: dict,
     model: torch.nn.Module,
     cluster_center: np.ndarray,
-) -> plt.figure.Figure:
+) -> plt.Figure:
     """
     Visualize cluster centers.
 
@@ -193,7 +193,7 @@ def visualize_cluster_center(
 
     Returns:
     --------
-    plt.figure.Figure
+    plt.Figure
         Figure of cluster centers.
     """
     # Cluster Center
