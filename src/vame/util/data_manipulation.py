@@ -285,8 +285,8 @@ def crop_and_flip(
 
 
 def background(
-    path_to_file: str,
-    filename: str,
+    project_path: str,
+    session: str,
     file_format: str = ".mp4",
     num_frames: int = 1000,
     save_background: bool = True,
@@ -296,10 +296,10 @@ def background(
 
     Parameters
     ----------
-    path_to_file : str
-        Path to the directory containing the video files.
-    filename : str
-        Name of the video file.
+    project_path : str
+        Path to the project directory.
+    session : str
+        Name of the session.
     file_format : str, optional
         Format of the video file. Defaults to '.mp4'.
     num_frames : int, optional
@@ -311,12 +311,12 @@ def background(
         Background image.
     """
     capture = cv.VideoCapture(
-        os.path.join(path_to_file, "videos", filename + file_format)
+        os.path.join(project_path, "videos", session + file_format)
     )
     if not capture.isOpened():
         raise Exception(
             "Unable to open video file: {0}".format(
-                os.path.join(path_to_file, "videos", filename + file_format)
+                os.path.join(project_path, "videos", session + file_format)
             )
         )
 
@@ -328,7 +328,7 @@ def background(
     for i in tqdm.tqdm(
         range(num_frames),
         disable=not True,
-        desc="Compute background image for video %s" % filename,
+        desc="Compute background image for session %s" % session,
     ):
         rand = np.random.choice(frame_count, replace=False)
         capture.set(1, rand)
@@ -342,7 +342,7 @@ def background(
 
     if save_background:
         np.save(
-            os.path.join(path_to_file, "videos", filename + "-background.npy"),
+            os.path.join(project_path, "videos", session + "-background.npy"),
             background,
         )
 

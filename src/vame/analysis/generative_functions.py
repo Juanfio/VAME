@@ -4,10 +4,10 @@ import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
 from sklearn.mixture import GaussianMixture
+
 from vame.schemas.states import GenerativeModelFunctionSchema, save_state
 from vame.util.auxiliary import read_config
 from vame.logging.logger import VameLogger
-from typing import Dict
 from vame.util.model_util import load_model
 from vame.schemas.project import SegmentationAlgorithms
 
@@ -255,9 +255,9 @@ def generative_model(
             logger_config.add_file_handler(str(logs_path))
         logger.info(f"Running generative model with mode {mode}...")
         model_name = cfg["model_name"]
-        n_cluster = cfg["n_cluster"]
+        n_clusters = cfg["n_clusters"]
 
-        files = []
+        sessions = []
         if cfg["all_data"] == "No":
             all_flag = input(
                 "Do you want to write motif videos for your entire dataset? \n"
@@ -268,34 +268,34 @@ def generative_model(
             all_flag = "yes"
 
         if all_flag == "yes" or all_flag == "Yes":
-            for file in cfg["video_sets"]:
-                files.append(file)
+            for session in cfg["session_names"]:
+                sessions.append(session)
 
         elif all_flag == "no" or all_flag == "No":
-            for file in cfg["video_sets"]:
-                use_file = input("Do you want to quantify " + file + "? yes/no: ")
-                if use_file == "yes":
-                    files.append(file)
-                if use_file == "no":
+            for session in cfg["session_names"]:
+                use_session = input("Do you want to quantify " + session + "? yes/no: ")
+                if use_session == "yes":
+                    sessions.append(session)
+                if use_session == "no":
                     continue
         else:
-            files.append(all_flag)
+            sessions.append(all_flag)
 
         model = load_model(cfg, model_name, fixed=False)
 
-        for file in files:
+        for session in sessions:
             path_to_file = os.path.join(
                 cfg["project_path"],
                 "results",
-                file,
+                session,
                 model_name,
-                segmentation_algorithm + "-" + str(n_cluster),
+                segmentation_algorithm + "-" + str(n_clusters),
                 "",
             )
 
             if mode == "sampling":
                 latent_vector = np.load(
-                    os.path.join(path_to_file, "latent_vector_" + file + ".npy")
+                    os.path.join(path_to_file, "latent_vector_" + session + ".npy")
                 )
                 return random_generative_samples(
                     cfg,
@@ -305,7 +305,7 @@ def generative_model(
 
             if mode == "reconstruction":
                 latent_vector = np.load(
-                    os.path.join(path_to_file, "latent_vector_" + file + ".npy")
+                    os.path.join(path_to_file, "latent_vector_" + session + ".npy")
                 )
                 return random_reconstruction_samples(
                     cfg,
@@ -319,7 +319,7 @@ def generative_model(
                         f"Algorithm {segmentation_algorithm} not supported for cluster center visualization."
                     )
                 cluster_center = np.load(
-                    os.path.join(path_to_file, "cluster_center_" + file + ".npy")
+                    os.path.join(path_to_file, "cluster_center_" + session + ".npy")
                 )
                 return visualize_cluster_center(
                     cfg,
@@ -329,17 +329,17 @@ def generative_model(
 
             if mode == "motifs":
                 latent_vector = np.load(
-                    os.path.join(path_to_file, "latent_vector_" + file + ".npy")
+                    os.path.join(path_to_file, "latent_vector_" + session + ".npy")
                 )
                 labels = np.load(
                     os.path.join(
                         path_to_file,
                         "",
-                        str(n_cluster)
+                        str(n_clusters)
                         + "_"
                         + segmentation_algorithm
                         + "_label_"
-                        + file
+                        + session
                         + ".npy",
                     )
                 )
@@ -348,7 +348,7 @@ def generative_model(
                     model,
                     latent_vector,
                     labels,
-                    n_cluster,
+                    n_clusters,
                 )
     except Exception as e:
         logger.exception(str(e))

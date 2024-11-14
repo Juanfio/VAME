@@ -21,7 +21,7 @@ logger = logger_config.logger
 
 def embedd_latent_vectors(
     cfg: dict,
-    files: List[str],
+    sessions: List[str],
     model: RNN_VAE,
     fixed: bool,
     tqdm_stream: Union[TqdmToLogger, None],
@@ -33,8 +33,8 @@ def embedd_latent_vectors(
     ----------
     cfg : dict
         Configuration dictionary.
-    files : List[str]
-        List of files names.
+    sessions : List[str]
+        List of session names.
     model : RNN_VAE
         VAME model.
     fixed : bool
@@ -61,10 +61,10 @@ def embedd_latent_vectors(
 
     latent_vector_files = []
 
-    for file in files:
-        logger.info("Embedding of latent vector for file %s" % file)
+    for session in sessions:
+        logger.info(f"Embedding of latent vector for file {session}")
         data = np.load(
-            os.path.join(project_path, "data", file, file + "-PE-seq-clean.npy")
+            os.path.join(project_path, "data", session, session + "-PE-seq-clean.npy")
         )
         latent_vector_list = []
         with torch.no_grad():
@@ -91,7 +91,10 @@ def embedd_latent_vectors(
     return latent_vector_files
 
 
-def get_motif_usage(session_labels: np.ndarray, n_cluster: int) -> np.ndarray:
+def get_motif_usage(
+    session_labels: np.ndarray,
+    n_clusters: int,
+) -> np.ndarray:
     """
     Count motif usage from session label array.
 
@@ -99,7 +102,7 @@ def get_motif_usage(session_labels: np.ndarray, n_cluster: int) -> np.ndarray:
     ----------
     session_labels : np.ndarray
         Array of session labels.
-    n_cluster : int
+    n_clusters : int
         Number of clusters.
 
     Returns
@@ -107,26 +110,22 @@ def get_motif_usage(session_labels: np.ndarray, n_cluster: int) -> np.ndarray:
     np.ndarray
         Array of motif usage counts.
     """
-
-    motif_usage = np.zeros(n_cluster)
-    for i in range(n_cluster):
+    motif_usage = np.zeros(n_clusters)
+    for i in range(n_clusters):
         motif_count = np.sum(session_labels == i)
         motif_usage[i] = motif_count
-
-    # include warning if any unused motifs are present
+    # Include warning if any unused motifs are present
     unused_motifs = np.where(motif_usage == 0)[0]
     if unused_motifs.size > 0:
         logger.info(f"Warning: The following motifs are unused: {unused_motifs}")
-    # print(motif_usage)
-
     return motif_usage
 
 
 def same_segmentation(
     cfg: dict,
-    files: List[str],
-    latent_vector_files: List[np.ndarray],
-    states: int,
+    sessions: List[str],
+    latent_vectors: List[np.ndarray],
+    n_clusters: int,
     segmentation_algorithm: str,
 ) -> Tuple[List[np.ndarray], List[np.ndarray], List[np.ndarray]]:
     """
@@ -136,12 +135,12 @@ def same_segmentation(
     ----------
     cfg : dict
         Configuration dictionary.
-    files : List[str]
-        List of file names.
-    latent_vector_files : List[np.ndarray]
+    sessions : List[str]
+        List of session names.
+    latent_vectors : List[np.ndarray]
         List of latent vector arrays.
-    states : int
-        Number of states.
+    n_clusters : int
+        Number of clusters.
     segmentation_algorithm : str
         Segmentation algorithm.
 
@@ -155,12 +154,12 @@ def same_segmentation(
     cluster_centers = []  # List of arrays containing each session's cluster centers
     motif_usages = []  # List of arrays containing each session's motif usages
 
-    latent_vector_cat = np.concatenate(latent_vector_files, axis=0)
+    latent_vector_cat = np.concatenate(latent_vectors, axis=0)
     if segmentation_algorithm == "kmeans":
         logger.info("Using kmeans as segmentation algorithm!")
         kmeans = KMeans(
             init="k-means++",
-            n_clusters=states,
+            n_clusters=n_clusters,
             random_state=42,
             n_init=20,
         ).fit(latent_vector_cat)
@@ -172,7 +171,7 @@ def same_segmentation(
         if not cfg["hmm_trained"]:
             logger.info("Using a HMM as segmentation algorithm!")
             hmm_model = hmm.GaussianHMM(
-                n_components=states,
+                n_components=n_clusters,
                 covariance_type="full",
                 n_iter=100,
             )
@@ -189,15 +188,15 @@ def same_segmentation(
             label = hmm_model.predict(latent_vector_cat)
 
     idx = 0  # start index for each session
-    for i, file in enumerate(files):
-        logger.info(f"Getting motif usage for {file}")
-        file_len = latent_vector_files[i].shape[0]  # stop index of the session
+    for i, session in enumerate(sessions):
+        logger.info(f"Getting motif usage for {session}")
+        file_len = latent_vectors[i].shape[0]  # stop index of the session
         labels.append(label[idx : idx + file_len])  # append session's label
         if segmentation_algorithm == "kmeans":
             cluster_centers.append(clust_center)
 
         # session's motif usage
-        motif_usage = get_motif_usage(label[idx : idx + file_len], states)
+        motif_usage = get_motif_usage(label[idx : idx + file_len], n_clusters)
         motif_usages.append(motif_usage)
         idx += file_len  # updating the session start index
 
@@ -206,9 +205,9 @@ def same_segmentation(
 
 def individual_segmentation(
     cfg: dict,
-    files: List[str],
+    sessions: List[str],
     latent_vectors: List[np.ndarray],
-    n_cluster: int,
+    n_clusters: int,
 ) -> Tuple:
     """
     Apply individual segmentation to each session.
@@ -217,11 +216,11 @@ def individual_segmentation(
     ----------
     cfg : dict
         Configuration dictionary.
-    files : List[str]
-        List of file names.
+    sessions : List[str]
+        List of session names.
     latent_vectors : List[np.ndarray]
         List of latent vector arrays.
-    n_cluster : int
+    n_clusters : int
         Number of clusters.
 
     Returns
@@ -234,11 +233,11 @@ def individual_segmentation(
     labels = []
     cluster_centers = []
     motif_usages = []
-    for i, file in enumerate(files):
-        logger.info(f"Processing file: {file}")
+    for i, session in enumerate(sessions):
+        logger.info(f"Processing session: {session}")
         kmeans = KMeans(
             init="k-means++",
-            n_clusters=n_cluster,
+            n_clusters=n_clusters,
             random_state=random_state,
             n_init=n_init,
         ).fit(latent_vectors[i])
@@ -246,7 +245,7 @@ def individual_segmentation(
         label = kmeans.predict(latent_vectors[i])
         motif_usage = get_motif_usage(
             session_labels=label,
-            n_cluster=n_cluster,
+            n_clusters=n_clusters,
         )
         motif_usages.append(motif_usage)
         labels.append(label)
@@ -266,25 +265,25 @@ def segment_session(
     - project_name/
         - results/
             - hmm_trained.pkl
-            - file_name/
+            - session/
                 - model_name/
                     - hmm-n_cluster/
-                        - latent_vector_file.npy
-                        - motif_usage_file.npy
-                        - n_cluster_label_file.npy
+                        - latent_vector_session.npy
+                        - motif_usage_session.npy
+                        - n_cluster_label_session.npy
                     - kmeans-n_cluster/
-                        - latent_vector_file.npy
-                        - motif_usage_file.npy
-                        - n_cluster_label_file.npy
-                        - cluster_center_file.npy
+                        - latent_vector_session.npy
+                        - motif_usage_session.npy
+                        - n_cluster_label_session.npy
+                        - cluster_center_session.npy
 
-    latent_vector_file.npy contains the projection of the data into the latent space,
+    latent_vector_session.npy contains the projection of the data into the latent space,
     for each frame of the video. Dimmentions: (n_frames, n_latent_features)
 
-    motif_usage_file.npy contains the number of times each motif was used in the video.
+    motif_usage_session.npy contains the number of times each motif was used in the video.
     Dimmentions: (n_motifs,)
 
-    n_cluster_label_file.npy contains the label of the cluster assigned to each frame.
+    n_cluster_label_session.npy contains the label of the cluster assigned to each frame.
     Dimmentions: (n_frames,)
 
     Parameters
@@ -307,7 +306,7 @@ def segment_session(
             logger_config.add_file_handler(str(log_path))
             tqdm_stream = TqdmToLogger(logger)
         model_name = cfg["model_name"]
-        n_cluster = cfg["n_cluster"]
+        n_clusters = cfg["n_clusters"]
         fixed = cfg["egocentric_data"]
         segmentation_algorithms = cfg["segmentation_algorithms"]
 
@@ -317,12 +316,12 @@ def segment_session(
 
         for seg in segmentation_algorithms:
             logger.info(f"Running pose segmentation using {seg} algorithm...")
-            for folders in cfg["video_sets"]:
+            for session in cfg["session_names"]:
                 if not os.path.exists(
                     os.path.join(
                         cfg["project_path"],
                         "results",
-                        folders,
+                        session,
                         model_name,
                         "",
                     )
@@ -331,35 +330,35 @@ def segment_session(
                         os.path.join(
                             cfg["project_path"],
                             "results",
-                            folders,
+                            session,
                             model_name,
                             "",
                         )
                     )
 
-            files = []
+            sessions = []
             if cfg["all_data"] == "No":
                 all_flag = input(
-                    "Do you want to qunatify your entire dataset? \n"
-                    "If you only want to use a specific dataset type filename: \n"
-                    "yes/no/filename "
+                    "Do you want to quantify your entire dataset? \n"
+                    "If you only want to use a specific dataset type the session name: \n"
+                    "yes/no/session_name "
                 )
-                file = all_flag
             else:
                 all_flag = "yes"
 
             if all_flag == "yes" or all_flag == "Yes":
-                for file in cfg["video_sets"]:
-                    files.append(file)
+                sessions = cfg["session_names"]
             elif all_flag == "no" or all_flag == "No":
-                for file in cfg["video_sets"]:
-                    use_file = input("Do you want to quantify " + file + "? yes/no: ")
-                    if use_file == "yes":
-                        files.append(file)
-                    if use_file == "no":
+                for session in cfg["session_names"]:
+                    use_session = input(
+                        "Do you want to quantify " + session + "? yes/no: "
+                    )
+                    if use_session == "yes":
+                        sessions.append(session)
+                    if use_session == "no":
                         continue
             else:
-                files.append(all_flag)
+                sessions.append(all_flag)
 
             use_gpu = torch.cuda.is_available()
             if use_gpu:
@@ -374,9 +373,9 @@ def segment_session(
                 os.path.join(
                     cfg["project_path"],
                     "results",
-                    file,
+                    sessions[0],
                     model_name,
-                    seg + "-" + str(n_cluster),
+                    seg + "-" + str(n_clusters),
                     "",
                 )
             ):
@@ -384,7 +383,7 @@ def segment_session(
                 model = load_model(cfg, model_name, fixed)
                 latent_vectors = embedd_latent_vectors(
                     cfg,
-                    files,
+                    sessions,
                     model,
                     fixed,
                     tqdm_stream=tqdm_stream,
@@ -392,42 +391,38 @@ def segment_session(
 
                 if ind_seg:
                     logger.info(
-                        "Apply individual segmentation of latent vectors for each session, %d clusters"
-                        % n_cluster
+                        f"Apply individual segmentation of latent vectors for each session, {n_clusters} clusters"
                     )
                     labels, cluster_center, motif_usages = individual_segmentation(
                         cfg=cfg,
-                        files=files,
+                        sessions=sessions,
                         latent_vectors=latent_vectors,
-                        n_cluster=n_cluster,
+                        n_clusters=n_clusters,
                     )
                 else:
                     logger.info(
-                        "Apply the same segmentation of latent vectors for all sessions, %d clusters"
-                        % n_cluster
+                        f"Apply the same segmentation of latent vectors for all sessions, {n_clusters} clusters"
                     )
                     labels, cluster_center, motif_usages = same_segmentation(
-                        cfg,
-                        files,
-                        latent_vectors,
-                        n_cluster,
-                        seg,
+                        cfg=cfg,
+                        sessions=sessions,
+                        latent_vectors=latent_vectors,
+                        n_clusters=n_clusters,
+                        segmentation_algorithm=seg,
                     )
 
             else:
                 logger.info(
-                    "\n"
-                    "Segmentation with %d k-means cluster already exists for model %s"
-                    % (model_name, n_cluster)
+                    f"\nSegmentation with {n_clusters} k-means clusters already exists for model {model_name}"
                 )
 
                 if os.path.exists(
                     os.path.join(
                         cfg["project_path"],
                         "results",
-                        file,
+                        sessions[0],
                         model_name,
-                        seg + "-" + str(n_cluster),
+                        seg + "-" + str(n_clusters),
                         "",
                     )
                 ):
@@ -441,46 +436,45 @@ def segment_session(
                 if flag == "yes":
                     new = True
                     latent_vectors = []
-                    for file in files:
+                    for session in sessions:
                         path_to_latent_vector = os.path.join(
                             cfg["project_path"],
                             "results",
-                            file,
+                            session,
                             model_name,
-                            seg + "-" + str(n_cluster),
+                            seg + "-" + str(n_clusters),
                             "",
                         )
                         latent_vector = np.load(
                             os.path.join(
-                                path_to_latent_vector, "latent_vector_" + file + ".npy"
+                                path_to_latent_vector,
+                                "latent_vector_" + session + ".npy",
                             )
                         )
                         latent_vectors.append(latent_vector)
 
                     if ind_seg:
                         logger.info(
-                            "Apply individual segmentation of latent vectors for each session, %d clusters"
-                            % n_cluster
+                            f"Apply individual segmentation of latent vectors for each session, {n_clusters} clusters"
                         )
                         # [SRM, 10/28/24] rename to cluster_centers
                         labels, cluster_center, motif_usages = individual_segmentation(
                             cfg=cfg,
-                            files=files,
+                            sessions=sessions,
                             latent_vectors=latent_vectors,
-                            n_cluster=n_cluster,
+                            n_clusters=n_clusters,
                         )
                     else:
                         logger.info(
-                            "Apply the same segmentation of latent vectors for all sessions, %d clusters"
-                            % n_cluster
+                            f"Apply the same segmentation of latent vectors for all sessions, {n_clusters} clusters"
                         )
                         # [SRM, 10/28/24] rename to cluster_centers
                         labels, cluster_center, motif_usages = same_segmentation(
-                            cfg,
-                            files,
-                            latent_vectors,
-                            n_cluster,
-                            seg,
+                            cfg=cfg,
+                            sessions=sessions,
+                            latent_vectors=latent_vectors,
+                            n_clusters=n_clusters,
+                            segmentation_algorithm=seg,
                         )
                 else:
                     logger.info("No new segmentation has been calculated.")
@@ -488,15 +482,15 @@ def segment_session(
 
             if new:
                 # saving session data
-                for idx, file in enumerate(files):
+                for idx, session in enumerate(sessions):
                     logger.info(
                         os.path.join(
                             cfg["project_path"],
                             "results",
-                            file,
+                            session,
                             "",
                             model_name,
-                            seg + "-" + str(n_cluster),
+                            seg + "-" + str(n_clusters),
                             "",
                         )
                     )
@@ -504,9 +498,9 @@ def segment_session(
                         os.path.join(
                             cfg["project_path"],
                             "results",
-                            file,
+                            session,
                             model_name,
-                            seg + "-" + str(n_cluster),
+                            seg + "-" + str(n_clusters),
                             "",
                         )
                     ):
@@ -515,10 +509,10 @@ def segment_session(
                                 os.path.join(
                                     cfg["project_path"],
                                     "results",
-                                    file,
+                                    session,
                                     "",
                                     model_name,
-                                    seg + "-" + str(n_cluster),
+                                    seg + "-" + str(n_clusters),
                                     "",
                                 )
                             )
@@ -528,34 +522,34 @@ def segment_session(
                     save_data = os.path.join(
                         cfg["project_path"],
                         "results",
-                        file,
+                        session,
                         model_name,
-                        seg + "-" + str(n_cluster),
+                        seg + "-" + str(n_clusters),
                         "",
                     )
                     np.save(
                         os.path.join(
                             save_data,
-                            str(n_cluster) + "_" + seg + "_label_" + file,
+                            str(n_clusters) + "_" + seg + "_label_" + session,
                         ),
                         labels[idx],
                     )
                     if seg == "kmeans":
                         np.save(
-                            os.path.join(save_data, "cluster_center_" + file),
+                            os.path.join(save_data, "cluster_center_" + session),
                             cluster_center[idx],
                         )
                     np.save(
-                        os.path.join(save_data, "latent_vector_" + file),
+                        os.path.join(save_data, "latent_vector_" + session),
                         latent_vectors[idx],
                     )
                     np.save(
-                        os.path.join(save_data, "motif_usage_" + file),
+                        os.path.join(save_data, "motif_usage_" + session),
                         motif_usages[idx],
                     )
 
                 logger.info(
-                    "You succesfully extracted motifs with VAME! From here, you can proceed running vame.motif_videos() "
+                    "You succesfully extracted motifs with VAME! From here, you can proceed running vame.motif_videos()"
                 )
                 # "to get an idea of the behavior captured by VAME. This will leave you with short snippets of certain movements."
                 # "To get the full picture of the spatiotemporal dynamic we recommend applying our community approach afterwards.")

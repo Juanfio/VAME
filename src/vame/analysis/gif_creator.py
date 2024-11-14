@@ -19,7 +19,7 @@ logger = logger_config.logger
 
 def create_video(
     path_to_file: str,
-    file: str,
+    session: str,
     embed: np.ndarray,
     clabel: np.ndarray,
     frames: List[np.ndarray],
@@ -35,8 +35,8 @@ def create_video(
     -----------
     path_to_file : str
         Path to the file.
-    file : str
-        File name.
+    session : str
+        Session name.
     embed : np.ndarray
         Embedding array.
     clabel : np.ndarray
@@ -100,12 +100,14 @@ def create_video(
         frame = frames[i]
         ax2.imshow(frame, cmap=cmap_reversed)
         # ax2.set_title("Motif %d,\n Community: %s" % (lbl, motifs[lbl]), fontsize=10)
-        fig.savefig(os.path.join(path_to_file, "gif_frames", file + "gif_%d.png") % i)
+        fig.savefig(
+            os.path.join(path_to_file, "gif_frames", session + "gif_%d.png") % i
+        )
 
 
 def gif(
     config: str,
-    pose_ref_index: int,
+    pose_ref_index: list,
     segmentation_algorithm: SegmentationAlgorithms,
     subtract_background: bool = True,
     start: int | None = None,
@@ -121,8 +123,8 @@ def gif(
     -----------
     config : str
         Path to the configuration file.
-    pose_ref_index : int
-        Pose reference index.
+    pose_ref_index : list
+        List of reference coordinate indices for alignment.
     segmentation_algorithm : SegmentationAlgorithms
         Segmentation algorithm.
     subtract_background : bool, optional
@@ -147,12 +149,12 @@ def gif(
     config_file = Path(config).resolve()
     cfg = read_config(str(config_file))
     model_name = cfg["model_name"]
-    n_cluster = cfg["n_cluster"]
+    n_clusters = cfg["n_clusters"]
 
     if segmentation_algorithm not in cfg["segmentation_algorithms"]:
         raise ValueError("Segmentation algorithm not found in config")
 
-    files = []
+    sessions = []
     if cfg["all_data"] == "No":
         all_flag = input(
             "Do you want to write motif videos for your entire dataset? \n"
@@ -163,26 +165,26 @@ def gif(
         all_flag = "yes"
 
     if all_flag == "yes" or all_flag == "Yes":
-        for file in cfg["video_sets"]:
-            files.append(file)
+        for session in cfg["sessions"]:
+            sessions.append(session)
 
     elif all_flag == "no" or all_flag == "No":
-        for file in cfg["video_sets"]:
-            use_file = input("Do you want to quantify " + file + "? yes/no: ")
-            if use_file == "yes":
-                files.append(file)
-            if use_file == "no":
+        for session in cfg["session_names"]:
+            use_session = input("Do you want to quantify " + session + "? yes/no: ")
+            if use_session == "yes":
+                sessions.append(session)
+            if use_session == "no":
                 continue
     else:
-        files.append(all_flag)
+        sessions.append(all_flag)
 
-    for file in files:
+    for session in sessions:
         path_to_file = os.path.join(
             cfg["project_path"],
             "results",
-            file,
+            session,
             model_name,
-            segmentation_algorithm + "-" + str(n_cluster),
+            segmentation_algorithm + "-" + str(n_clusters),
             "",
         )
         if not os.path.exists(os.path.join(path_to_file, "gif_frames")):
@@ -192,7 +194,7 @@ def gif(
             os.path.join(
                 path_to_file,
                 "community",
-                "umap_embedding_" + file + ".npy",
+                "umap_embedding_" + session + ".npy",
             )
         )
 
@@ -201,14 +203,14 @@ def gif(
                 os.path.join(
                     path_to_file,
                     "community",
-                    "umap_embedding_" + file + ".npy",
+                    "umap_embedding_" + session + ".npy",
                 )
             )
             num_points = cfg["num_points"]
             if num_points > embed.shape[0]:
                 num_points = embed.shape[0]
         except Exception:
-            logger.info(f"Compute embedding for file {file}")
+            logger.info(f"Compute embedding for session {session}")
             reducer = umap.UMAP(
                 n_components=2,
                 min_dist=cfg["min_dist"],
@@ -217,7 +219,7 @@ def gif(
             )
 
             latent_vector = np.load(
-                os.path.join(path_to_file, "", "latent_vector_" + file + ".npy")
+                os.path.join(path_to_file, "", "latent_vector_" + session + ".npy")
             )
 
             num_points = cfg["num_points"]
@@ -230,7 +232,7 @@ def gif(
                 os.path.join(
                     path_to_file,
                     "community",
-                    "umap_embedding_" + file + ".npy",
+                    "umap_embedding_" + session + ".npy",
                 ),
                 embed,
             )
@@ -239,7 +241,12 @@ def gif(
             umap_label = np.load(
                 os.path.join(
                     path_to_file,
-                    str(n_cluster) + "_" + segmentation_algorithm + "_label_" + file + ".npy",
+                    str(n_clusters)
+                    + "_"
+                    + segmentation_algorithm
+                    + "_label_"
+                    + session
+                    + ".npy",
                 )
             )
         elif label == "community":
@@ -247,7 +254,7 @@ def gif(
                 os.path.join(
                     path_to_file,
                     "community",
-                    "cohort_community_label_" + file + ".npy",
+                    "cohort_community_label_" + session + ".npy",
                 )
             )
         elif label is None:
@@ -260,7 +267,7 @@ def gif(
 
         frames = get_animal_frames(
             cfg,
-            file,
+            session,
             pose_ref_index,
             start,
             length,
@@ -270,7 +277,7 @@ def gif(
         )
         create_video(
             path_to_file,
-            file,
+            session,
             embed,
             umap_label,
             frames,

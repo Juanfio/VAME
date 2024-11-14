@@ -14,7 +14,7 @@ config = vame.init_new_project(
     videos=videos,
     poses_estimations=poses_estimations,
     working_directory=working_directory,
-    videotype=".mp4",
+    video_type=".mp4",
 )
 
 # After the inital creation of your project you can always access the config.yaml file
@@ -52,7 +52,7 @@ vame.segment_session(config)
 # # community videos
 
 # # OPTIONAL: Create motif videos to get insights about the fine grained poses
-# vame.motif_videos(config, videoType='.mp4')
+# vame.motif_videos(config, video_type='.mp4')
 
 # # OPTIONAL: Create behavioural hierarchies via community detection
 # vame.community(config, cut_tree=2)

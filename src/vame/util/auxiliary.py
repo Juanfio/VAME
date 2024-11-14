@@ -23,7 +23,7 @@ def create_config_template() -> Tuple[dict, ruamel.yaml.YAML]:
     \n
 # Project path and videos
     project_path:
-    video_sets:
+    session_names:
     \n
 # Data
     all_data:

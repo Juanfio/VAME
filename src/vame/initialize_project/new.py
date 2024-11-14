@@ -19,7 +19,7 @@ def init_new_project(
     videos: List[str],
     poses_estimations: List[str],
     working_directory: str = ".",
-    videotype: str = ".mp4",
+    video_type: str = ".mp4",
     copy_videos: bool = False,
     paths_to_pose_nwb_series_data: Optional[str] = None,
     config_kwargs: Optional[dict] = None,
@@ -59,7 +59,7 @@ def init_new_project(
         List of pose estimation files paths to be used in the project. E.g. ['./sample_data/pose estimation/Session001.csv']
     working_directory : str, optional
         Working directory. Defaults to '.'.
-    videotype : str, optional
+    video_type : str, optional
         Video extension (.mp4 or .avi). Defaults to '.mp4'.
     copy_videos : bool, optional
         If True, the videos will be copied to the project directory. If False, symbolic links will be created instead. Defaults to False.
@@ -73,7 +73,7 @@ def init_new_project(
     projconfigfile : str
         Path to the new vame project config file.
     """
-    creation_datetime = datetime.now(timezone.utc).isoformat(timespec='seconds')
+    creation_datetime = datetime.now(timezone.utc).isoformat(timespec="seconds")
     project_path = Path(working_directory).resolve() / project_name
     if project_path.exists():
         logger.info('Project "{}" already exists!'.format(project_path))
@@ -94,13 +94,13 @@ def init_new_project(
         # Check if it is a folder
         if os.path.isdir(i):
             vids_in_dir = [
-                os.path.join(i, vp) for vp in os.listdir(i) if videotype in vp
+                os.path.join(i, vp) for vp in os.listdir(i) if video_type in vp
             ]
             vids = vids + vids_in_dir
             if len(vids_in_dir) == 0:
                 logger.info(f"No videos found in {i}")
                 logger.info(
-                    f"Perhaps change the videotype, which is currently set to: {videotype}"
+                    f"Perhaps change the video_type, which is currently set to: {video_type}"
                 )
             else:
                 videos = vids
@@ -195,7 +195,7 @@ def init_new_project(
         project_name=project_name,
         creation_datetime=creation_datetime,
         project_path=str(project_path),
-        video_sets=video_names,
+        session_names=video_names,
         pose_estimation_filetype=pose_estimation_filetype,
         paths_to_pose_nwb_series_data=paths_to_pose_nwb_series_data,
         **config_kwargs,

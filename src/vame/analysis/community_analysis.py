@@ -206,8 +206,8 @@ def augment_motif_timeseries(
 
 
 def get_motif_labels(
-    cfg: dict,
-    files: List[str],
+    config: dict,
+    sessions: List[str],
     model_name: str,
     n_clusters: int,
     segmentation_algorithm: str,
@@ -217,10 +217,10 @@ def get_motif_labels(
 
     Parameters
     ----------
-    cfg : dict
+    config : dict
         Configuration parameters.
-    files : List[str]
-        List of files paths.
+    sessions : List[str]
+        List of session names.
     model_name : str
         Model name.
     n_clusters : int
@@ -236,11 +236,11 @@ def get_motif_labels(
     # TODO  - this is limiting the number of frames to the minimum number of frames in all files
     # Is this intended behavior? and why?
     shapes = []
-    for file in files:
+    for session in sessions:
         path_to_dir = os.path.join(
-            cfg["project_path"],
+            config["project_path"],
             "results",
-            file,
+            session,
             model_name,
             segmentation_algorithm + "-" + str(n_clusters),
             "",
@@ -252,7 +252,7 @@ def get_motif_labels(
                 + "_"
                 + segmentation_algorithm
                 + "_label_"
-                + file
+                + session
                 + ".npy",
             )
         )
@@ -262,11 +262,11 @@ def get_motif_labels(
     min_frames = min(shapes)
 
     community_label = []
-    for file in files:
+    for session in sessions:
         path_to_dir = os.path.join(
-            cfg["project_path"],
+            config["project_path"],
             "results",
-            file,
+            session,
             model_name,
             segmentation_algorithm + "-" + str(n_clusters),
             "",
@@ -278,7 +278,7 @@ def get_motif_labels(
                 + "_"
                 + segmentation_algorithm
                 + "_label_"
-                + file
+                + session
                 + ".npy",
             )
         )[:min_frames]
@@ -440,19 +440,19 @@ def get_cohort_community_labels(
 
 
 def save_cohort_community_labels_per_file(
-    cfg: dict,
-    files: List[str],
+    config: dict,
+    sessions: List[str],
     model_name: str,
     n_clusters: int,
     segmentation_algorithm: str,
     cohort_community_bag: list,
 ) -> None:
 
-    for idx, file in enumerate(files):
+    for idx, session in enumerate(sessions):
         path_to_dir = os.path.join(
-            cfg["project_path"],
+            config["project_path"],
             "results",
-            file,
+            session,
             model_name,
             segmentation_algorithm + "-" + str(n_clusters),
             "",
@@ -464,7 +464,7 @@ def save_cohort_community_labels_per_file(
                 + "_"
                 + segmentation_algorithm
                 + "_label_"
-                + file
+                + session
                 + ".npy",
             )
         )
@@ -478,7 +478,7 @@ def save_cohort_community_labels_per_file(
             os.path.join(
                 path_to_dir,
                 "community",
-                f"cohort_community_label_{file}.npy",
+                f"cohort_community_label_{session}.npy",
             ),
             np.array(community_labels[0]),
         )
@@ -550,9 +550,9 @@ def community(
             logger_config.add_file_handler(str(log_path))
 
         model_name = cfg["model_name"]
-        n_cluster = cfg["n_cluster"]
+        n_clusters = cfg["n_clusters"]
 
-        files = []
+        sessions = []
         if cfg["all_data"] == "No":
             all_flag = input(
                 "Do you want to write motif videos for your entire dataset? \n"
@@ -563,14 +563,14 @@ def community(
             all_flag = "yes"
 
         if all_flag == "yes" or all_flag == "Yes":
-            for file in cfg["video_sets"]:
-                files.append(file)
+            for session in cfg["session_names"]:
+                sessions.append(session)
         elif all_flag == "no" or all_flag == "No":
-            for file in cfg["video_sets"]:
-                use_file = input("Do you want to quantify " + file + "? yes/no: ")
-                if use_file == "yes":
-                    files.append(file)
-                if use_file == "no":
+            for session in cfg["session_names"]:
+                use_session = input("Do you want to quantify " + session + "? yes/no: ")
+                if use_session == "yes":
+                    sessions.append(session)
+                if use_session == "no":
                     continue
         # else:
         #     files.append(all_flag)
@@ -581,7 +581,7 @@ def community(
                     cfg["project_path"],
                     "results",
                     "community_cohort",
-                    segmentation_algorithm + "-" + str(n_cluster),
+                    segmentation_algorithm + "-" + str(n_clusters),
                 )
             )
 
@@ -589,25 +589,25 @@ def community(
                 path_to_dir.mkdir(parents=True, exist_ok=True)
 
             motif_labels = get_motif_labels(
-                cfg=cfg,
-                files=files,
+                config=cfg,
+                sessions=sessions,
                 model_name=model_name,
-                n_clusters=n_cluster,
+                n_clusters=n_clusters,
                 segmentation_algorithm=segmentation_algorithm,
             )
             augmented_labels, motifs_with_zero_counts = augment_motif_timeseries(
                 labels=motif_labels,
-                n_clusters=n_cluster,
+                n_clusters=n_clusters,
             )
             _, trans_mat_full, _ = get_adjacency_matrix(
                 labels=augmented_labels,
-                n_clusters=n_cluster,
+                n_clusters=n_clusters,
             )
             cohort_community_bag = create_cohort_community_bag(
                 motif_labels=motif_labels,
                 trans_mat_full=trans_mat_full,
                 cut_tree=cut_tree,
-                n_clusters=n_cluster,
+                n_clusters=n_clusters,
             )
             community_labels_all = get_cohort_community_labels(
                 motif_labels=motif_labels,
@@ -654,10 +654,10 @@ def community(
             # Saves the full community labels list to each of the original video files
             # This is useful for further analysis when cohort=True
             save_cohort_community_labels_per_file(
-                cfg=cfg,
-                files=files,
+                config=cfg,
+                sessions=sessions,
                 model_name=model_name,
-                n_clusters=n_cluster,
+                n_clusters=n_clusters,
                 segmentation_algorithm=segmentation_algorithm,
                 cohort_community_bag=cohort_community_bag,
             )

@@ -17,7 +17,7 @@ logger = logger_config.logger
 
 def get_animal_frames(
     cfg: dict,
-    filename: str,
+    session: str,
     pose_ref_index: list,
     start: int,
     length: int,
@@ -32,8 +32,8 @@ def get_animal_frames(
     -----------
     cfg : dict
         Configuration dictionary containing project information.
-    filename : str
-        Name of the video file.
+    session : str
+        Name of the session.
     pose_ref_index : list
         List of reference coordinate indices for alignment.
     start : int
@@ -61,7 +61,7 @@ def get_animal_frames(
             path_to_file,
             "videos",
             "pose_estimation",
-            filename + ".csv",
+            session + ".csv",
         ),
         skiprows=2,
     )
@@ -91,14 +91,14 @@ def get_animal_frames(
                 os.path.join(
                     path_to_file,
                     "videos",
-                    filename + "-background.npy",
+                    session + "-background.npy",
                 )
             )
         except Exception:
             logger.info("Can't find background image... Calculate background image...")
             bg = background(
                 path_to_file,
-                filename,
+                session,
                 file_format,
                 save_background=True,
             )
@@ -118,7 +118,7 @@ def get_animal_frames(
         os.path.join(
             path_to_file,
             "videos",
-            filename + file_format,
+            session + file_format,
         )
     )
     if not capture.isOpened():
@@ -127,7 +127,7 @@ def get_animal_frames(
                 os.path.join(
                     path_to_file,
                     "videos",
-                    filename + +file_format,
+                    session + file_format,
                 )
             )
         )
@@ -142,9 +142,7 @@ def get_animal_frames(
                 frame[frame <= 0] = 0
         except Exception:
             logger.info(
-                "Couldn't find a frame in capture.read(). #Frame: %d" % idx
-                + start
-                + lag
+                f"Couldn't find a frame in capture.read(). #Frame: {idx + start + lag}"
             )
             continue
 

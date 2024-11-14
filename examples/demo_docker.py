@@ -16,7 +16,7 @@ def run_pipeline(
         videos=videos,
         poses_estimations=poses_estimations,
         working_directory=working_directory,
-        videotype=".mp4",
+        video_type=".mp4",
     )
 
     config_values = read_config(config)
