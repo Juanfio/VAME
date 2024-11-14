@@ -38,13 +38,13 @@ def test_pose_segmentation_hmm_files_exists(
     project_path = setup_project_and_train_model["config_data"]["project_path"]
     file = setup_project_and_train_model["config_data"]["session_names"][0]
     model_name = setup_project_and_train_model["config_data"]["model_name"]
-    n_cluster = setup_project_and_train_model["config_data"]["n_cluster"]
+    n_clusters = setup_project_and_train_model["config_data"]["n_clusters"]
     save_base_path = (
         Path(project_path)
         / "results"
         / file
         / model_name
-        / f"{segmentation_algorithm}-{n_cluster}"
+        / f"{segmentation_algorithm}-{n_clusters}"
     )
     latent_vector_path = save_base_path / f"latent_vector_{file}.npy"
     motif_usage_path = save_base_path / f"motif_usage_{file}.npy"
@@ -66,19 +66,19 @@ def test_motif_videos_mp4_files_exists(
     project_path = setup_project_and_train_model["config_data"]["project_path"]
     file = setup_project_and_train_model["config_data"]["session_names"][0]
     model_name = setup_project_and_train_model["config_data"]["model_name"]
-    n_cluster = setup_project_and_train_model["config_data"]["n_cluster"]
+    n_clusters = setup_project_and_train_model["config_data"]["n_clusters"]
 
     save_base_path = (
         Path(project_path)
         / "results"
         / file
         / model_name
-        / f"{segmentation_algorithm}-{n_cluster}"
+        / f"{segmentation_algorithm}-{n_clusters}"
         / "cluster_videos"
     )
 
     assert len(list(save_base_path.glob("*.mp4"))) > 0
-    assert len(list(save_base_path.glob("*.mp4"))) <= n_cluster
+    assert len(list(save_base_path.glob("*.mp4"))) <= n_clusters
 
 
 @pytest.mark.parametrize("segmentation_algorithm", ["hmm", "kmeans"])
@@ -95,19 +95,19 @@ def test_motif_videos_avi_files_exists(
     project_path = setup_project_and_train_model["config_data"]["project_path"]
     file = setup_project_and_train_model["config_data"]["session_names"][0]
     model_name = setup_project_and_train_model["config_data"]["model_name"]
-    n_cluster = setup_project_and_train_model["config_data"]["n_cluster"]
+    n_clusters = setup_project_and_train_model["config_data"]["n_clusters"]
 
     save_base_path = (
         Path(project_path)
         / "results"
         / file
         / model_name
-        / f"{segmentation_algorithm}-{n_cluster}"
+        / f"{segmentation_algorithm}-{n_clusters}"
         / "cluster_videos"
     )
 
     assert len(list(save_base_path.glob("*.avi"))) > 0
-    assert len(list(save_base_path.glob("*.avi"))) <= n_cluster
+    assert len(list(save_base_path.glob("*.avi"))) <= n_clusters
 
 
 # @pytest.mark.parametrize("segmentation_algorithm", ["hmm", "kmeans"])
@@ -123,14 +123,14 @@ def test_motif_videos_avi_files_exists(
 #     project_path = setup_project_and_train_model["config_data"]["project_path"]
 #     file = setup_project_and_train_model["config_data"]["session_names"][0]
 #     model_name = setup_project_and_train_model["config_data"]["model_name"]
-#     n_cluster = setup_project_and_train_model["config_data"]["n_cluster"]
+#     n_clusters = setup_project_and_train_model["config_data"]["n_clusters"]
 
 #     save_base_path = (
 #         Path(project_path)
 #         / "results"
 #         / file
 #         / model_name
-#         / f"{segmentation_algorithm}-{n_cluster}"
+#         / f"{segmentation_algorithm}-{n_clusters}"
 #         / "community"
 #     )
 
@@ -156,13 +156,13 @@ def test_cohort_community_files_exists(
         segmentation_algorithm=segmentation_algorithm,
     )
     project_path = setup_project_and_train_model["config_data"]["project_path"]
-    n_cluster = setup_project_and_train_model["config_data"]["n_cluster"]
+    n_clusters = setup_project_and_train_model["config_data"]["n_clusters"]
 
     base_path = (
         Path(project_path)
         / "results"
         / "community_cohort"
-        / f"{segmentation_algorithm}-{n_cluster}"
+        / f"{segmentation_algorithm}-{n_clusters}"
     )
     cohort_path = base_path / "cohort_transition_matrix.npy"
     community_path = base_path / "cohort_community_label.npy"
@@ -191,7 +191,7 @@ def test_community_videos_mp4_files_exists(
     )
     file = setup_project_and_train_model["config_data"]["session_names"][0]
     model_name = setup_project_and_train_model["config_data"]["model_name"]
-    n_cluster = setup_project_and_train_model["config_data"]["n_cluster"]
+    n_clusters = setup_project_and_train_model["config_data"]["n_clusters"]
     project_path = setup_project_and_train_model["config_data"]["project_path"]
 
     save_base_path = (
@@ -199,12 +199,12 @@ def test_community_videos_mp4_files_exists(
         / "results"
         / file
         / model_name
-        / f"{segmentation_algorithm}-{n_cluster}"
+        / f"{segmentation_algorithm}-{n_clusters}"
         / "community_videos"
     )
 
     assert len(list(save_base_path.glob("*.mp4"))) > 0
-    assert len(list(save_base_path.glob("*.mp4"))) <= n_cluster
+    assert len(list(save_base_path.glob("*.mp4"))) <= n_clusters
 
 
 @pytest.mark.parametrize("segmentation_algorithm", ["hmm", "kmeans"])
@@ -221,7 +221,7 @@ def test_community_videos_avi_files_exists(
     )
     file = setup_project_and_train_model["config_data"]["session_names"][0]
     model_name = setup_project_and_train_model["config_data"]["model_name"]
-    n_cluster = setup_project_and_train_model["config_data"]["n_cluster"]
+    n_clusters = setup_project_and_train_model["config_data"]["n_clusters"]
     project_path = setup_project_and_train_model["config_data"]["project_path"]
 
     save_base_path = (
@@ -229,12 +229,12 @@ def test_community_videos_avi_files_exists(
         / "results"
         / file
         / model_name
-        / f"{segmentation_algorithm}-{n_cluster}"
+        / f"{segmentation_algorithm}-{n_clusters}"
         / "community_videos"
     )
 
     assert len(list(save_base_path.glob("*.avi"))) > 0
-    assert len(list(save_base_path.glob("*.avi"))) <= n_cluster
+    assert len(list(save_base_path.glob("*.avi"))) <= n_clusters
 
 
 @pytest.mark.parametrize(
@@ -263,7 +263,7 @@ def test_visualization_output_files(
     project_path = setup_project_and_train_model["config_data"]["project_path"]
     file = setup_project_and_train_model["config_data"]["session_names"][0]
     model_name = setup_project_and_train_model["config_data"]["model_name"]
-    n_cluster = setup_project_and_train_model["config_data"]["n_cluster"]
+    n_clusters = setup_project_and_train_model["config_data"]["n_clusters"]
 
     project_path = setup_project_and_train_model["config_data"]["project_path"]
 
@@ -272,7 +272,7 @@ def test_visualization_output_files(
         / "results"
         / file
         / model_name
-        / f"{segmentation_algorithm}-{n_cluster}"
+        / f"{segmentation_algorithm}-{n_clusters}"
         / "community"
     )
     assert len(list(save_base_path.glob(f"umap_vis*{file}.png"))) > 0
@@ -381,17 +381,17 @@ def test_gif_frames_files_exists(setup_project_and_evaluate_model, label):
             crop_size=(300, 300),
         )
 
-    # path_to_file=os.path.join(cfg['project_path'],"results",file,model_name,param+'-'+str(n_cluster),"")
+    # path_to_file=os.path.join(cfg['project_path'],"results",file,model_name,param+'-'+str(n_clusters),"")
     video = setup_project_and_evaluate_model["config_data"]["session_names"][0]
     model_name = setup_project_and_evaluate_model["config_data"]["model_name"]
-    n_cluster = setup_project_and_evaluate_model["config_data"]["n_cluster"]
+    n_clusters = setup_project_and_evaluate_model["config_data"]["n_clusters"]
 
     save_base_path = (
         Path(setup_project_and_evaluate_model["config_data"]["project_path"])
         / "results"
         / video
         / model_name
-        / f"{SEGMENTATION_ALGORITHM}-{n_cluster}"
+        / f"{SEGMENTATION_ALGORITHM}-{n_clusters}"
     )
 
     gif_frames_path = save_base_path / "gif_frames"

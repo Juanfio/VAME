@@ -16,7 +16,7 @@ def report(
     config_file = Path(config).resolve()
     cfg = read_config(str(config_file))
     project_path = Path(cfg["project_path"])
-    n_clusters = cfg["n_cluster"]
+    n_clusters = cfg["n_clusters"]
 
     with open(project_path / "states" / "states.json") as f:
         project_states = json.load(f)

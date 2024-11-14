@@ -267,11 +267,11 @@ def segment_session(
             - hmm_trained.pkl
             - session/
                 - model_name/
-                    - hmm-n_cluster/
+                    - hmm-n_clusters/
                         - latent_vector_session.npy
                         - motif_usage_session.npy
                         - n_cluster_label_session.npy
-                    - kmeans-n_cluster/
+                    - kmeans-n_clusters/
                         - latent_vector_session.npy
                         - motif_usage_session.npy
                         - n_cluster_label_session.npy

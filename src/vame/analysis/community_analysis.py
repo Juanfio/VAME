@@ -148,7 +148,7 @@ def fill_motifs_with_zero_counts(
             usage_list.insert(n_clusters, 0)
 
     elif len(cons[0]) != n_clusters:  # if missing motif is at the front or end of list
-        # diff = n_cluster - cons[0][-1]
+        # diff = n_clusters - cons[0][-1]
         usage_list = list(motif_counts)
         if cons[0][0] != 0:  # missing motif at front of list
             usage_list.insert(0, 0)
@@ -290,22 +290,28 @@ def get_motif_labels(
 def compute_transition_matrices(
     files: List[str],
     labels: List[np.ndarray],
-    n_cluster: int,
+    n_clusters: int,
 ) -> List[np.ndarray]:
     """
     Compute transition matrices for given files and labels.
 
-    Args:
-        files (List[str]): List of file paths.
-        labels (List[np.ndarray]): List of label arrays.
-        n_cluster (int): Number of clusters.
+    Parameters:
+    -----------
+    files : List[str]
+        List of file paths.
+    labels : List[np.ndarray]
+        List of label arrays.
+    n_clusters : int
+        Number of clusters.
 
     Returns:
-        List[np.ndarray]: List of transition matrices.
+    --------
+    List[np.ndarray]:
+        List of transition matrices.
     """
     transition_matrices = []
     for i, file in enumerate(files):
-        adj, trans, mat = get_adjacency_matrix(labels[i], n_cluster)
+        adj, trans, mat = get_adjacency_matrix(labels[i], n_clusters)
         transition_matrices.append(trans)
     return transition_matrices
 
@@ -328,7 +334,7 @@ def create_cohort_community_bag(
         Full transition matrix.
     cut_tree : int | None
         Cut line for tree.
-    n_cluster : int
+    n_clusters : int
         Number of clusters.
 
     Returns
@@ -344,7 +350,7 @@ def create_cohort_community_bag(
     T = graph_to_tree(
         motif_usage=usage_full,
         transition_matrix=trans_mat_full,
-        n_cluster=n_clusters,
+        n_clusters=n_clusters,
         merge_sel=1,
     )
     draw_tree(
@@ -501,7 +507,7 @@ def community(
     - project_name/
         - results/
             - community_cohort/
-                - segmentation_algorithm-n_cluster/
+                - segmentation_algorithm-n_clusters/
                     - cohort_community_bag.npy
                     - cohort_community_label.npy
                     - cohort_segmentation_algorithm_label.npy
@@ -509,7 +515,7 @@ def community(
                     - hierarchy.pkl
             - file_name/
                 - model_name/
-                    - segmentation_algorithm-n_cluster/
+                    - segmentation_algorithm-n_clusters/
                         - community/
                             - cohort_community_label_file_name.npy
 
@@ -518,7 +524,7 @@ def community(
         - results/
             - file_name/
                 - model_name/
-                    - segmentation_algorithm-n_cluster/
+                    - segmentation_algorithm-n_clusters/
                         - community/
                             - transition_matrix_file_name.npy
                             - community_label_file_name.npy
@@ -667,18 +673,18 @@ def community(
             raise NotImplementedError(
                 "Community analysis for cohort=False is not supported yet."
             )
-        #     labels = get_labels(cfg, files, model_name, n_cluster, parametrization)
+        #     labels = get_labels(cfg, files, model_name, n_clusters, parametrization)
         #     transition_matrices = compute_transition_matrices(
         #         files,
         #         labels,
-        #         n_cluster,
+        #         n_clusters,
         #     )
         #     communities_all, trees = create_community_bag(
         #         files,
         #         labels,
         #         transition_matrices,
         #         cut_tree,
-        #         n_cluster,
+        #         n_clusters,
         #     )
         #     community_labels_all = get_community_labels_2(
         #         files,
@@ -692,7 +698,7 @@ def community(
         #             "results",
         #             file,
         #             model_name,
-        #             parametrization + "-" + str(n_cluster),
+        #             parametrization + "-" + str(n_clusterss),
         #             "",
         #         )
         #         if not os.path.exists(os.path.join(path_to_dir, "community")):
@@ -729,7 +735,7 @@ def community(
 #     labels: List[np.ndarray],
 #     transition_matrices: List[np.ndarray],
 #     cut_tree: int,
-#     n_cluster: int,
+#     n_clusters: int,
 # ) -> Tuple:
 #     """Create community bag for given files and labels (Markov chain to tree -> community detection).
 #     Args:
@@ -737,7 +743,7 @@ def community(
 #         labels (List[np.ndarray]): List of label arrays.
 #         transition_matrices (List[np.ndarray]): List of transition matrices.
 #         cut_tree (int): Cut line for tree.
-#         n_cluster (int): Number of clusters.
+#         n_clusters (int): Number of clusters.
 
 #     Returns:
 #         Tuple: Tuple containing list of community bags and list of trees.
@@ -746,7 +752,7 @@ def community(
 #     communities_all = []
 #     for i, file in enumerate(files):
 #         _, usage = np.unique(labels[i], return_counts=True)
-#         T = graph_to_tree(usage, transition_matrices[i], n_cluster, merge_sel=1)
+#         T = graph_to_tree(usage, transition_matrices[i], n_clusters, merge_sel=1)
 #         trees.append(T)
 
 #         if cut_tree is not None:

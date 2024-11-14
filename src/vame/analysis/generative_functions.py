@@ -21,7 +21,7 @@ def random_generative_samples_motif(
     model: torch.nn.Module,
     latent_vector: np.ndarray,
     labels: np.ndarray,
-    n_cluster: int,
+    n_clusters: int,
 ) -> plt.Figure:
     """
     Generate random samples for motifs.
@@ -36,7 +36,7 @@ def random_generative_samples_motif(
         Latent vectors.
     labels : np.ndarray
         Labels.
-    n_cluster : int
+    n_clusters : int
         Number of clusters.
 
     Returns:
@@ -46,7 +46,7 @@ def random_generative_samples_motif(
     """
     logger.info("Generate random generative samples for motifs...")
     time_window = cfg["time_window"]
-    for j in range(n_cluster):
+    for j in range(n_clusters):
 
         inds = np.where(labels == j)
         motif_latents = latent_vector[inds[0], :]

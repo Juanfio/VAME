@@ -170,7 +170,7 @@ def umap_label_vis(
         s=2,
         alpha=0.7,
     )
-    # plt.colorbar(boundaries=np.arange(n_cluster+1)-0.5).set_ticks(np.arange(n_cluster))
+    # plt.colorbar(boundaries=np.arange(n_clusters+1)-0.5).set_ticks(np.arange(n_clusters))
     plt.gca().set_aspect("equal", "datalim")
     plt.grid(False)
     return fig
@@ -231,7 +231,7 @@ def visualization(
         - results/
             - file_name/
                 - model_name/
-                    - segmentation_algorithm-n_cluster/
+                    - segmentation_algorithm-n_clusters/
                         - community/
                             - umap_embedding_file_name.npy
                             - umap_vis_label_none_file_name.png  (UMAP visualization without labels)

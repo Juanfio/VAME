@@ -178,7 +178,7 @@ def motif_videos(
         - results/
             - session/
                 - model_name/
-                    - segmentation_algorithm-n_cluster/
+                    - segmentation_algorithm-n_clusters/
                         - cluster_videos/
                             - session-motif_0.mp4
                             - session-motif_1.mp4
@@ -292,7 +292,7 @@ def community_videos(
         - results/
             - file_name/
                 - model_name/
-                    - segmentation_algorithm-n_cluster/
+                    - segmentation_algorithm-n_clusters/
                         - community_videos/
                             - file_name-community_0.mp4
                             - file_name-community_1.mp4
