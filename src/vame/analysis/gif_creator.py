@@ -10,7 +10,7 @@ from vame.util.auxiliary import read_config
 from vame.util.gif_pose_helper import get_animal_frames
 from typing import List, Tuple
 from vame.logging.logger import VameLogger
-from vame.schemas.project import Parametrizations
+from vame.schemas.project import SegmentationAlgorithms
 
 
 logger_config = VameLogger(__name__)
@@ -106,7 +106,7 @@ def create_video(
 def gif(
     config: str,
     pose_ref_index: int,
-    parametrization: Parametrizations,
+    segmentation_algorithm: SegmentationAlgorithms,
     subtract_background: bool = True,
     start: int | None = None,
     length: int = 500,
@@ -123,6 +123,8 @@ def gif(
         Path to the configuration file.
     pose_ref_index : int
         Pose reference index.
+    segmentation_algorithm : SegmentationAlgorithms
+        Segmentation algorithm.
     subtract_background : bool, optional
         Whether to subtract background. Defaults to True.
     start :int, optional
@@ -143,12 +145,12 @@ def gif(
     None
     """
     config_file = Path(config).resolve()
-    cfg = read_config(config_file)
+    cfg = read_config(str(config_file))
     model_name = cfg["model_name"]
     n_cluster = cfg["n_cluster"]
 
-    if parametrization not in cfg["parametrizations"]:
-        raise ValueError("Parametrization not found in config")
+    if segmentation_algorithm not in cfg["segmentation_algorithms"]:
+        raise ValueError("Segmentation algorithm not found in config")
 
     files = []
     if cfg["all_data"] == "No":
@@ -180,7 +182,7 @@ def gif(
             "results",
             file,
             model_name,
-            parametrization + "-" + str(n_cluster),
+            segmentation_algorithm + "-" + str(n_cluster),
             "",
         )
         if not os.path.exists(os.path.join(path_to_file, "gif_frames")):
@@ -237,7 +239,7 @@ def gif(
             umap_label = np.load(
                 os.path.join(
                     path_to_file,
-                    str(n_cluster) + "_" + parametrization + "_label_" + file + ".npy",
+                    str(n_cluster) + "_" + segmentation_algorithm + "_label_" + file + ".npy",
                 )
             )
         elif label == "community":

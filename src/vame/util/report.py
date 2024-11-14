@@ -4,12 +4,11 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 
 from vame.util.auxiliary import read_config
-from vame.schemas.project import Parametrizations
 
 
 def report(
     config: str,
-    parametrization: str = "hmm",
+    segmentation_algorithm: str = "hmm",
 ) -> None:
     """
     Report for a project.
@@ -40,7 +39,7 @@ def report(
 
     ml = np.load(
         project_path
-        / f"results/community_cohort/{parametrization}-{n_clusters}/cohort_{parametrization}_label.npy",
+        / f"results/community_cohort/{segmentation_algorithm}-{n_clusters}/cohort_{segmentation_algorithm}_label.npy",
         allow_pickle=True,
     )
     motif_labels = dict()
@@ -50,7 +49,7 @@ def report(
 
     cl = np.load(
         project_path
-        / f"results/community_cohort/{parametrization}-{n_clusters}/cohort_community_label.npy",
+        / f"results/community_cohort/{segmentation_algorithm}-{n_clusters}/cohort_community_label.npy",
         allow_pickle=True,
     )
     community_labels = dict()
@@ -60,7 +59,7 @@ def report(
 
     community_bag = np.load(
         project_path
-        / f"results/community_cohort/{parametrization}-{n_clusters}/cohort_community_bag.npy",
+        / f"results/community_cohort/{segmentation_algorithm}-{n_clusters}/cohort_community_bag.npy",
         allow_pickle=True,
     )
 
@@ -83,7 +82,7 @@ def report(
 
         fml = np.load(
             project_path
-            / f"results/{file_name}/VAME/{parametrization}-{n_clusters}/{n_clusters}_{parametrization}_label_{file_name}.npy",
+            / f"results/{file_name}/VAME/{segmentation_algorithm}-{n_clusters}/{n_clusters}_{segmentation_algorithm}_label_{file_name}.npy",
             allow_pickle=True,
         )
         file_motif_labels = dict()
@@ -93,7 +92,7 @@ def report(
 
         fcl = np.load(
             project_path
-            / f"results/{file_name}/VAME/{parametrization}-{n_clusters}/community/cohort_community_label_{file_name}.npy",
+            / f"results/{file_name}/VAME/{segmentation_algorithm}-{n_clusters}/community/cohort_community_label_{file_name}.npy",
             allow_pickle=True,
         )
         file_community_labels = dict()

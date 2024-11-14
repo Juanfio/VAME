@@ -7,7 +7,7 @@ from typing import Optional, Union
 from vame.util.auxiliary import read_config
 from vame.schemas.states import VisualizationFunctionSchema, save_state
 from vame.logging.logger import VameLogger
-from vame.schemas.project import Parametrizations
+from vame.schemas.project import SegmentationAlgorithms
 
 
 logger_config = VameLogger(__name__)
@@ -19,7 +19,7 @@ def umap_embedding(
     file: str,
     model_name: str,
     n_cluster: int,
-    parametrization: str,
+    segmentation_algorithm: SegmentationAlgorithms,
 ) -> np.ndarray:
     """
     Perform UMAP embedding for given file and parameters.
@@ -34,8 +34,8 @@ def umap_embedding(
         Model name.
     n_cluster : int
         Number of clusters.
-    parametrization : str
-        parametrization.
+    segmentation_algorithm : str
+        Segmentation algorithm.
 
     Returns
     -------
@@ -54,7 +54,7 @@ def umap_embedding(
         "results",
         file,
         model_name,
-        parametrization + "-" + str(n_cluster),
+        segmentation_algorithm + "-" + str(n_cluster),
         "",
     )
     latent_vector = np.load(os.path.join(folder, "latent_vector_" + file + ".npy"))
@@ -220,7 +220,7 @@ def umap_vis_comm(
 @save_state(model=VisualizationFunctionSchema)
 def visualization(
     config: Union[str, Path],
-    parametrization: Parametrizations,
+    segmentation_algorithm: SegmentationAlgorithms,
     label: Optional[str] = None,
     save_logs: bool = False,
 ) -> None:
@@ -234,7 +234,7 @@ def visualization(
         - results/
             - file_name/
                 - model_name/
-                    - parametrization-n_cluster/
+                    - segmentation_algorithm-n_cluster/
                         - community/
                             - umap_embedding_file_name.npy
                             - umap_vis_label_none_file_name.png  (UMAP visualization without labels)
@@ -245,8 +245,8 @@ def visualization(
     ----------
     config : Union[str, Path]
         Path to the configuration file.
-    parametrization : Parametrizations
-        Which parametrization to use. Options are 'hmm' or 'kmeans'.
+    segmentation_algorithm : SegmentationAlgorithms
+        Which segmentation algorithm to use. Options are 'hmm' or 'kmeans'.
     label : str, optional
         Type of labels to visualize. Options are None, 'motif' or 'community'. Default is None.
     save_logs : bool, optional
@@ -259,7 +259,6 @@ def visualization(
     try:
         config_file = Path(config).resolve()
         cfg = read_config(str(config_file))
-        # parametrizations = cfg["parametrizations"]
 
         if save_logs:
             logs_path = Path(cfg["project_path"]) / "logs" / "visualization.log"
@@ -300,7 +299,7 @@ def visualization(
                 "",
                 model_name,
                 "",
-                parametrization + "-" + str(n_cluster),
+                segmentation_algorithm + "-" + str(n_cluster),
             )
 
             try:
@@ -325,7 +324,7 @@ def visualization(
                     file,
                     model_name,
                     n_cluster,
-                    parametrization,
+                    segmentation_algorithm,
                 )
                 num_points = cfg["num_points"]
                 if num_points > embed.shape[0]:
@@ -347,7 +346,7 @@ def visualization(
                         "",
                         str(n_cluster)
                         + "_"
-                        + parametrization
+                        + segmentation_algorithm
                         + "_label_"
                         + file
                         + ".npy",

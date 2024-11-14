@@ -16,9 +16,9 @@ def create_config_template() -> Tuple[dict, ruamel.yaml.YAML]:
     """
     yaml_str = """\
 # Project configurations
-    Project:
+    project_name:
     model_name:
-    n_cluster:
+    n_clusters:
     pose_confidence:
     \n
 # Project path and videos
@@ -64,10 +64,10 @@ def create_config_template() -> Tuple[dict, ruamel.yaml.YAML]:
     softplus:
     \n
 # Segmentation:
-    parametrization:
+    segmentation_algorithms:
     hmm_trained: False
     load_data:
-    individual_parametrization:
+    individual_segmentation:
     random_state_kmeans:
     n_init_kmeans:
     \n
@@ -80,6 +80,7 @@ def create_config_template() -> Tuple[dict, ruamel.yaml.YAML]:
     random_state:
     num_points:
     \n
+#---------------------------------------------------------------
 # ONLY CHANGE ANYTHING BELOW IF YOU ARE FAMILIAR WITH RNN MODELS
 # RNN encoder hyperparamter:
     hidden_size_layer_1:

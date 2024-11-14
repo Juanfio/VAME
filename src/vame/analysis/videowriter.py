@@ -12,7 +12,7 @@ from vame.schemas.states import (
 )
 import imageio
 from vame.logging.logger import VameLogger, TqdmToLogger
-from vame.schemas.project import Parametrizations
+from vame.schemas.project import SegmentationAlgorithms
 
 
 logger_config = VameLogger(__name__)
@@ -20,13 +20,13 @@ logger = logger_config.logger
 
 
 def get_cluster_vid(
-    cfg: dict,
+    config: dict,
     path_to_file: str,
     file: str,
     n_cluster: int,
     videoType: str,
     flag: str,
-    param: Parametrizations,
+    segmentation_algorithm: SegmentationAlgorithms,
     cohort: bool = True,
     output_video_type: str = ".mp4",
     tqdm_logger_stream: Union[TqdmToLogger, None] = None,
@@ -36,7 +36,7 @@ def get_cluster_vid(
 
     Parameters
     ----------
-    cfg : dict
+    config : dict
         Configuration parameters.
     path_to_file : str
         Path to the file.
@@ -48,8 +48,8 @@ def get_cluster_vid(
         Type of input video.
     flag : str
         Flag indicating the type of video (motif or community).
-    param : Parametrizations
-        Which parametrization to use. Options are 'hmm' or 'kmeans'.
+    segmentation_algorithm : SegmentationAlgorithms
+        Which segmentation algorithm to use. Options are 'hmm' or 'kmeans'.
     cohort : bool, optional
         Flag indicating cohort analysis. Defaults to True.
     output_video_type : str, optional
@@ -68,7 +68,7 @@ def get_cluster_vid(
         logger.info("Motif videos getting created for " + file + " ...")
         labels = np.load(
             os.path.join(
-                path_to_file, str(n_cluster) + "_" + param + "_label_" + file + ".npy"
+                path_to_file, str(n_cluster) + "_" + segmentation_algorithm + "_label_" + file + ".npy"
             )
         )
     if flag == "community":
@@ -91,15 +91,17 @@ def get_cluster_vid(
                 )
             )
 
-    video_file_path = os.path.join(cfg["project_path"], "videos", file + videoType)
+    video_file_path = os.path.join(config["project_path"], "videos", file + videoType)
     capture = cv.VideoCapture(video_file_path)
     if not capture.isOpened():
-        raise ValueError(f"Video capture could not be opened. Ensure the video file is valid.\n {video_file_path}")
+        raise ValueError(
+            f"Video capture could not be opened. Ensure the video file is valid.\n {video_file_path}"
+        )
     width = capture.get(cv.CAP_PROP_FRAME_WIDTH)
     height = capture.get(cv.CAP_PROP_FRAME_HEIGHT)
     fps = 25  # capture.get(cv.CAP_PROP_FPS)
 
-    cluster_start = cfg["time_window"] / 2
+    cluster_start = config["time_window"] / 2
     unique_labels, count_labels = np.unique(labels, return_counts=True)
 
     for cluster in unique_labels:
@@ -134,10 +136,10 @@ def get_cluster_vid(
                 macro_block_size=None,
             )
 
-        if len(cluster_lbl) < cfg["length_of_motif_video"]:
+        if len(cluster_lbl) < config["length_of_motif_video"]:
             vid_length = len(cluster_lbl)
         else:
-            vid_length = cfg["length_of_motif_video"]
+            vid_length = config["length_of_motif_video"]
 
         for num in tqdm.tqdm(range(vid_length), file=tqdm_logger_stream):
             idx = cluster_lbl[num]
@@ -157,7 +159,7 @@ def get_cluster_vid(
 @save_state(model=MotifVideosFunctionSchema)
 def motif_videos(
     config: Union[str, Path],
-    parametrization: Parametrizations,
+    segmentation_algorithm: SegmentationAlgorithms,
     videoType: str = ".mp4",
     output_video_type: str = ".mp4",
     save_logs: bool = False,
@@ -170,7 +172,7 @@ def motif_videos(
         - results/
             - file_name/
                 - model_name/
-                    - parametrization-n_cluster/
+                    - segmentation_algorithm-n_cluster/
                         - cluster_videos/
                             - file_name-motif_0.mp4
                             - file_name-motif_1.mp4
@@ -180,8 +182,8 @@ def motif_videos(
     ----------
     config : Union[str, Path]
         Path to the configuration file.
-    parametrization : Parametrizations
-        Which parametrization to use. Options are 'hmm' or 'kmeans'.
+    segmentation_algorithm : SegmentationAlgorithms
+        Which segmentation algorithm to use. Options are 'hmm' or 'kmeans'.
     videoType : str, optional
         Type of video. Default is '.mp4'.
     output_video_type : str, optional
@@ -197,7 +199,6 @@ def motif_videos(
         tqdm_logger_stream = None
         config_file = Path(config).resolve()
         cfg = read_config(str(config_file))
-        # parametrizations = cfg["parametrizations"]
 
         if save_logs:
             log_path = Path(cfg["project_path"]) / "logs" / "motif_videos.log"
@@ -207,7 +208,7 @@ def motif_videos(
         n_cluster = cfg["n_cluster"]
         flag = "motif"
 
-        logger.info(f"Creating motif videos for parametrization: {parametrization}...")
+        logger.info(f"Creating motif videos for algorithm: {segmentation_algorithm}...")
         files = []
         if cfg["all_data"] == "No":
             all_flag = input(
@@ -239,7 +240,7 @@ def motif_videos(
                 "results",
                 file,
                 model_name,
-                parametrization + "-" + str(n_cluster),
+                segmentation_algorithm + "-" + str(n_cluster),
                 "",
             )
             if not os.path.exists(os.path.join(path_to_file, "cluster_videos")):
@@ -252,7 +253,7 @@ def motif_videos(
                 n_cluster,
                 videoType,
                 flag,
-                parametrization,
+                segmentation_algorithm,
                 output_video_type=output_video_type,
                 tqdm_logger_stream=tqdm_logger_stream,
             )
@@ -267,7 +268,7 @@ def motif_videos(
 @save_state(model=CommunityVideosFunctionSchema)
 def community_videos(
     config: Union[str, Path],
-    parametrization: Parametrizations,
+    segmentation_algorithm: SegmentationAlgorithms,
     cohort: bool = True,
     videoType: str = ".mp4",
     save_logs: bool = False,
@@ -286,7 +287,7 @@ def community_videos(
         - results/
             - file_name/
                 - model_name/
-                    - parametrization-n_cluster/
+                    - segmentation_algorithm-n_cluster/
                         - community_videos/
                             - file_name-community_0.mp4
                             - file_name-community_1.mp4
@@ -296,8 +297,8 @@ def community_videos(
     -----------
     config : Union[str, Path]
         Path to the configuration file.
-    parametrization : Parametrizations
-        Which parametrization to use. Options are 'hmm' or 'kmeans'.
+    segmentation_algorithm : SegmentationAlgorithms
+        Which segmentation algorithm to use. Options are 'hmm' or 'kmeans'.
     cohort : bool, optional
         Flag indicating cohort analysis. Defaults to True.
     videoType : str, optional
@@ -315,7 +316,6 @@ def community_videos(
         tqdm_logger_stream = None
         config_file = Path(config).resolve()
         cfg = read_config(str(config_file))
-        # parametrizations = cfg["parametrizations"]
 
         if save_logs:
             log_path = Path(cfg["project_path"]) / "logs" / "community_videos.log"
@@ -356,21 +356,21 @@ def community_videos(
                 "results",
                 file,
                 model_name,
-                parametrization + "-" + str(n_cluster),
+                segmentation_algorithm + "-" + str(n_cluster),
                 "",
             )
             if not os.path.exists(os.path.join(path_to_file, "community_videos")):
                 os.mkdir(os.path.join(path_to_file, "community_videos"))
 
             get_cluster_vid(
-                cfg=cfg,
+                config=cfg,
                 path_to_file=path_to_file,
                 file=file,
                 cohort=cohort,
                 n_cluster=n_cluster,
                 videoType=videoType,
                 flag=flag,
-                param=parametrization,
+                segmentation_algorithm=segmentation_algorithm,
                 tqdm_logger_stream=tqdm_logger_stream,
                 output_video_type=output_video_type,
             )

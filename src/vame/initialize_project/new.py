@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 import shutil
-from datetime import datetime as dt
+from datetime import datetime, timezone
 from vame.util.auxiliary import write_config
 from typing import List, Optional
 from vame.schemas.project import ProjectSchema, PoseEstimationFiletype
@@ -15,7 +15,7 @@ logger = logger_config.logger
 
 
 def init_new_project(
-    project: str,
+    project_name: str,
     videos: List[str],
     poses_estimations: List[str],
     working_directory: str = ".",
@@ -51,7 +51,7 @@ def init_new_project(
 
     Parameters:
     ----------
-    project : str
+    project_name : str
         Project name.
     videos : List[str]
         List of videos paths to be used in the project. E.g. ['./sample_data/Session001.mp4']
@@ -73,18 +73,8 @@ def init_new_project(
     projconfigfile : str
         Path to the new vame project config file.
     """
-
-    date = dt.today()
-    month = date.strftime("%B")
-    day = date.day
-    year = date.year
-    d = str(month[0:3] + str(day))
-    date = dt.today().strftime("%Y-%m-%d")
-
-    wd = Path(working_directory).resolve()
-    project_name = "{pn}-{date}".format(pn=project, date=d + "-" + str(year))
-
-    project_path = wd / project_name
+    creation_datetime = datetime.now(timezone.utc).isoformat(timespec='seconds')
+    project_path = Path(working_directory).resolve() / project_name
     if project_path.exists():
         logger.info('Project "{}" already exists!'.format(project_path))
         projconfigfile = os.path.join(str(project_path), "config.yaml")
@@ -202,17 +192,17 @@ def init_new_project(
         config_kwargs = {}
 
     new_project = ProjectSchema(
-        Project=str(project),
+        project_name=project_name,
+        creation_datetime=creation_datetime,
         project_path=str(project_path),
         video_sets=video_names,
         pose_estimation_filetype=pose_estimation_filetype,
         paths_to_pose_nwb_series_data=paths_to_pose_nwb_series_data,
         **config_kwargs,
     )
-    cfg_data = new_project.model_dump()
-
-    projconfigfile = os.path.join(str(project_path), "config.yaml")
     # Write dictionary to yaml  config file
+    cfg_data = new_project.model_dump()
+    projconfigfile = os.path.join(str(project_path), "config.yaml")
     write_config(projconfigfile, cfg_data)
 
     vame_pipeline_default_schema = VAMEPipelineStatesSchema()

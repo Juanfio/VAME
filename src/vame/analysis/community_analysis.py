@@ -14,7 +14,7 @@ from vame.util.data_manipulation import consecutive
 from typing import List, Tuple
 from vame.schemas.states import save_state, CommunityFunctionSchema
 from vame.logging.logger import VameLogger
-from vame.schemas.project import Parametrizations
+from vame.schemas.project import SegmentationAlgorithms
 
 
 logger_config = VameLogger(__name__)
@@ -210,7 +210,7 @@ def get_motif_labels(
     files: List[str],
     model_name: str,
     n_clusters: int,
-    parametrization: str,
+    segmentation_algorithm: str,
 ) -> np.ndarray:
     """
     Get motif labels for given files.
@@ -225,8 +225,8 @@ def get_motif_labels(
         Model name.
     n_clusters : int
         Number of clusters.
-    parametrization : str
-        Which parametrization to use. Options are 'hmm' or 'kmeans'.
+    segmentation_algorithm : str
+        Which segmentation algorithm to use. Options are 'hmm' or 'kmeans'.
 
     Returns
     -------
@@ -242,13 +242,18 @@ def get_motif_labels(
             "results",
             file,
             model_name,
-            parametrization + "-" + str(n_clusters),
+            segmentation_algorithm + "-" + str(n_clusters),
             "",
         )
         file_labels = np.load(
             os.path.join(
                 path_to_dir,
-                str(n_clusters) + "_" + parametrization + "_label_" + file + ".npy",
+                str(n_clusters)
+                + "_"
+                + segmentation_algorithm
+                + "_label_"
+                + file
+                + ".npy",
             )
         )
         shape = len(file_labels)
@@ -263,13 +268,18 @@ def get_motif_labels(
             "results",
             file,
             model_name,
-            parametrization + "-" + str(n_clusters),
+            segmentation_algorithm + "-" + str(n_clusters),
             "",
         )
         file_labels = np.load(
             os.path.join(
                 path_to_dir,
-                str(n_clusters) + "_" + parametrization + "_label_" + file + ".npy",
+                str(n_clusters)
+                + "_"
+                + segmentation_algorithm
+                + "_label_"
+                + file
+                + ".npy",
             )
         )[:min_frames]
         community_label.extend(file_labels)
@@ -434,7 +444,7 @@ def save_cohort_community_labels_per_file(
     files: List[str],
     model_name: str,
     n_clusters: int,
-    parametrization: str,
+    segmentation_algorithm: str,
     cohort_community_bag: list,
 ) -> None:
 
@@ -444,13 +454,18 @@ def save_cohort_community_labels_per_file(
             "results",
             file,
             model_name,
-            parametrization + "-" + str(n_clusters),
+            segmentation_algorithm + "-" + str(n_clusters),
             "",
         )
         file_labels = np.load(
             os.path.join(
                 path_to_dir,
-                str(n_clusters) + "_" + parametrization + "_label_" + file + ".npy",
+                str(n_clusters)
+                + "_"
+                + segmentation_algorithm
+                + "_label_"
+                + file
+                + ".npy",
             )
         )
         community_labels = get_cohort_community_labels(
@@ -472,7 +487,7 @@ def save_cohort_community_labels_per_file(
 @save_state(model=CommunityFunctionSchema)
 def community(
     config: str,
-    parametrization: Parametrizations,
+    segmentation_algorithm: SegmentationAlgorithms,
     cohort: bool = True,
     cut_tree: int | None = None,
     save_logs: bool = False,
@@ -486,15 +501,15 @@ def community(
     - project_name/
         - results/
             - community_cohort/
-                - parametrization-n_cluster/
+                - segmentation_algorithm-n_cluster/
                     - cohort_community_bag.npy
                     - cohort_community_label.npy
-                    - cohort_parametrization_label.npy
+                    - cohort_segmentation_algorithm_label.npy
                     - cohort_transition_matrix.npy
                     - hierarchy.pkl
             - file_name/
                 - model_name/
-                    - parametrization-n_cluster/
+                    - segmentation_algorithm-n_cluster/
                         - community/
                             - cohort_community_label_file_name.npy
 
@@ -503,7 +518,7 @@ def community(
         - results/
             - file_name/
                 - model_name/
-                    - parametrization-n_cluster/
+                    - segmentation_algorithm-n_cluster/
                         - community/
                             - transition_matrix_file_name.npy
                             - community_label_file_name.npy
@@ -513,8 +528,8 @@ def community(
     ----------
     config : str
         Path to the configuration file.
-    parametrization : Parametrizations
-        Which parametrization to use. Options are 'hmm' or 'kmeans'.
+    segmentation_algorithm : SegmentationAlgorithms
+        Which segmentation algorithm to use. Options are 'hmm' or 'kmeans'.
     cohort : bool, optional
         Flag indicating cohort analysis. Defaults to True.
     cut_tree : int, optional
@@ -529,7 +544,6 @@ def community(
     try:
         config_file = Path(config).resolve()
         cfg = read_config(str(config_file))
-        # parametrizations = cfg["parametrizations"]
 
         if save_logs:
             log_path = Path(cfg["project_path"]) / "logs" / "community.log"
@@ -567,7 +581,7 @@ def community(
                     cfg["project_path"],
                     "results",
                     "community_cohort",
-                    parametrization + "-" + str(n_cluster),
+                    segmentation_algorithm + "-" + str(n_cluster),
                 )
             )
 
@@ -579,7 +593,7 @@ def community(
                 files=files,
                 model_name=model_name,
                 n_clusters=n_cluster,
-                parametrization=parametrization,
+                segmentation_algorithm=segmentation_algorithm,
             )
             augmented_labels, motifs_with_zero_counts = augment_motif_timeseries(
                 labels=motif_labels,
@@ -604,21 +618,31 @@ def community(
             cohort_community_bag = np.array(cohort_community_bag, dtype=object)
 
             np.save(
-                os.path.join(path_to_dir, "cohort_transition_matrix" + ".npy"),
+                os.path.join(
+                    path_to_dir,
+                    "cohort_transition_matrix" + ".npy",
+                ),
                 trans_mat_full,
             )
             np.save(
-                os.path.join(path_to_dir, "cohort_community_label" + ".npy"),
+                os.path.join(
+                    path_to_dir,
+                    "cohort_community_label" + ".npy",
+                ),
                 community_labels_all,
             )
             np.save(
                 os.path.join(
-                    path_to_dir, "cohort_" + parametrization + "_label" + ".npy"
+                    path_to_dir,
+                    "cohort_" + segmentation_algorithm + "_label" + ".npy",
                 ),
                 motif_labels,
             )
             np.save(
-                os.path.join(path_to_dir, "cohort_community_bag" + ".npy"),
+                os.path.join(
+                    path_to_dir,
+                    "cohort_community_bag" + ".npy",
+                ),
                 cohort_community_bag,
             )
             with open(
@@ -634,7 +658,7 @@ def community(
                 files=files,
                 model_name=model_name,
                 n_clusters=n_cluster,
-                parametrization=parametrization,
+                segmentation_algorithm=segmentation_algorithm,
                 cohort_community_bag=cohort_community_bag,
             )
 

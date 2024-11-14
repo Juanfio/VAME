@@ -9,7 +9,7 @@ from vame.util.auxiliary import read_config
 from vame.logging.logger import VameLogger
 from typing import Dict
 from vame.util.model_util import load_model
-from vame.schemas.project import Parametrizations
+from vame.schemas.project import SegmentationAlgorithms
 
 
 logger_config = VameLogger(__name__)
@@ -228,10 +228,10 @@ def visualize_cluster_center(
 @save_state(model=GenerativeModelFunctionSchema)
 def generative_model(
     config: str,
-    parametrization: Parametrizations,
+    segmentation_algorithm: SegmentationAlgorithms,
     mode: str = "sampling",
     save_logs: bool = False,
-) -> Dict[str, plt.Figure]:
+) -> plt.Figure:
     """
     Generative model.
 
@@ -244,19 +244,18 @@ def generative_model(
 
     Returns:
     --------
-    Dict[str, plt.Figure]
-        Plots of generated samples for each parametrization.
+    plt.Figure
+        Plots of generated samples for each segmentation algorithm.
     """
     try:
-        config_file = Path(config).resolve()
+        config_file = str(Path(config).resolve())
         cfg = read_config(config_file)
         if save_logs:
             logs_path = Path(cfg["project_path"]) / "logs" / "generative_model.log"
-            logger_config.add_file_handler(logs_path)
+            logger_config.add_file_handler(str(logs_path))
         logger.info(f"Running generative model with mode {mode}...")
         model_name = cfg["model_name"]
         n_cluster = cfg["n_cluster"]
-        parametrizations = cfg["parametrizations"]
 
         files = []
         if cfg["all_data"] == "No":
@@ -290,7 +289,7 @@ def generative_model(
                 "results",
                 file,
                 model_name,
-                parametrization + "-" + str(n_cluster),
+                segmentation_algorithm + "-" + str(n_cluster),
                 "",
             )
 
@@ -298,23 +297,35 @@ def generative_model(
                 latent_vector = np.load(
                     os.path.join(path_to_file, "latent_vector_" + file + ".npy")
                 )
-                return random_generative_samples(cfg, model, latent_vector)
+                return random_generative_samples(
+                    cfg,
+                    model,
+                    latent_vector,
+                )
 
             if mode == "reconstruction":
                 latent_vector = np.load(
                     os.path.join(path_to_file, "latent_vector_" + file + ".npy")
                 )
-                return random_reconstruction_samples(cfg, model, latent_vector)
+                return random_reconstruction_samples(
+                    cfg,
+                    model,
+                    latent_vector,
+                )
 
             if mode == "centers":
-                if parametrization != "kmeans":
+                if segmentation_algorithm != "kmeans":
                     raise ValueError(
-                        f"Parametrization {parametrization} not supported for cluster center visualization."
+                        f"Algorithm {segmentation_algorithm} not supported for cluster center visualization."
                     )
                 cluster_center = np.load(
                     os.path.join(path_to_file, "cluster_center_" + file + ".npy")
                 )
-                return visualize_cluster_center(cfg, model, cluster_center)
+                return visualize_cluster_center(
+                    cfg,
+                    model,
+                    cluster_center,
+                )
 
             if mode == "motifs":
                 latent_vector = np.load(
@@ -326,7 +337,7 @@ def generative_model(
                         "",
                         str(n_cluster)
                         + "_"
-                        + parametrization
+                        + segmentation_algorithm
                         + "_label_"
                         + file
                         + ".npy",

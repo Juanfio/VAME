@@ -122,15 +122,15 @@ def get_motif_usage(session_labels: np.ndarray, n_cluster: int) -> np.ndarray:
     return motif_usage
 
 
-def same_parametrization(
+def same_segmentation(
     cfg: dict,
     files: List[str],
     latent_vector_files: List[np.ndarray],
     states: int,
-    parametrization: str,
+    segmentation_algorithm: str,
 ) -> Tuple[List[np.ndarray], List[np.ndarray], List[np.ndarray]]:
     """
-    Apply the same parametrization to all animals.
+    Apply the same segmentation to all animals.
 
     Parameters
     ----------
@@ -142,8 +142,8 @@ def same_parametrization(
         List of latent vector arrays.
     states : int
         Number of states.
-    parametrization : str
-        parametrization method.
+    segmentation_algorithm : str
+        Segmentation algorithm.
 
     Returns
     -------
@@ -156,8 +156,8 @@ def same_parametrization(
     motif_usages = []  # List of arrays containing each session's motif usages
 
     latent_vector_cat = np.concatenate(latent_vector_files, axis=0)
-    if parametrization == "kmeans":
-        logger.info("Using kmeans as parametrization!")
+    if segmentation_algorithm == "kmeans":
+        logger.info("Using kmeans as segmentation algorithm!")
         kmeans = KMeans(
             init="k-means++",
             n_clusters=states,
@@ -168,9 +168,9 @@ def same_parametrization(
         # 1D, vector of all labels for the entire cohort
         label = kmeans.predict(latent_vector_cat)
 
-    elif parametrization == "hmm":
+    elif segmentation_algorithm == "hmm":
         if not cfg["hmm_trained"]:
-            logger.info("Using a HMM as parametrization!")
+            logger.info("Using a HMM as segmentation algorithm!")
             hmm_model = hmm.GaussianHMM(
                 n_components=states,
                 covariance_type="full",
@@ -182,7 +182,7 @@ def same_parametrization(
             with open(save_data + "hmm_trained.pkl", "wb") as file:
                 pickle.dump(hmm_model, file)
         else:
-            logger.info("Using a pretrained HMM as parametrization!")
+            logger.info("Using a pretrained HMM as segmentation algorithm!")
             save_data = os.path.join(cfg["project_path"], "results", "")
             with open(save_data + "hmm_trained.pkl", "rb") as file:
                 hmm_model = pickle.load(file)
@@ -193,7 +193,7 @@ def same_parametrization(
         logger.info(f"Getting motif usage for {file}")
         file_len = latent_vector_files[i].shape[0]  # stop index of the session
         labels.append(label[idx : idx + file_len])  # append session's label
-        if parametrization == "kmeans":
+        if segmentation_algorithm == "kmeans":
             cluster_centers.append(clust_center)
 
         # session's motif usage
@@ -204,14 +204,14 @@ def same_parametrization(
     return labels, cluster_centers, motif_usages
 
 
-def individual_parametrization(
+def individual_segmentation(
     cfg: dict,
     files: List[str],
     latent_vectors: List[np.ndarray],
     n_cluster: int,
 ) -> Tuple:
     """
-    Apply individual parametrization to each animal.
+    Apply individual segmentation to each session.
 
     Parameters
     ----------
@@ -309,26 +309,31 @@ def segment_session(
         model_name = cfg["model_name"]
         n_cluster = cfg["n_cluster"]
         fixed = cfg["egocentric_data"]
-        parametrizations = cfg["parametrizations"]
+        segmentation_algorithms = cfg["segmentation_algorithms"]
 
         logger.info("Pose segmentation for VAME model: %s \n" % model_name)
-        ind_param = cfg["individual_parametrization"]
+        ind_seg = cfg["individual_segmentation"]
+        logger.info(f"Segmentation algorithms: {segmentation_algorithms}")
 
-        logger.info(f"parametrizations: {parametrizations}")
-
-        for parametrization in parametrizations:
-            logger.info(
-                f"Running pose segmentation using {parametrization} parametrization"
-            )
+        for seg in segmentation_algorithms:
+            logger.info(f"Running pose segmentation using {seg} algorithm...")
             for folders in cfg["video_sets"]:
                 if not os.path.exists(
                     os.path.join(
-                        cfg["project_path"], "results", folders, model_name, ""
+                        cfg["project_path"],
+                        "results",
+                        folders,
+                        model_name,
+                        "",
                     )
                 ):
                     os.mkdir(
                         os.path.join(
-                            cfg["project_path"], "results", folders, model_name, ""
+                            cfg["project_path"],
+                            "results",
+                            folders,
+                            model_name,
+                            "",
                         )
                     )
 
@@ -355,8 +360,6 @@ def segment_session(
                         continue
             else:
                 files.append(all_flag)
-            # files.append("mouse-3-1")
-            # file="mouse-3-1"
 
             use_gpu = torch.cuda.is_available()
             if use_gpu:
@@ -373,7 +376,7 @@ def segment_session(
                     "results",
                     file,
                     model_name,
-                    parametrization + "-" + str(n_cluster),
+                    seg + "-" + str(n_cluster),
                     "",
                 )
             ):
@@ -387,35 +390,34 @@ def segment_session(
                     tqdm_stream=tqdm_stream,
                 )
 
-                if not ind_param:
+                if ind_seg:
                     logger.info(
-                        "For all animals the same parametrization of latent vectors is applied for %d cluster"
+                        "Apply individual segmentation of latent vectors for each session, %d clusters"
                         % n_cluster
                     )
-                    labels, cluster_center, motif_usages = same_parametrization(
-                        cfg,
-                        files,
-                        latent_vectors,
-                        n_cluster,
-                        parametrization,
-                    )
-                else:
-                    logger.info(
-                        "Individual parametrization of latent vectors for %d cluster"
-                        % n_cluster
-                    )
-                    labels, cluster_center, motif_usages = individual_parametrization(
+                    labels, cluster_center, motif_usages = individual_segmentation(
                         cfg=cfg,
                         files=files,
                         latent_vectors=latent_vectors,
                         n_cluster=n_cluster,
                     )
+                else:
+                    logger.info(
+                        "Apply the same segmentation of latent vectors for all sessions, %d clusters"
+                        % n_cluster
+                    )
+                    labels, cluster_center, motif_usages = same_segmentation(
+                        cfg,
+                        files,
+                        latent_vectors,
+                        n_cluster,
+                        seg,
+                    )
 
             else:
                 logger.info(
                     "\n"
-                    "For model %s a latent vector embedding already exists. \n"
-                    "parametrization of latent vector with %d k-Means cluster"
+                    "Segmentation with %d k-means cluster already exists for model %s"
                     % (model_name, n_cluster)
                 )
 
@@ -425,13 +427,13 @@ def segment_session(
                         "results",
                         file,
                         model_name,
-                        parametrization + "-" + str(n_cluster),
+                        seg + "-" + str(n_cluster),
                         "",
                     )
                 ):
                     flag = input(
-                        "WARNING: A parametrization for the chosen cluster size of the model already exists! \n"
-                        "Do you want to continue? A new parametrization will be computed! (yes/no) "
+                        "WARNING: A segmentation for the chosen model and cluster size already exists! \n"
+                        "Do you want to continue? A new segmentation will be computed! (yes/no) "
                     )
                 else:
                     flag = "yes"
@@ -445,7 +447,7 @@ def segment_session(
                             "results",
                             file,
                             model_name,
-                            parametrization + "-" + str(n_cluster),
+                            seg + "-" + str(n_cluster),
                             "",
                         )
                         latent_vector = np.load(
@@ -455,35 +457,33 @@ def segment_session(
                         )
                         latent_vectors.append(latent_vector)
 
-                    if not ind_param:
+                    if ind_seg:
                         logger.info(
-                            "For all animals the same parametrization of latent vectors is applied for %d cluster"
+                            "Apply individual segmentation of latent vectors for each session, %d clusters"
                             % n_cluster
                         )
                         # [SRM, 10/28/24] rename to cluster_centers
-                        labels, cluster_center, motif_usages = same_parametrization(
+                        labels, cluster_center, motif_usages = individual_segmentation(
+                            cfg=cfg,
+                            files=files,
+                            latent_vectors=latent_vectors,
+                            n_cluster=n_cluster,
+                        )
+                    else:
+                        logger.info(
+                            "Apply the same segmentation of latent vectors for all sessions, %d clusters"
+                            % n_cluster
+                        )
+                        # [SRM, 10/28/24] rename to cluster_centers
+                        labels, cluster_center, motif_usages = same_segmentation(
                             cfg,
                             files,
                             latent_vectors,
                             n_cluster,
-                            parametrization,
-                        )
-                    else:
-                        logger.info(
-                            "Individual parametrization of latent vectors for %d cluster"
-                            % n_cluster
-                        )
-                        # [SRM, 10/28/24] rename to cluster_centers
-                        labels, cluster_center, motif_usages = (
-                            individual_parametrization(
-                                cfg=cfg,
-                                files=files,
-                                latent_vectors=latent_vectors,
-                                n_cluster=n_cluster,
-                            )
+                            seg,
                         )
                 else:
-                    logger.info("No new parametrization has been calculated.")
+                    logger.info("No new segmentation has been calculated.")
                     new = False
 
             if new:
@@ -496,7 +496,7 @@ def segment_session(
                             file,
                             "",
                             model_name,
-                            parametrization + "-" + str(n_cluster),
+                            seg + "-" + str(n_cluster),
                             "",
                         )
                     )
@@ -506,7 +506,7 @@ def segment_session(
                             "results",
                             file,
                             model_name,
-                            parametrization + "-" + str(n_cluster),
+                            seg + "-" + str(n_cluster),
                             "",
                         )
                     ):
@@ -518,7 +518,7 @@ def segment_session(
                                     file,
                                     "",
                                     model_name,
-                                    parametrization + "-" + str(n_cluster),
+                                    seg + "-" + str(n_cluster),
                                     "",
                                 )
                             )
@@ -530,17 +530,17 @@ def segment_session(
                         "results",
                         file,
                         model_name,
-                        parametrization + "-" + str(n_cluster),
+                        seg + "-" + str(n_cluster),
                         "",
                     )
                     np.save(
                         os.path.join(
                             save_data,
-                            str(n_cluster) + "_" + parametrization + "_label_" + file,
+                            str(n_cluster) + "_" + seg + "_label_" + file,
                         ),
                         labels[idx],
                     )
-                    if parametrization == "kmeans":
+                    if seg == "kmeans":
                         np.save(
                             os.path.join(save_data, "cluster_center_" + file),
                             cluster_center[idx],
