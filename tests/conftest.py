@@ -15,7 +15,7 @@ def init_project(
     paths_to_pose_nwb_series_data: Optional[List[str]] = None,
 ):
     config = vame.init_new_project(
-        project=project,
+        project_name=project,
         videos=videos,
         poses_estimations=poses_estimations,
         working_directory=working_directory,

@@ -27,13 +27,13 @@ def test_existing_project():
     working_directory = "./tests"
 
     config_path_creation = init_new_project(
-        project=project,
+        project_name=project,
         videos=videos,
         poses_estimations=poses_estimations,
         working_directory=working_directory,
     )
     config_path_duplicated = init_new_project(
-        project=project,
+        project_name=project,
         videos=videos,
         poses_estimations=poses_estimations,
         working_directory=working_directory,

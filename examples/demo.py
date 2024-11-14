@@ -10,7 +10,7 @@ poses_estimations = ["./video-1.csv"]
 
 # Step 1.1: Initialize your project
 config = vame.init_new_project(
-    project=project,
+    project_name=project,
     videos=videos,
     poses_estimations=poses_estimations,
     working_directory=working_directory,
