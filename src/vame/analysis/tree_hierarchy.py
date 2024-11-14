@@ -1,20 +1,8 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Variational Animal Motion Embedding 1.0-alpha Toolbox
-© K. Luxem & P. Bauer, Department of Cellular Neuroscience
-Leibniz Institute for Neurobiology, Magdeburg, Germany
-
-https://github.com/LINCellularNeuroscience/VAME
-Licensed under GNU General Public License v3.0
-"""
-
-
 import numpy as np
 import networkx as nx
 import random
 from matplotlib import pyplot as plt
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple
 
 
 def hierarchy_pos(
