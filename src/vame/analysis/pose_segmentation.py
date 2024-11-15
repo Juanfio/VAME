@@ -5,13 +5,15 @@ import pickle
 import numpy as np
 from pathlib import Path
 from typing import List, Tuple, Union
-from vame.util.data_manipulation import consecutive
 from hmmlearn import hmm
 from sklearn.cluster import KMeans
+
 from vame.schemas.states import save_state, SegmentSessionFunctionSchema
 from vame.logging.logger import VameLogger, TqdmToLogger
-from vame.util.auxiliary import read_config
 from vame.model.rnn_model import RNN_VAE
+from vame.util.auxiliary import read_config
+# from vame.util.data_manipulation import consecutive
+from vame.util.cli import get_sessions_from_user_input
 from vame.util.model_util import load_model
 
 
@@ -336,29 +338,14 @@ def segment_session(
                         )
                     )
 
-            sessions = []
-            if cfg["all_data"] == "No":
-                all_flag = input(
-                    "Do you want to quantify your entire dataset? \n"
-                    "If you only want to use a specific dataset type the session name: \n"
-                    "yes/no/session_name "
-                )
-            else:
-                all_flag = "yes"
-
-            if all_flag == "yes" or all_flag == "Yes":
+            # Get sessions
+            if cfg["all_data"] in ["Yes", "yes"]:
                 sessions = cfg["session_names"]
-            elif all_flag == "no" or all_flag == "No":
-                for session in cfg["session_names"]:
-                    use_session = input(
-                        "Do you want to quantify " + session + "? yes/no: "
-                    )
-                    if use_session == "yes":
-                        sessions.append(session)
-                    if use_session == "no":
-                        continue
             else:
-                sessions.append(all_flag)
+                sessions = get_sessions_from_user_input(
+                    cfg=cfg,
+                    action_message="run segmentation",
+                )
 
             use_gpu = torch.cuda.is_available()
             if use_gpu:

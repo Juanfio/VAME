@@ -4,6 +4,8 @@ import pickle
 import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
+from typing import List, Tuple
+
 from vame.util.auxiliary import read_config
 from vame.analysis.tree_hierarchy import (
     graph_to_tree,
@@ -11,7 +13,7 @@ from vame.analysis.tree_hierarchy import (
     bag_nodes_by_cutline,
 )
 from vame.util.data_manipulation import consecutive
-from typing import List, Tuple
+from vame.util.cli import get_sessions_from_user_input
 from vame.schemas.states import save_state, CommunityFunctionSchema
 from vame.logging.logger import VameLogger
 from vame.schemas.project import SegmentationAlgorithms
@@ -558,29 +560,16 @@ def community(
         model_name = cfg["model_name"]
         n_clusters = cfg["n_clusters"]
 
-        sessions = []
-        if cfg["all_data"] == "No":
-            all_flag = input(
-                "Do you want to write motif videos for your entire dataset? \n"
-                "If you only want to use a specific dataset type filename: \n"
-                "yes/no/filename "
-            )
+        # Get sessions
+        if cfg["all_data"] in ["Yes", "yes"]:
+            sessions = cfg["session_names"]
         else:
-            all_flag = "yes"
+            sessions = get_sessions_from_user_input(
+                cfg=cfg,
+                action_message="run community analysis",
+            )
 
-        if all_flag == "yes" or all_flag == "Yes":
-            for session in cfg["session_names"]:
-                sessions.append(session)
-        elif all_flag == "no" or all_flag == "No":
-            for session in cfg["session_names"]:
-                use_session = input("Do you want to quantify " + session + "? yes/no: ")
-                if use_session == "yes":
-                    sessions.append(session)
-                if use_session == "no":
-                    continue
-        # else:
-        #     files.append(all_flag)
-
+        # Run community analysis for cohort=True
         if cohort:
             path_to_dir = Path(
                 os.path.join(

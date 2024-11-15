@@ -6,9 +6,10 @@ import matplotlib.pyplot as plt
 from sklearn.mixture import GaussianMixture
 
 from vame.schemas.states import GenerativeModelFunctionSchema, save_state
-from vame.util.auxiliary import read_config
 from vame.logging.logger import VameLogger
+from vame.util.auxiliary import read_config
 from vame.util.model_util import load_model
+from vame.util.cli import get_sessions_from_user_input
 from vame.schemas.project import SegmentationAlgorithms
 
 
@@ -257,29 +258,14 @@ def generative_model(
         model_name = cfg["model_name"]
         n_clusters = cfg["n_clusters"]
 
-        sessions = []
-        if cfg["all_data"] == "No":
-            all_flag = input(
-                "Do you want to write motif videos for your entire dataset? \n"
-                "If you only want to use a specific dataset type filename: \n"
-                "yes/no/filename "
+        # Get sessions
+        if cfg["all_data"] in ["Yes", "yes"]:
+            sessions = cfg["session_names"]
+        else:
+            sessions = get_sessions_from_user_input(
+                cfg=cfg,
+                action_message="generate samples",
             )
-        else:
-            all_flag = "yes"
-
-        if all_flag == "yes" or all_flag == "Yes":
-            for session in cfg["session_names"]:
-                sessions.append(session)
-
-        elif all_flag == "no" or all_flag == "No":
-            for session in cfg["session_names"]:
-                use_session = input("Do you want to quantify " + session + "? yes/no: ")
-                if use_session == "yes":
-                    sessions.append(session)
-                if use_session == "no":
-                    continue
-        else:
-            sessions.append(all_flag)
 
         model = load_model(cfg, model_name, fixed=False)
 

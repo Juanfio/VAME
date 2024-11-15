@@ -6,9 +6,11 @@ from pathlib import Path
 import matplotlib
 from matplotlib import pyplot as plt
 from matplotlib.gridspec import GridSpec
+from typing import List, Tuple
+
 from vame.util.auxiliary import read_config
 from vame.util.gif_pose_helper import get_animal_frames
-from typing import List, Tuple
+from vame.util.cli import get_sessions_from_user_input
 from vame.logging.logger import VameLogger
 from vame.schemas.project import SegmentationAlgorithms
 
@@ -154,29 +156,14 @@ def gif(
     if segmentation_algorithm not in cfg["segmentation_algorithms"]:
         raise ValueError("Segmentation algorithm not found in config")
 
-    sessions = []
-    if cfg["all_data"] == "No":
-        all_flag = input(
-            "Do you want to write motif videos for your entire dataset? \n"
-            "If you only want to use a specific dataset type filename: \n"
-            "yes/no/filename "
+    # Get sessions
+    if cfg["all_data"] in ["Yes", "yes"]:
+        sessions = cfg["session_names"]
+    else:
+        sessions = get_sessions_from_user_input(
+            cfg=cfg,
+            action_message="create gifs",
         )
-    else:
-        all_flag = "yes"
-
-    if all_flag == "yes" or all_flag == "Yes":
-        for session in cfg["session_names"]:
-            sessions.append(session)
-
-    elif all_flag == "no" or all_flag == "No":
-        for session in cfg["session_names"]:
-            use_session = input("Do you want to quantify " + session + "? yes/no: ")
-            if use_session == "yes":
-                sessions.append(session)
-            if use_session == "no":
-                continue
-    else:
-        sessions.append(all_flag)
 
     for session in sessions:
         path_to_file = os.path.join(

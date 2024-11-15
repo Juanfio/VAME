@@ -4,7 +4,9 @@ import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
 from typing import Optional, Union
+
 from vame.util.auxiliary import read_config
+from vame.util.cli import get_sessions_from_user_input
 from vame.schemas.states import VisualizationFunctionSchema, save_state
 from vame.logging.logger import VameLogger
 from vame.schemas.project import SegmentationAlgorithms
@@ -264,27 +266,14 @@ def visualization(
         model_name = cfg["model_name"]
         n_clusters = cfg["n_clusters"]
 
-        sessions = []
-        if cfg["all_data"] == "No":
-            all_flag = input(
-                "Do you want to write motif videos for your entire dataset? \n"
-                "If you only want to use a specific dataset, type the session name: \n"
-                "yes/no/session_name "
-            )
-        else:
-            all_flag = "yes"
-
-        if all_flag == "yes" or all_flag == "Yes":
+        # Get sessions
+        if cfg["all_data"] in ["Yes", "yes"]:
             sessions = cfg["session_names"]
-        elif all_flag == "no" or all_flag == "No":
-            for session in cfg["session_names"]:
-                use_session = input("Do you want to quantify " + session + "? yes/no: ")
-                if use_session == "yes":
-                    sessions.append(session)
-                if use_session == "no":
-                    continue
         else:
-            sessions.append(all_flag)
+            sessions = get_sessions_from_user_input(
+                cfg=cfg,
+                action_message="generate visualization",
+            )
 
         for idx, session in enumerate(sessions):
             path_to_file = os.path.join(
