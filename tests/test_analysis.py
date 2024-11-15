@@ -319,6 +319,9 @@ def test_report(
         segmentation_algorithm=segmentation_algorithm,
     )
 
+    reports_path = Path(setup_project_and_train_model["project_path"]) / "reports"
+    assert len(list(reports_path.glob("*.png"))) > 0
+
 
 def test_generative_kmeans_wrong_mode(setup_project_and_train_model):
     with pytest.raises(ValueError):
