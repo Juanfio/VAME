@@ -90,16 +90,16 @@ def report(
     )
 
     # Per session file
-    for f in pose_estimation_files:
-        file_name = str(f.resolve()).split("/")[-1].split(".")[0]
+    for session in pose_estimation_files:
+        session = f.name.split(".")[0]
 
         fml = np.load(
             project_path
             / "results"
-            / f"{file_name}"
+            / f"{session}"
             / "VAME"
             / f"{segmentation_algorithm}-{n_clusters}"
-            / f"{n_clusters}_{segmentation_algorithm}_label_{file_name}.npy",
+            / f"{n_clusters}_{segmentation_algorithm}_label_{session}.npy",
             allow_pickle=True,
         )
         file_motif_labels = dict()
@@ -110,11 +110,11 @@ def report(
         fcl = np.load(
             project_path
             / "results"
-            / f"{file_name}"
+            / f"{session}"
             / "VAME"
             / f"{segmentation_algorithm}-{n_clusters}"
             / "community"
-            / f"cohort_community_label_{file_name}.npy",
+            / f"cohort_community_label_{session}.npy",
             allow_pickle=True,
         )
         file_community_labels = dict()
@@ -126,7 +126,7 @@ def report(
             file_motif_labels,
             file_community_labels,
             community_bag,
-            title=f"Community and Motif Counts - {file_name}",
+            title=f"Community and Motif Counts - {session}",
         )
 
 
