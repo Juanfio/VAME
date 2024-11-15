@@ -90,7 +90,7 @@ def report(
     )
 
     # Per session file
-    for session in pose_estimation_files:
+    for f in pose_estimation_files:
         session = f.name.split(".")[0]
 
         fml = np.load(
