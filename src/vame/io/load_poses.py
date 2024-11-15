@@ -38,17 +38,12 @@ def load_pose_estimation(
     return ds
 
 
-def load_vame_dataset(
-    config: dict,
-    ds_path: Path | str,
-) -> xr.Dataset:
+def load_vame_dataset(ds_path: Path | str) -> xr.Dataset:
     """
     Load VAME dataset.
 
     Parameters:
     -----------
-    config : dict
-        Configuration dictionary.
     ds_path : Path or str
         Path to the netCDF dataset.
 
