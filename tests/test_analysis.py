@@ -312,14 +312,11 @@ def test_report(
     setup_project_and_train_model,
     segmentation_algorithm,
 ):
-    from vame.util.report import report
-
-    report(
+    vame.report(
         config=setup_project_and_train_model["config_path"],
         segmentation_algorithm=segmentation_algorithm,
     )
-
-    reports_path = Path(setup_project_and_train_model["project_path"]) / "reports"
+    reports_path = Path(setup_project_and_train_model["config_data"]["project_path"]) / "reports"
     assert len(list(reports_path.glob("*.png"))) > 0
 
 
