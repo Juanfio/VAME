@@ -92,7 +92,10 @@ class VAMEPipeline:
         )
 
     def create_training_set(self):
-        vame.create_trainset(config=self.config_path, check_parameter=False)
+        vame.create_trainset(
+            config=self.config_path,
+            check_parameter=False,
+        )
 
     def train_model(self):
         vame.train_model(config=self.config_path)
@@ -105,7 +108,9 @@ class VAMEPipeline:
 
     def generate_motif_videos(self):
         vame.motif_videos(
-            config=self.config_path, video_type=".mp4", segmentation_algorithm="hmm"
+            config=self.config_path,
+            video_type=".mp4",
+            segmentation_algorithm="hmm",
         )
 
     def run_community_clustering(self):
@@ -118,7 +123,9 @@ class VAMEPipeline:
 
     def generate_community_videos(self):
         vame.community_videos(
-            config=self.config_path, video_type=".mp4", segmentation_algorithm="hmm"
+            config=self.config_path,
+            video_type=".mp4",
+            segmentation_algorithm="hmm",
         )
 
     def visualization(self):

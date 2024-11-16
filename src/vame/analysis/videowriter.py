@@ -102,7 +102,10 @@ def create_cluster_videos(
             )
 
     video_file_path = os.path.join(
-        config["project_path"], "videos", session + video_type
+        config["project_path"],
+        "data",
+        "raw",
+        session + video_type,
     )
     capture = cv.VideoCapture(video_file_path)
     if not capture.isOpened():
