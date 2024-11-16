@@ -350,7 +350,7 @@ def alignment(
 @save_state(model=EgocentricAlignmentFunctionSchema)
 def egocentric_alignment(
     config: str,
-    pose_ref_index: Tuple[int, int] = (5, 6),
+    pose_ref_index: Tuple[int, int] = (0, 1),
     crop_size: Tuple[int, int] = (300, 300),
     use_video: bool = False,
     video_format: str = ".mp4",
@@ -375,7 +375,7 @@ def egocentric_alignment(
     config : str
         Path for the project config file.
     pose_ref_index : list, optional
-        Pose reference index to be used to align. Defaults to [5,6].
+        Pose reference index to be used to align. Defaults to [0, 1].
     crop_size : tuple, optional
         Size to crop the video. Defaults to (300,300).
     use_video : bool, optional

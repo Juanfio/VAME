@@ -85,7 +85,7 @@ class VAMEPipeline:
             dss.attrs[key] = value
         return dss
 
-    def preprocessing(self, pose_ref_index=[5, 6]):
+    def preprocessing(self, pose_ref_index=[0, 1]):
         vame.egocentric_alignment(
             config=self.config_path,
             pose_ref_index=pose_ref_index,
