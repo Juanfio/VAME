@@ -130,6 +130,18 @@ class VAMEPipeline:
             segmentation_algorithm="hmm",
         )
 
+    def run_pipeline(self):
+        self.preprocessing()
+        self.create_training_set()
+        self.train_model()
+        self.evaluate_model()
+        self.run_segmentation()
+        self.generate_motif_videos()
+        self.run_community_clustering()
+        self.generate_community_videos()
+        self.visualization()
+        self.report()
+
 
 def unique_in_order(sequence):
     seen = set()
