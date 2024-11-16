@@ -98,7 +98,13 @@ def pose_to_numpy(
 
             # save the final_positions array with np.save()
             np.save(
-                os.path.join(path_to_file, "data", session, session + "-PE-seq.npy"),
+                os.path.join(
+                    path_to_file,
+                    "data",
+                    "processed",
+                    session,
+                    session + "-PE-seq.npy",
+                ),
                 final_positions.T,
             )
             logger.info("conversion from DeepLabCut csv to numpy complete...")

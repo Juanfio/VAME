@@ -235,10 +235,22 @@ def traindata_aligned(
     else:
         # save numpy arrays the the test/train info:
         np.save(
-            os.path.join(cfg["project_path"], "data", "train", "train_seq.npy"), z_train
+            os.path.join(
+                cfg["project_path"],
+                "data",
+                "train",
+                "train_seq.npy",
+            ),
+            z_train,
         )
         np.save(
-            os.path.join(cfg["project_path"], "data", "train", "test_seq.npy"), z_test
+            os.path.join(
+                cfg["project_path"],
+                "data",
+                "train",
+                "test_seq.npy",
+            ),
+            z_test,
         )
         for i, session in enumerate(sessions):
             np.save(
@@ -300,7 +312,11 @@ def traindata_fixed(
     for session in sessions:
         logger.info("z-scoring of file %s" % session)
         path_to_file = os.path.join(
-            cfg["project_path"], "data", session, session + "-PE-seq.npy"
+            cfg["project_path"],
+            "data",
+            "processed",
+            session,
+            session + "-PE-seq.npy",
         )
         data = np.load(path_to_file)
 
@@ -396,7 +412,11 @@ def traindata_fixed(
 
             np.save(
                 os.path.join(
-                    cfg["project_path"], "data", session, session + "-PE-seq-clean.npy"
+                    cfg["project_path"],
+                    "data",
+                    "processed",
+                    session,
+                    session + "-PE-seq-clean.npy",
                 ),
                 X_med_shifted_file,
             )  # saving new shifted file
