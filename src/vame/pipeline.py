@@ -150,17 +150,27 @@ class VAMEPipeline:
                 logger.info(f"{key}: {value.get('execution_state', 'Not executed')}")
         return states
 
-    def run_pipeline(self):
-        self.preprocessing()
-        self.create_training_set()
-        self.train_model()
-        self.evaluate_model()
-        self.run_segmentation()
-        self.generate_motif_videos()
-        self.run_community_clustering()
-        self.generate_community_videos()
-        self.visualization()
-        self.report()
+    def run_pipeline(self, from_step: int = 0):
+        if from_step == 0:
+            self.preprocessing()
+        if from_step <= 1:
+            self.create_training_set()
+        if from_step <= 2:
+            self.train_model()
+        if from_step <= 3:
+            self.evaluate_model()
+        if from_step <= 4:
+            self.run_segmentation()
+        if from_step <= 5:
+            self.generate_motif_videos()
+        if from_step <= 6:
+            self.run_community_clustering()
+        if from_step <= 7:
+            self.generate_community_videos()
+        if from_step <= 8:
+            self.visualization()
+        if from_step <= 9:
+            self.report()
 
 
 def unique_in_order(sequence):

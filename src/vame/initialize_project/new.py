@@ -230,20 +230,12 @@ def init_new_project(
     write_config(projconfigfile, cfg_data)
 
     vame_pipeline_default_schema = VAMEPipelineStatesSchema()
-    vame_pipeline_default_schema_path = Path(project_path) / "states/states.json"
+    vame_pipeline_default_schema_path = Path(project_path) / "states" / "states.json"
     if not vame_pipeline_default_schema_path.parent.exists():
         vame_pipeline_default_schema_path.parent.mkdir(parents=True)
     with open(vame_pipeline_default_schema_path, "w") as f:
         json.dump(vame_pipeline_default_schema.model_dump(), f, indent=4)
 
-    logger.info("A VAME project has been created. \n")
-    logger.info(
-        "Now its time to prepare your data for VAME. "
-        "The first step is to move your pose .csv file (e.g. DeepLabCut .csv) into the "
-        "//YOUR//VAME//PROJECT//videos//pose_estimation folder. From here you can call "
-        "either the function vame.egocentric_alignment() or if your data is by design egocentric "
-        "call vame.pose_to_numpy(). This will prepare the data in .csv into the right format to start "
-        "working with VAME."
-    )
+    logger.info(f"A VAME project has been created at {project_path}")
 
     return projconfigfile
