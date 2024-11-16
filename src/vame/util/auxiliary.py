@@ -1,7 +1,8 @@
 import os
+import json
 import yaml
-from pathlib import Path
 import ruamel.yaml
+from pathlib import Path
 from typing import Tuple
 
 
@@ -172,3 +173,23 @@ def write_config(
         for key in cfg.keys():
             cfg_file[key] = cfg[key]
         ruamelFile.dump(cfg_file, cf)
+
+
+def read_states(config: dict) -> dict:
+    """
+    Reads the states.json file.
+
+    Parameters
+    ----------
+    config : dict
+        Dictionary containing the config data.
+
+    Returns
+    -------
+    dict
+        The contents of the states.json file as a dictionary.
+    """
+    states_path = Path(config["project_path"]) / "states" / "states.json"
+    with open(states_path, "r") as f:
+        states = json.load(f)
+    return states

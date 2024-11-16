@@ -3,12 +3,16 @@ from pathlib import Path
 import xarray as xr
 
 import vame
-from vame.util.auxiliary import read_config
+from vame.util.auxiliary import read_config, read_states
 from vame.io.load_poses import load_vame_dataset
+from vame.logging.logger import VameLogger
+
+
+logger_config = VameLogger(__name__)
+logger = logger_config.logger
 
 
 class VAMEPipeline:
-
     def __init__(
         self,
         project_name: str,
@@ -129,6 +133,22 @@ class VAMEPipeline:
             config=self.config_path,
             segmentation_algorithm="hmm",
         )
+
+    def get_states(self, summary: bool = True) -> dict:
+        """
+        Returns the pipeline states.
+
+        Returns:
+        --------
+        dict
+            Pipeline states.
+        """
+        states = read_states(self.config)
+        if summary and states:
+            logger.info("Pipeline states:")
+            for key, value in states.items():
+                logger.info(f"{key}: {value.get('execution_state', 'Not executed')}")
+        return states
 
     def run_pipeline(self):
         self.preprocessing()
