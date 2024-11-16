@@ -15,6 +15,8 @@ class SegmentationAlgorithms(str, Enum):
 class PoseEstimationFiletype(str, Enum):
     csv = "csv"
     nwb = "nwb"
+    slp = "slp"
+    h5 = "h5"
 
     class Config:
         use_enum_values = True

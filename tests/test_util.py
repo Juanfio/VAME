@@ -9,7 +9,9 @@ def test_pose_to_numpy_file_exists(setup_project_and_convert_pose_to_numpy):
     project_path = setup_project_and_convert_pose_to_numpy["config_data"][
         "project_path"
     ]
-    file_name = setup_project_and_convert_pose_to_numpy["config_data"]["session_names"][0]
+    file_name = setup_project_and_convert_pose_to_numpy["config_data"]["session_names"][
+        0
+    ]
     file_path = os.path.join(project_path, "data", file_name, f"{file_name}-PE-seq.npy")
     assert os.path.exists(file_path)
 

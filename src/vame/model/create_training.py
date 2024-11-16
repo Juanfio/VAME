@@ -143,7 +143,11 @@ def traindata_aligned(
     for session in sessions:
         logger.info("z-scoring of session %s" % session)
         path_to_file = os.path.join(
-            cfg["project_path"], "data", session, session + "-PE-seq.npy"
+            cfg["project_path"],
+            "data",
+            "processed",
+            session,
+            session + "-PE-seq.npy",
         )
         data = np.load(path_to_file)
 
@@ -239,7 +243,11 @@ def traindata_aligned(
         for i, session in enumerate(sessions):
             np.save(
                 os.path.join(
-                    cfg["project_path"], "data", session, session + "-PE-seq-clean.npy"
+                    cfg["project_path"],
+                    "data",
+                    "processed",
+                    session,
+                    session + "-PE-seq-clean.npy",
                 ),
                 X_med[:, pos[i] : pos[i + 1]],
             )

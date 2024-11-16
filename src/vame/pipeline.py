@@ -17,7 +17,7 @@ class VAMEPipeline:
         source_software: Literal["DeepLabCut", "SLEAP", "LightningPose"],
         working_directory: str = ".",
         video_type: str = ".mp4",
-        fps: int = 30,
+        fps: int | None = None,
         copy_videos: bool = False,
         paths_to_pose_nwb_series_data: Optional[str] = None,
         config_kwargs: Optional[dict] = None,
@@ -60,7 +60,9 @@ class VAMEPipeline:
         datasets = list()
         attributes = list()
         for session in sessions:
-            ds_path = Path(self.config["project_path"]) / "data" / "raw" / f"{session}.nc"
+            ds_path = (
+                Path(self.config["project_path"]) / "data" / "raw" / f"{session}.nc"
+            )
             ds = load_vame_dataset(ds_path=ds_path)
             ds = ds.expand_dims({"session": [session]})
             datasets.append(ds)
@@ -72,14 +74,16 @@ class VAMEPipeline:
                 dss_attrs.setdefault(key, []).append(value)
         for key, values in dss_attrs.items():
             unique_values = unique_in_order(values)  # Maintain order of unique values
-            dss_attrs[key] = unique_values[0] if len(unique_values) == 1 else unique_values
+            dss_attrs[key] = (
+                unique_values[0] if len(unique_values) == 1 else unique_values
+            )
         for key, value in dss_attrs.items():
             dss.attrs[key] = value
         return dss
 
     def preprocessing(self, pose_ref_index=[5, 6]):
         vame.egocentric_alignment(
-            self.config,
+            config=self.config_path,
             pose_ref_index=pose_ref_index,
         )
 

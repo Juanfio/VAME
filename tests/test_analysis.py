@@ -316,7 +316,9 @@ def test_report(
         config=setup_project_and_train_model["config_path"],
         segmentation_algorithm=segmentation_algorithm,
     )
-    reports_path = Path(setup_project_and_train_model["config_data"]["project_path"]) / "reports"
+    reports_path = (
+        Path(setup_project_and_train_model["config_data"]["project_path"]) / "reports"
+    )
     assert len(list(reports_path.glob("*.png"))) > 0
 
 

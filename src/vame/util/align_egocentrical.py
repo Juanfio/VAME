@@ -283,8 +283,7 @@ def alignment(
         Aligned time series data and list of aligned frames.
     """
     # read out data
-    folder_path = os.path.join(project_path, "videos", "pose_estimation")
-    file_path = os.path.join(folder_path, session + "." + pose_estimation_filetype)
+    file_path = str(Path(project_path) / "data" / "raw" / f"{session}.nc")
     data, data_mat = read_pose_estimation_file(
         file_path=file_path,
         file_type=pose_estimation_filetype,
@@ -292,6 +291,7 @@ def alignment(
     )
 
     # get the coordinates for alignment from data table
+    # pose_list dimensions: (num_body_parts, num_frames, 3)
     pose_list = []
     for i in range(int(data_mat.shape[1] / 3)):
         pose_list.append(data_mat[:, i * 3 : (i + 1) * 3])
@@ -453,7 +453,9 @@ def egocentric_alignment(
 
             # Save new shifted file
             np.save(
-                os.path.join(project_path, "data", session, session + "-PE-seq.npy"),
+                os.path.join(
+                    project_path, "data", "processed", session, session + "-PE-seq.npy"
+                ),
                 egocentric_time_series_shifted,
             )
 
