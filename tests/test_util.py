@@ -1,4 +1,4 @@
-import vame
+from pathlib import Path
 import os
 
 
@@ -46,3 +46,19 @@ def test_egocentric_alignment_file_is_created(setup_project_and_align_egocentric
 #         project_path, "data", "processed", file_name, f"{file_name}-PE-seq.npy"
 #     )
 #     assert os.path.exists(file_path)
+
+
+def test_download_sample_data():
+    """
+    Test if the download_sample_data function returns a dictionary with the expected keys.
+    """
+    from vame.util.sample_data import download_sample_data
+
+    source_software = "DeepLabCut"
+    paths_dict = download_sample_data(source_software)
+    assert "video" in paths_dict
+    assert Path(paths_dict["video"]).exists()
+    assert "poses" in paths_dict
+    assert Path(paths_dict["poses"]).exists()
+    assert "frame" in paths_dict
+    assert Path(paths_dict["frame"]).exists()
