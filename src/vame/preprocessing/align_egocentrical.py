@@ -4,8 +4,9 @@ import numpy as np
 import pandas as pd
 import tqdm
 from typing import Tuple, List, Union
-from vame.logging.logger import VameLogger, TqdmToLogger
 from pathlib import Path
+
+from vame.logging.logger import VameLogger, TqdmToLogger
 from vame.util.auxiliary import read_config
 from vame.schemas.states import EgocentricAlignmentFunctionSchema, save_state
 from vame.schemas.project import PoseEstimationFiletype
@@ -15,6 +16,7 @@ from vame.util.data_manipulation import (
     background,
     read_pose_estimation_file,
 )
+from vame.video import get_video_frame_rate
 
 
 logger_config = VameLogger(__name__)
@@ -160,13 +162,6 @@ def align_mouse(
         rect = tuple(lst)
         center, size, theta = rect
 
-        # lst2 = list(rect)
-        # lst2[0][0] = center[0] - size[0]//2
-        # lst2[0][1] = center[1] - size[1]//2
-        # rect = tuple(lst2)
-        # center[0] -= size[0]//2
-        # center[1] -= size[0]//2 # added this shift to change center to belly 2/28/2024
-
         # crop image
         out, shifted_points = crop_and_flip(
             rect,
@@ -192,52 +187,6 @@ def align_mouse(
     return images, points, time_series
 
 
-def play_aligned_video(
-    a: List[np.ndarray],
-    n: List[List[np.ndarray]],
-    frame_count: int,
-) -> None:
-    """
-    Play the aligned video.
-
-    Parameters
-    ----------
-    a : List[np.ndarray]
-        List of aligned images.
-    n : List[List[np.ndarray]]
-        List of aligned DLC points.
-    frame_count : int
-        Number of frames in the video.
-    """
-    colors = [
-        (255, 0, 0),
-        (0, 255, 0),
-        (0, 0, 255),
-        (255, 255, 0),
-        (255, 0, 255),
-        (0, 255, 255),
-        (0, 0, 0),
-        (255, 255, 255),
-    ]
-    for i in range(frame_count):
-        # Capture frame-by-frame
-        ret, frame = True, a[i]
-        if ret is True:
-            # Display the resulting frame
-            frame = cv.cvtColor(frame.astype("uint8") * 255, cv.COLOR_GRAY2BGR)
-            im_color = cv.applyColorMap(frame, cv.COLORMAP_JET)
-            for c, j in enumerate(n[i]):
-                cv.circle(im_color, (j[0], j[1]), 5, colors[c], -1)
-            cv.imshow("Frame", im_color)
-            # Press Q on keyboard to exit
-            # Break the loop
-            if cv.waitKey(25) & 0xFF == ord("q"):
-                break
-        else:
-            break
-    cv.destroyAllWindows()
-
-
 def alignment(
     project_path: str,
     session: str,
@@ -248,7 +197,6 @@ def alignment(
     pose_estimation_filetype: PoseEstimationFiletype,
     path_to_pose_nwb_series_data: Union[str, None] = None,
     use_video: bool = False,
-    check_video: bool = False,
     tqdm_stream: Union[TqdmToLogger, None] = None,
 ) -> Tuple[np.ndarray, List[np.ndarray]]:
     """
@@ -274,8 +222,6 @@ def alignment(
         Path to the pose series data in nwb files. Defaults to None.
     use_video : bool, optional
         Whether to use video for alignment. Defaults to False.
-    check_video : bool, optional
-        Whether to check the aligned video. Defaults to False.
     tqdm_stream : Union[TqdmToLogger, None], optional
         Tqdm stream to log the progress. Defaults to None.
 
@@ -320,11 +266,7 @@ def alignment(
             video_path=video_path,
             save_background=False,
         )
-        capture = cv.VideoCapture(video_path)
-        if not capture.isOpened():
-            raise Exception(f"Unable to open video file: {video_path}")
-        frame_count = int(capture.get(cv.CAP_PROP_FRAME_COUNT))
-        capture.release()
+        frame_count = get_video_frame_rate(video_path)
     else:
         bg = 0
         # Change this to an abitrary number if you first want to test the code
@@ -344,9 +286,6 @@ def alignment(
         use_video=use_video,
         tqdm_stream=tqdm_stream,
     )
-
-    if check_video:
-        play_aligned_video(frames, n, frame_count)
 
     return time_series, frames
 
@@ -442,7 +381,6 @@ def egocentric_alignment(
                     else paths_to_pose_nwb_series_data[i]
                 ),
                 use_video=use_video,
-                check_video=check_video,
                 tqdm_stream=tqdm_stream,
             )
 
@@ -458,7 +396,11 @@ def egocentric_alignment(
             # Save new shifted file
             np.save(
                 os.path.join(
-                    project_path, "data", "processed", session, session + "-PE-seq.npy"
+                    project_path,
+                    "data",
+                    "processed",
+                    session,
+                    session + "-PE-seq.npy",
                 ),
                 egocentric_time_series_shifted,
             )

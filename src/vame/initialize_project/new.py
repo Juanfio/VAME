@@ -9,7 +9,7 @@ from vame.schemas.project import ProjectSchema, PoseEstimationFiletype
 from vame.schemas.states import VAMEPipelineStatesSchema
 from vame.logging.logger import VameLogger
 from vame.util.auxiliary import write_config
-from vame.util.video import get_video_frame_rate
+from vame.video.video import get_video_frame_rate
 from vame.io.load_poses import load_pose_estimation
 
 

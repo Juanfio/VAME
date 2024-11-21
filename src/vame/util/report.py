@@ -30,12 +30,8 @@ def report(
     with open(project_path / "states" / "states.json") as f:
         project_states = json.load(f)
 
-    pose_estimation_files = list(
-        (project_path / "data" / "raw").glob("*.nc")
-    )
-    video_files = list(
-        (project_path / "data" / "raw").glob("*.mp4")
-    )
+    pose_estimation_files = list((project_path / "data" / "raw").glob("*.nc"))
+    video_files = list((project_path / "data" / "raw").glob("*.mp4"))
 
     # Create a report folder for the project, if it does not exist
     report_folder = project_path / "reports"
