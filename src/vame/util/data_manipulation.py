@@ -83,7 +83,7 @@ def get_dataframe_from_pose_nwb_file(
 
 def read_pose_estimation_file(
     file_path: str,
-    file_type: PoseEstimationFiletype,
+    file_type: Optional[PoseEstimationFiletype] = None,
     path_to_pose_nwb_series_data: Optional[str] = None,
 ) -> Tuple[pd.DataFrame, np.ndarray]:
     """

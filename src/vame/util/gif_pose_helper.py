@@ -8,6 +8,7 @@ from vame.util.data_manipulation import (
     interpol_first_rows_nans,
     crop_and_flip,
     background,
+    read_pose_estimation_file,
 )
 
 
@@ -55,18 +56,28 @@ def get_animal_frames(
     path_to_file = cfg["project_path"]
     time_window = cfg["time_window"]
     lag = int(time_window / 2)
+
     # read out data
-    data = pd.read_csv(
-        os.path.join(
-            path_to_file,
-            "videos",
-            "pose_estimation",
-            session + ".csv",
-        ),
-        skiprows=2,
+    # data = pd.read_csv(
+    #     os.path.join(
+    #         path_to_file,
+    #         "videos",
+    #         "pose_estimation",
+    #         session + ".csv",
+    #     ),
+    #     skiprows=2,
+    # )
+    # data_mat = pd.DataFrame.to_numpy(data)
+    # data_mat = data_mat[:, 1:]
+
+    file_path = os.path.join(
+        path_to_file,
+        "data",
+        "raw",
+        session + ".nc",
     )
-    data_mat = pd.DataFrame.to_numpy(data)
-    data_mat = data_mat[:, 1:]
+    data, data_mat = read_pose_estimation_file(file_path=file_path)
+
 
     # get the coordinates for alignment from data table
     pose_list = []
