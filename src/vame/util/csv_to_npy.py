@@ -60,7 +60,7 @@ def pose_to_numpy(
                 project_path,
                 "data",
                 "raw",
-                session + "." + file_type,
+                session + ".nc",
             )
             data, data_mat = read_pose_estimation_file(
                 file_path=file_path,
