@@ -292,7 +292,7 @@ def crop_and_flip(
 def background(
     project_path: str,
     session: str,
-    file_format: str = ".mp4",
+    video_path: str,
     num_frames: int = 1000,
     save_background: bool = True,
 ) -> np.ndarray:
@@ -305,8 +305,8 @@ def background(
         Path to the project directory.
     session : str
         Name of the session.
-    file_format : str, optional
-        Format of the video file. Defaults to '.mp4'.
+    video_path : str
+        Path to the video file.
     num_frames : int, optional
         Number of frames to use for background computation. Defaults to 1000.
 
@@ -315,15 +315,11 @@ def background(
     np.ndarray
         Background image.
     """
-    capture = cv.VideoCapture(
-        os.path.join(project_path, "videos", session + file_format)
-    )
+    logger.info("Computing background image ...")
+
+    capture = cv.VideoCapture(video_path)
     if not capture.isOpened():
-        raise Exception(
-            "Unable to open video file: {0}".format(
-                os.path.join(project_path, "videos", session + file_format)
-            )
-        )
+        raise Exception(f"Unable to open video file: {video_path}")
 
     frame_count = int(capture.get(cv.CAP_PROP_FRAME_COUNT))
     ret, frame = capture.read()
@@ -347,7 +343,12 @@ def background(
 
     if save_background:
         np.save(
-            os.path.join(project_path, "videos", session + "-background.npy"),
+            os.path.join(
+                project_path,
+                "data",
+                "processed",
+                session + "-background.npy",
+            ),
             background,
         )
 

@@ -81,15 +81,15 @@ def align_mouse(
         i = interpol_first_rows_nans(i)
 
     if use_video:
-        capture = cv.VideoCapture(
-            os.path.join(project_path, "videos", session + video_format)
-        )
+        video_path = str(os.path.join(
+            project_path,
+            "data",
+            "raw",
+            session + video_format,
+        ))
+        capture = cv.VideoCapture(video_path)
         if not capture.isOpened():
-            raise Exception(
-                "Unable to open video file: {0}".format(
-                    os.path.join(project_path, "videos", session + video_format)
-                )
-            )
+            raise Exception(f"Unable to open video file: {video_path}")
 
     for idx in tqdm.tqdm(
         range(frame_count),
@@ -304,21 +304,21 @@ def alignment(
 
     if use_video:
         # compute background
+        video_path = str(os.path.join(
+            project_path,
+            "data",
+            "raw",
+            session + video_format,
+        ))
         bg = background(
             project_path=project_path,
             session=session,
-            file_format=video_format,
+            video_path=video_path,
             save_background=False,
         )
-        capture = cv.VideoCapture(
-            os.path.join(project_path, "videos", session + video_format)
-        )
+        capture = cv.VideoCapture(video_path)
         if not capture.isOpened():
-            raise Exception(
-                "Unable to open video file: {0}".format(
-                    os.path.join(project_path, "videos", session + video_format)
-                )
-            )
+            raise Exception(f"Unable to open video file: {video_path}")
         frame_count = int(capture.get(cv.CAP_PROP_FRAME_COUNT))
         capture.release()
     else:

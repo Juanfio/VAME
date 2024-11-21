@@ -53,9 +53,16 @@ def get_animal_frames(
     list:
         List of extracted frames.
     """
-    path_to_file = cfg["project_path"]
+    project_path = cfg["project_path"]
     time_window = cfg["time_window"]
     lag = int(time_window / 2)
+
+    video_path = os.path.join(
+        project_path,
+        "data",
+        "raw",
+        session + file_format,
+    )
 
     # read out data
     # data = pd.read_csv(
@@ -71,13 +78,12 @@ def get_animal_frames(
     # data_mat = data_mat[:, 1:]
 
     file_path = os.path.join(
-        path_to_file,
+        project_path,
         "data",
         "raw",
         session + ".nc",
     )
     data, data_mat = read_pose_estimation_file(file_path=file_path)
-
 
     # get the coordinates for alignment from data table
     pose_list = []
@@ -100,17 +106,18 @@ def get_animal_frames(
             logger.info("Loading background image ...")
             bg = np.load(
                 os.path.join(
-                    path_to_file,
-                    "videos",
+                    project_path,
+                    "data",
+                    "processed",
                     session + "-background.npy",
                 )
             )
         except Exception:
             logger.info("Can't find background image... Calculate background image...")
             bg = background(
-                path_to_file,
-                session,
-                file_format,
+                project_path=project_path,
+                session=session,
+                video_path=video_path,
                 save_background=True,
             )
 
@@ -125,23 +132,9 @@ def get_animal_frames(
     for i in pose_list:
         i = interpol_first_rows_nans(i)
 
-    capture = cv.VideoCapture(
-        os.path.join(
-            path_to_file,
-            "videos",
-            session + file_format,
-        )
-    )
+    capture = cv.VideoCapture(video_path)
     if not capture.isOpened():
-        raise Exception(
-            "Unable to open video file: {0}".format(
-                os.path.join(
-                    path_to_file,
-                    "videos",
-                    session + file_format,
-                )
-            )
-        )
+        raise Exception(f"Unable to open video file: {video_path}")
 
     for idx in tqdm.tqdm(range(length), disable=not True, desc="Align frames"):
         try:
