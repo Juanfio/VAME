@@ -81,7 +81,9 @@ def create_cluster_videos(
         )
     if flag == "community":
         if cohort:
-            logger.info("Cohort community videos getting created for " + session + " ...")
+            logger.info(
+                "Cohort community videos getting created for " + session + " ..."
+            )
             labels = np.load(
                 os.path.join(
                     path_to_file,
@@ -99,7 +101,12 @@ def create_cluster_videos(
                 )
             )
 
-    video_file_path = os.path.join(config["project_path"], "videos", session + video_type)
+    video_file_path = os.path.join(
+        config["project_path"],
+        "data",
+        "raw",
+        session + video_type,
+    )
     capture = cv.VideoCapture(video_file_path)
     if not capture.isOpened():
         raise ValueError(

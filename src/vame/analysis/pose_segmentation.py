@@ -12,6 +12,7 @@ from vame.schemas.states import save_state, SegmentSessionFunctionSchema
 from vame.logging.logger import VameLogger, TqdmToLogger
 from vame.model.rnn_model import RNN_VAE
 from vame.util.auxiliary import read_config
+
 # from vame.util.data_manipulation import consecutive
 from vame.util.cli import get_sessions_from_user_input
 from vame.util.model_util import load_model
@@ -66,7 +67,13 @@ def embedd_latent_vectors(
     for session in sessions:
         logger.info(f"Embedding of latent vector for file {session}")
         data = np.load(
-            os.path.join(project_path, "data", session, session + "-PE-seq-clean.npy")
+            os.path.join(
+                project_path,
+                "data",
+                "processed",
+                session,
+                session + "-PE-seq-clean.npy",
+            )
         )
         latent_vector_list = []
         with torch.no_grad():

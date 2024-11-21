@@ -316,7 +316,9 @@ def test_report(
         config=setup_project_and_train_model["config_path"],
         segmentation_algorithm=segmentation_algorithm,
     )
-    reports_path = Path(setup_project_and_train_model["config_data"]["project_path"]) / "reports"
+    reports_path = (
+        Path(setup_project_and_train_model["config_data"]["project_path"]) / "reports"
+    )
     assert len(list(reports_path.glob("*.png"))) > 0
 
 
@@ -337,19 +339,19 @@ def test_gif_frames_files_exists(setup_project_and_evaluate_model, label):
         vame.segment_session(setup_project_and_evaluate_model["config_path"])
 
     def mock_background(
-        path_to_file=None,
-        filename=None,
-        file_format=None,
+        project_path=None,
+        session=None,
+        video_path=None,
         num_frames=None,
         save_background=True,
     ):
         num_frames = 100
         return background(
-            path_to_file,
-            filename,
-            file_format,
-            num_frames,
-            save_background,
+            project_path=project_path,
+            session=session,
+            video_path=video_path,
+            num_frames=num_frames,
+            save_background=save_background,
         )
 
     SEGMENTATION_ALGORITHM = "hmm"

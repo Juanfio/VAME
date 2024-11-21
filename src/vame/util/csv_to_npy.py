@@ -45,7 +45,7 @@ def pose_to_numpy(
             log_path = Path(cfg["project_path"]) / "logs" / "pose_to_numpy.log"
             logger_config.add_file_handler(str(log_path))
 
-        path_to_file = cfg["project_path"]
+        project_path = cfg["project_path"]
         sessions = cfg["session_names"]
         confidence = cfg["pose_confidence"]
         if not cfg["egocentric_data"]:
@@ -53,11 +53,15 @@ def pose_to_numpy(
                 "The config.yaml indicates that the data is not egocentric. Please check the parameter egocentric_data"
             )
 
-        folder_path = os.path.join(path_to_file, "videos", "pose_estimation")
         file_type = cfg["pose_estimation_filetype"]
         paths_to_pose_nwb_series_data = cfg["paths_to_pose_nwb_series_data"]
         for i, session in enumerate(sessions):
-            file_path = os.path.join(folder_path, session + "." + file_type)
+            file_path = os.path.join(
+                project_path,
+                "data",
+                "raw",
+                session + ".nc",
+            )
             data, data_mat = read_pose_estimation_file(
                 file_path=file_path,
                 file_type=file_type,
@@ -98,7 +102,13 @@ def pose_to_numpy(
 
             # save the final_positions array with np.save()
             np.save(
-                os.path.join(path_to_file, "data", session, session + "-PE-seq.npy"),
+                os.path.join(
+                    project_path,
+                    "data",
+                    "processed",
+                    session,
+                    session + "-PE-seq.npy",
+                ),
                 final_positions.T,
             )
             logger.info("conversion from DeepLabCut csv to numpy complete...")

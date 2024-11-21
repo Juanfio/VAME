@@ -1,6 +1,7 @@
 import numpy as np
 import json
 from pathlib import Path
+
 # import matplotlib
 import matplotlib.pyplot as plt
 
@@ -30,9 +31,11 @@ def report(
         project_states = json.load(f)
 
     pose_estimation_files = list(
-        (project_path / "videos" / "pose_estimation").glob("*.csv")
+        (project_path / "data" / "raw").glob("*.nc")
     )
-    video_files = list((project_path / "videos").glob("*.mp4"))
+    video_files = list(
+        (project_path / "data" / "raw").glob("*.mp4")
+    )
 
     # Create a report folder for the project, if it does not exist
     report_folder = project_path / "reports"
@@ -96,7 +99,10 @@ def report(
         community_bag,
         title=f"Community and Motif Counts - Cohort - {model_name} - {segmentation_algorithm} - {n_clusters}",
         save_to_file=True,
-        save_path=str(report_folder / f"community_motifs_cohort_{model_name}_{segmentation_algorithm}-{n_clusters}.png"),
+        save_path=str(
+            report_folder
+            / f"community_motifs_cohort_{model_name}_{segmentation_algorithm}-{n_clusters}.png"
+        ),
     )
 
     # Per session file
@@ -138,7 +144,10 @@ def report(
             community_bag,
             title=f"Community and Motif Counts - {session} - {model_name} - {segmentation_algorithm} - {n_clusters}",
             save_to_file=True,
-            save_path=str(report_folder / f"community_motifs_{session}_{model_name}_{segmentation_algorithm}-{n_clusters}.png"),
+            save_path=str(
+                report_folder
+                / f"community_motifs_{session}_{model_name}_{segmentation_algorithm}-{n_clusters}.png"
+            ),
         )
 
 

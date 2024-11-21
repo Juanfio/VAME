@@ -81,15 +81,17 @@ def align_mouse(
         i = interpol_first_rows_nans(i)
 
     if use_video:
-        capture = cv.VideoCapture(
-            os.path.join(project_path, "videos", session + video_format)
-        )
-        if not capture.isOpened():
-            raise Exception(
-                "Unable to open video file: {0}".format(
-                    os.path.join(project_path, "videos", session + video_format)
-                )
+        video_path = str(
+            os.path.join(
+                project_path,
+                "data",
+                "raw",
+                session + video_format,
             )
+        )
+        capture = cv.VideoCapture(video_path)
+        if not capture.isOpened():
+            raise Exception(f"Unable to open video file: {video_path}")
 
     for idx in tqdm.tqdm(
         range(frame_count),
@@ -283,8 +285,7 @@ def alignment(
         Aligned time series data and list of aligned frames.
     """
     # read out data
-    folder_path = os.path.join(project_path, "videos", "pose_estimation")
-    file_path = os.path.join(folder_path, session + "." + pose_estimation_filetype)
+    file_path = str(Path(project_path) / "data" / "raw" / f"{session}.nc")
     data, data_mat = read_pose_estimation_file(
         file_path=file_path,
         file_type=pose_estimation_filetype,
@@ -292,6 +293,7 @@ def alignment(
     )
 
     # get the coordinates for alignment from data table
+    # pose_list dimensions: (num_body_parts, num_frames, 3)
     pose_list = []
     for i in range(int(data_mat.shape[1] / 3)):
         pose_list.append(data_mat[:, i * 3 : (i + 1) * 3])
@@ -304,21 +306,23 @@ def alignment(
 
     if use_video:
         # compute background
+        video_path = str(
+            os.path.join(
+                project_path,
+                "data",
+                "raw",
+                session + video_format,
+            )
+        )
         bg = background(
             project_path=project_path,
             session=session,
-            file_format=video_format,
+            video_path=video_path,
             save_background=False,
         )
-        capture = cv.VideoCapture(
-            os.path.join(project_path, "videos", session + video_format)
-        )
+        capture = cv.VideoCapture(video_path)
         if not capture.isOpened():
-            raise Exception(
-                "Unable to open video file: {0}".format(
-                    os.path.join(project_path, "videos", session + video_format)
-                )
-            )
+            raise Exception(f"Unable to open video file: {video_path}")
         frame_count = int(capture.get(cv.CAP_PROP_FRAME_COUNT))
         capture.release()
     else:
@@ -350,7 +354,7 @@ def alignment(
 @save_state(model=EgocentricAlignmentFunctionSchema)
 def egocentric_alignment(
     config: str,
-    pose_ref_index: Tuple[int, int] = (5, 6),
+    pose_ref_index: Tuple[int, int] = (0, 1),
     crop_size: Tuple[int, int] = (300, 300),
     use_video: bool = False,
     video_format: str = ".mp4",
@@ -375,7 +379,7 @@ def egocentric_alignment(
     config : str
         Path for the project config file.
     pose_ref_index : list, optional
-        Pose reference index to be used to align. Defaults to [5,6].
+        Pose reference index to be used to align. Defaults to [0, 1].
     crop_size : tuple, optional
         Size to crop the video. Defaults to (300,300).
     use_video : bool, optional
@@ -453,7 +457,9 @@ def egocentric_alignment(
 
             # Save new shifted file
             np.save(
-                os.path.join(project_path, "data", session, session + "-PE-seq.npy"),
+                os.path.join(
+                    project_path, "data", "processed", session, session + "-PE-seq.npy"
+                ),
                 egocentric_time_series_shifted,
             )
 
