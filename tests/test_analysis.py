@@ -339,16 +339,16 @@ def test_gif_frames_files_exists(setup_project_and_evaluate_model, label):
         vame.segment_session(setup_project_and_evaluate_model["config_path"])
 
     def mock_background(
-        path_to_file=None,
-        filename=None,
+        project_path=None,
+        session=None,
         video_path=None,
         num_frames=None,
         save_background=True,
     ):
         num_frames = 100
         return background(
-            project_path=path_to_file,
-            session=filename,
+            project_path=project_path,
+            session=session,
             video_path=video_path,
             num_frames=num_frames,
             save_background=save_background,

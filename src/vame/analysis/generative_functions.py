@@ -281,7 +281,10 @@ def generative_model(
 
             if mode == "sampling":
                 latent_vector = np.load(
-                    os.path.join(path_to_file, "latent_vector_" + session + ".npy")
+                    os.path.join(
+                        path_to_file,
+                        "latent_vector_" + session + ".npy",
+                    )
                 )
                 return random_generative_samples(
                     cfg,
@@ -291,7 +294,10 @@ def generative_model(
 
             if mode == "reconstruction":
                 latent_vector = np.load(
-                    os.path.join(path_to_file, "latent_vector_" + session + ".npy")
+                    os.path.join(
+                        path_to_file,
+                        "latent_vector_" + session + ".npy",
+                    )
                 )
                 return random_reconstruction_samples(
                     cfg,
@@ -305,7 +311,10 @@ def generative_model(
                         f"Algorithm {segmentation_algorithm} not supported for cluster center visualization."
                     )
                 cluster_center = np.load(
-                    os.path.join(path_to_file, "cluster_center_" + session + ".npy")
+                    os.path.join(
+                        path_to_file,
+                        "cluster_center_" + session + ".npy",
+                    )
                 )
                 return visualize_cluster_center(
                     cfg,
@@ -315,7 +324,10 @@ def generative_model(
 
             if mode == "motifs":
                 latent_vector = np.load(
-                    os.path.join(path_to_file, "latent_vector_" + session + ".npy")
+                    os.path.join(
+                        path_to_file,
+                        "latent_vector_" + session + ".npy",
+                    )
                 )
                 labels = np.load(
                     os.path.join(
@@ -330,11 +342,11 @@ def generative_model(
                     )
                 )
                 return random_generative_samples_motif(
-                    cfg,
-                    model,
-                    latent_vector,
-                    labels,
-                    n_clusters,
+                    cfg=cfg,
+                    model=model,
+                    latent_vector=latent_vector,
+                    labels=labels,
+                    n_clusters=n_clusters,
                 )
     except Exception as e:
         logger.exception(str(e))

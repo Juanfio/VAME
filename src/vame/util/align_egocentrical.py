@@ -81,12 +81,14 @@ def align_mouse(
         i = interpol_first_rows_nans(i)
 
     if use_video:
-        video_path = str(os.path.join(
-            project_path,
-            "data",
-            "raw",
-            session + video_format,
-        ))
+        video_path = str(
+            os.path.join(
+                project_path,
+                "data",
+                "raw",
+                session + video_format,
+            )
+        )
         capture = cv.VideoCapture(video_path)
         if not capture.isOpened():
             raise Exception(f"Unable to open video file: {video_path}")
@@ -304,12 +306,14 @@ def alignment(
 
     if use_video:
         # compute background
-        video_path = str(os.path.join(
-            project_path,
-            "data",
-            "raw",
-            session + video_format,
-        ))
+        video_path = str(
+            os.path.join(
+                project_path,
+                "data",
+                "raw",
+                session + video_format,
+            )
+        )
         bg = background(
             project_path=project_path,
             session=session,
