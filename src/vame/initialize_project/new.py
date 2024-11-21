@@ -202,7 +202,10 @@ def init_new_project(
             source_software=source_software,
         )
         output_name = data_raw_path / Path(video_path).stem
-        ds.to_netcdf(f"{output_name}.nc")
+        ds.to_netcdf(
+            path=f"{output_name}.nc",
+            engine="scipy",
+        )
         num_features_list.append(ds.space.shape[0] * ds.keypoints.shape[0])
 
     unique_num_features = list(set(num_features_list))

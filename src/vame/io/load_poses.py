@@ -50,4 +50,4 @@ def load_vame_dataset(ds_path: Path | str) -> xr.Dataset:
     Returns:
     --------
     """
-    return xr.open_dataset(ds_path, engine="netcdf4")
+    return xr.open_dataset(ds_path, engine="scipy")
