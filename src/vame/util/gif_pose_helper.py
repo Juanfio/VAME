@@ -6,7 +6,7 @@ import pandas as pd
 from vame.logging.logger import VameLogger
 from vame.util.data_manipulation import (
     interpol_first_rows_nans,
-    crop_and_flip,
+    crop_and_flip_legacy,
     background,
     read_pose_estimation_file,
 )
@@ -191,7 +191,7 @@ def get_animal_frames(
         center, size, theta = rect
 
         # crop image
-        out, shifted_points = crop_and_flip(
+        out, shifted_points = crop_and_flip_legacy(
             rect,
             img,
             pose_list_bordered,
