@@ -3,6 +3,7 @@ import sys
 sys.dont_write_bytecode = True
 
 from vame.initialize_project import init_new_project
+from vame.preprocessing.preprocessing import preprocessing
 from vame.model import create_trainset
 from vame.model import train_model
 from vame.model import evaluate_model

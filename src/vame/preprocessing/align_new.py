@@ -31,9 +31,7 @@ def align_time_series(data, keypoint1, keypoint2, confidence_threshold):
 
     # Loop over individuals
     for ind in range(positions.shape[1]):
-        individual_positions = positions[
-            :, ind, :, :
-        ]  # Shape: (time, keypoints, space)
+        individual_positions = positions[:, ind, :, :]  # Shape: (time, keypoints, space)
         individual_confidence = confidence[:, ind, :]  # Shape: (time, keypoints)
 
         # Replace low-confidence points with NaN
@@ -54,9 +52,7 @@ def align_time_series(data, keypoint1, keypoint2, confidence_threshold):
                 )
 
         # Centralize all positions around the first keypoint
-        centralized_positions = (
-            individual_positions - individual_positions[:, idx1, :][:, np.newaxis, :]
-        )
+        centralized_positions = individual_positions - individual_positions[:, idx1, :][:, np.newaxis, :]
 
         # Calculate vectors between keypoints
         vector = centralized_positions[:, idx2, :]  # Vector from keypoint1 to keypoint2

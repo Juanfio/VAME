@@ -118,9 +118,7 @@ def align_mouse_legacy(
         pose_list_bordered = []
 
         for i in pose_list:
-            pose_list_bordered.append(
-                (int(i[idx][0] + crop_size[0]), int(i[idx][1] + crop_size[1]))
-            )
+            pose_list_bordered.append((int(i[idx][0] + crop_size[0]), int(i[idx][1] + crop_size[1])))
 
         img = cv.copyMakeBorder(
             frame,
@@ -363,10 +361,7 @@ def egocentric_alignment_legacy(
         # call function and save into your VAME data folder
         paths_to_pose_nwb_series_data = cfg["paths_to_pose_nwb_series_data"]
         for i, session in enumerate(sessions):
-            logger.info(
-                "Aligning session %s, Pose confidence value: %.2f"
-                % (session, confidence)
-            )
+            logger.info("Aligning session %s, Pose confidence value: %.2f" % (session, confidence))
             egocentric_time_series, frames = alignment_legacy(
                 project_path=project_path,
                 session=session,
@@ -405,9 +400,7 @@ def egocentric_alignment_legacy(
                 egocentric_time_series_shifted,
             )
 
-        logger.info(
-            "Your data is now in the right format and you can call vame.create_trainset()"
-        )
+        logger.info("Your data is now in the right format and you can call vame.create_trainset()")
     except Exception as e:
         logger.exception(f"{e}")
         raise e
@@ -477,10 +470,7 @@ def egocentric_alignment(
 
         # call function and save into your VAME data folder
         for i, session in enumerate(sessions):
-            logger.info(
-                "Aligning session %s, Pose confidence value: %.2f"
-                % (session, confidence)
-            )
+            logger.info("Aligning session %s, Pose confidence value: %.2f" % (session, confidence))
             # read out data
             file_path = str(Path(project_path) / "data" / "raw" / f"{session}.nc")
             _, data_mat, ds = read_pose_estimation_file(file_path=file_path)
@@ -540,9 +530,7 @@ def egocentric_alignment(
             result_file = Path(project_path) / "data" / "processed" / session / f"{session}-aligned.nc"
             ds.to_netcdf(result_file, engine="scipy")
 
-        logger.info(
-            "Your data is now in the right format and you can call vame.create_trainset()"
-        )
+        logger.info("Your data is now in the right format and you can call vame.create_trainset()")
     except Exception as e:
         logger.exception(f"{e}")
         raise e
@@ -601,9 +589,7 @@ def alignment(
         pose_list_bordered = []
 
         for i in pose_list:
-            pose_list_bordered.append(
-                (int(i[idx][0] + crop_size[0]), int(i[idx][1] + crop_size[1]))
-            )
+            pose_list_bordered.append((int(i[idx][0] + crop_size[0]), int(i[idx][1] + crop_size[1])))
 
         punkte = []
         for i in pose_ref_index:

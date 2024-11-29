@@ -212,6 +212,32 @@ def interpol_first_rows_nans(arr: np.ndarray) -> np.ndarray:
     return arr
 
 
+def interpolate_nans_with_pandas(data: np.ndarray) -> np.ndarray:
+    """
+    Interpolate NaN values along the time axis of a 3D NumPy array using Pandas.
+
+    Parameters:
+    -----------
+    data : numpy.ndarray
+        Input 3D array of shape (time, keypoints, space).
+
+    Returns:
+    --------
+    numpy.ndarray:
+        Array with NaN values interpolated.
+    """
+    for kp in range(data.shape[1]):  # Loop over keypoints dimension
+        for sp in range(data.shape[2]):  # Loop over space dimension (x, y)
+            series = pd.Series(data[:, kp, sp])
+            series_interpolated = series.interpolate(
+                method="linear",
+                limit_direction="both",
+                axis=0,
+            )
+            data[:, kp, sp] = series_interpolated.values
+    return data
+
+
 def crop_and_flip_legacy(
     rect: Tuple,
     src: np.ndarray,
@@ -363,9 +389,7 @@ def nc_to_dataframe(nc_data):
 
     # Flatten position data
     position_data = nc_data["position"].isel(individuals=0).values
-    position_column_names = [
-        f"{keypoint}_{sp}" for keypoint in keypoints for sp in space
-    ]
+    position_column_names = [f"{keypoint}_{sp}" for keypoint in keypoints for sp in space]
     position_flattened = position_data.reshape(position_data.shape[0], -1)
 
     # Create a DataFrame for position data
@@ -383,9 +407,7 @@ def nc_to_dataframe(nc_data):
     # Reorder columns: keypoint_x, keypoint_y, keypoint_confidence
     reordered_columns = []
     for keypoint in keypoints:
-        reordered_columns.extend(
-            [f"{keypoint}_x", f"{keypoint}_y", f"{keypoint}_confidence"]
-        )
+        reordered_columns.extend([f"{keypoint}_x", f"{keypoint}_y", f"{keypoint}_confidence"])
 
     combined_df = combined_df[reordered_columns]
 

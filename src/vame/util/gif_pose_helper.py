@@ -145,9 +145,7 @@ def get_animal_frames(
                 frame = frame - bg
                 frame[frame <= 0] = 0
         except Exception:
-            logger.info(
-                f"Couldn't find a frame in capture.read(). #Frame: {idx + start + lag}"
-            )
+            logger.info(f"Couldn't find a frame in capture.read(). #Frame: {idx + start + lag}")
             continue
 
         # Read coordinates and add border

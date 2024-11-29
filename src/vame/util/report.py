@@ -38,15 +38,10 @@ def report(
     report_folder.mkdir(exist_ok=True)
 
     # Motifs and Communities
-    if (
-        project_states.get("segment_session", {}).get("execution_state", "")
-        != "success"
-    ):
+    if project_states.get("segment_session", {}).get("execution_state", "") != "success":
         raise Exception("Segmentation failed. Skipping motifs and communities report.")
     if project_states.get("community", {}).get("execution_state", "") != "success":
-        raise Exception(
-            "Community detection failed. Skipping motifs and communities report."
-        )
+        raise Exception("Community detection failed. Skipping motifs and communities report.")
 
     ml = np.load(
         project_path
@@ -96,8 +91,7 @@ def report(
         title=f"Community and Motif Counts - Cohort - {model_name} - {segmentation_algorithm} - {n_clusters}",
         save_to_file=True,
         save_path=str(
-            report_folder
-            / f"community_motifs_cohort_{model_name}_{segmentation_algorithm}-{n_clusters}.png"
+            report_folder / f"community_motifs_cohort_{model_name}_{segmentation_algorithm}-{n_clusters}.png"
         ),
     )
 
@@ -141,8 +135,7 @@ def report(
             title=f"Community and Motif Counts - {session} - {model_name} - {segmentation_algorithm} - {n_clusters}",
             save_to_file=True,
             save_path=str(
-                report_folder
-                / f"community_motifs_{session}_{model_name}_{segmentation_algorithm}-{n_clusters}.png"
+                report_folder / f"community_motifs_{session}_{model_name}_{segmentation_algorithm}-{n_clusters}.png"
             ),
         )
 
@@ -165,9 +158,7 @@ def plot_community_motifs(
     community_indices = [community for community, count in communities]
     community_counts = [count for community, count in communities]
     total_community_counts = sum(community_counts)
-    community_percentages = [
-        (count / total_community_counts) * 100 for count in community_counts
-    ]
+    community_percentages = [(count / total_community_counts) * 100 for count in community_counts]
 
     # Define positions and bar widths
     bar_width = 0.8
@@ -203,9 +194,7 @@ def plot_community_motifs(
     ax2 = ax1.twinx()
     ax2.set_ylim(ax1.get_ylim())
     ax2.set_yticks(ax1.get_yticks())
-    ax2.set_yticklabels(
-        [f"{(tick / total_community_counts) * 100:.1f}%" for tick in ax1.get_yticks()]
-    )
+    ax2.set_yticklabels([f"{(tick / total_community_counts) * 100:.1f}%" for tick in ax1.get_yticks()])
     ax2.set_ylabel("Percentage")
 
     # Overlay motif bars within each community
@@ -217,16 +206,12 @@ def plot_community_motifs(
         motifs_sorted = [motif for motif, count in motif_counts]
         counts_sorted = [count for motif, count in motif_counts]
         total_motif_counts = sum(counts_sorted)
-        motif_percentages = [
-            (count / total_motif_counts) * 100 for count in counts_sorted
-        ]
+        motif_percentages = [(count / total_motif_counts) * 100 for count in counts_sorted]
 
         num_motifs = len(motifs_sorted)
         # Adjust motif bar width to fill the community bar width
         if num_motifs > 0:
-            motif_width = (
-                motif_bar_width / num_motifs * 0.9
-            )  # Slightly reduce width to create space between bars
+            motif_width = motif_bar_width / num_motifs * 0.9  # Slightly reduce width to create space between bars
         else:
             motif_width = motif_bar_width
 
@@ -240,8 +225,7 @@ def plot_community_motifs(
         bars = ax1.bar(
             motif_positions,
             counts_sorted,
-            width=motif_width
-            * 0.9,  # Slightly reduce width to create space between bars
+            width=motif_width * 0.9,  # Slightly reduce width to create space between bars
             label=f"Motifs in Community {community}",
         )
 
@@ -254,9 +238,7 @@ def plot_community_motifs(
                 ha="center",
                 va="bottom",
                 fontsize=9,
-                color=(
-                    "white" if bar.get_facecolor()[0] < 0.5 else "black"
-                ),  # Contrast with bar color
+                color=("white" if bar.get_facecolor()[0] < 0.5 else "black"),  # Contrast with bar color
             )
 
         # Add percentage values on top of motif bars
@@ -268,9 +250,7 @@ def plot_community_motifs(
                 ha="center",
                 va="bottom",
                 fontsize=8,
-                color=(
-                    "white" if bar.get_facecolor()[0] < 0.5 else "black"
-                ),  # Contrast with bar color
+                color=("white" if bar.get_facecolor()[0] < 0.5 else "black"),  # Contrast with bar color
             )
 
     # Formatting
