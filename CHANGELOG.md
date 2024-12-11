@@ -2,14 +2,14 @@
 
 ### Fixes
 
-- Fix #105
-- Fix #106
-- Fix #107
-- Fix #108
-- Fix #39
-- Fix #115
-- Fix #100
-- Fix #42
+- Removed auto adding date from poject names (#105)
+- Renamed `parametrization` to `segmentation_algorithm` (#106)
+- Renamed `file` to `session` (#107)
+- Removed old doctrings at top of files (#108)
+- Build compatibility with SLEAP (#39)
+- Build compatibility with LightningPose (#115)
+- `num_features` should be extracted from DLC data (#100)
+- Create VAME Project Class (#42)
 
 ### Features
 - Improve handling of user input (cli) when `all_data==no`
