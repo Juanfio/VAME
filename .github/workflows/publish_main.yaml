@@ -67,7 +67,7 @@ jobs:
           name: ${{ steps.determine_tag.outputs.tag_name }}
           body: "Release for version ${{ steps.determine_tag.outputs.tag_name }}"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to PyPI
         if: env.TAG_EXISTS == 'false'
