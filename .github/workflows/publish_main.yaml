@@ -39,11 +39,11 @@ jobs:
           script: |
             const tagName = "${{ steps.determine_tag.outputs.tag_name }}";
             const { data: tags } = await github.request('GET /repos/{owner}/{repo}/tags', {
-              owner: context.repo.owner,
-              repo: context.repo.repo
+                owner: context.repo.owner,
+                repo: context.repo.repo
             });
             const tagExists = tags.some(tag => tag.name === tagName);
-            echo "TAG_EXISTS=${TAG_EXISTS}"
+            core.info(`TAG_EXISTS=${tagExists.toString()}`);
             core.exportVariable('TAG_EXISTS', tagExists.toString());
 
       - name: Fail if tag already exists
