@@ -43,10 +43,11 @@ jobs:
               repo: context.repo.repo
             });
             const tagExists = tags.some(tag => tag.name === tagName);
-            return { tagExists }
+            echo "TAG_EXISTS=${TAG_EXISTS}"
+            core.exportVariable('TAG_EXISTS', tagExists.toString());
 
       - name: Fail if tag already exists
-        if: steps.check_tag.outputs.tagExists == 'true'
+        if: env.TAG_EXISTS == 'true'
         run: |
           echo "Tag ${{ steps.determine_tag.outputs.tag_name }} already exists for this version. Cannot create a new release."
           exit 1
@@ -55,7 +56,7 @@ jobs:
         run: python -m build
 
       - name: Create GitHub Release
-        if: steps.check_tag.outputs.tagExists == 'false'
+        if: env.TAG_EXISTS == 'false'
         uses: actions/create-release@v1
         with:
           tag_name: ${{ steps.determine_tag.outputs.tag_name }}
@@ -67,7 +68,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to PyPI
-        if: steps.check_tag.outputs.tagExists == 'false'
+        if: env.TAG_EXISTS == 'false'
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
