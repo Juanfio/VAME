@@ -22,7 +22,7 @@ jobs:
       - name: Extract version from pyproject.toml
         id: get_version
         run: |
-          python -c "import tomli; print(tomli.loads(open('pyproject.toml', 'rb').read())['project']['version'])" > version.txt
+          python -c "import tomli; version=tomli.load(open('pyproject.toml', 'rb'))['project']['version']; print(version)" > version.txt
           echo "version=$(cat version.txt)" >> $GITHUB_OUTPUT
 
       - name: Determine Tag Name
