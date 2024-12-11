@@ -2,7 +2,8 @@ name: Publish from Main
 
 on:
   push:
-    branches: [main]
+    branches:
+        - main
 
 permissions:
   contents: write
