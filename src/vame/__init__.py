@@ -22,3 +22,5 @@ from vame.preprocessing.align_egocentrical import (
 from vame.util import model_util
 from vame.util import auxiliary
 from vame.util.report import report
+
+from vame.preprocessing import preprocessing
