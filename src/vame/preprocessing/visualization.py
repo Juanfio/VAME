@@ -27,63 +27,58 @@ def visualize_preprocessing_scatter(
     processed_positions = ds["position_processed"].values
     keypoints_labels = ds.keypoints.values
 
-    # Fixed axis limits
-    centralized_limits = {
-        "x": (-150, 150),
-        "y": (-150, 150),
-    }
+    # # Fixed axis limits
+    # centralized_limits = {
+    #     "x": (-150, 150),
+    #     "y": (-150, 150),
+    # }
 
     if not frames:
         frames = [int(i * len(original_positions)) for i in [0.1, 0.3, 0.5, 0.7, 0.9]]
     num_frames = len(frames)
+
     fig, axes = plt.subplots(num_frames, 2, figsize=(14, 6 * num_frames))  # Increased figure size
 
     for i, frame in enumerate(frames):
-        # Centralized Original positions
-        ax_original = axes[i, 0]
+        # Compute dynamic limits for the original positions
         x_orig, y_orig = original_positions[frame, 0, :, 0], original_positions[frame, 0, :, 1]
         x_orig -= x_orig[0]  # Centralize around the first keypoint
         y_orig -= y_orig[0]
+        x_min, x_max = x_orig.min() - 10, x_orig.max() + 10  # Add a margin
+        y_min, y_max = y_orig.min() - 10, y_orig.max() + 10
+
+        # Centralized Original positions
+        ax_original = axes[i, 0]
         ax_original.scatter(x_orig, y_orig, c="blue", label="Original")
         for k, (x, y) in enumerate(zip(x_orig, y_orig)):
-            if (
-                centralized_limits["x"][0] <= x <= centralized_limits["x"][1]
-                and centralized_limits["y"][0] <= y <= centralized_limits["y"][1]
-            ):
-                ax_original.text(
-                    x, y, keypoints_labels[k], fontsize=8, color="blue"
-                )  # Annotate only points within limits
-        ax_original.set_title(f"Original - Frame {frame}", fontsize=10)  # Reduced title font size
+            ax_original.text(x, y, keypoints_labels[k], fontsize=8, color="blue")
+        ax_original.set_title(f"Original - Frame {frame}", fontsize=10)
         ax_original.set_xlabel("X", fontsize=8)
         ax_original.set_ylabel("Y", fontsize=8)
         ax_original.axhline(0, color="gray", linestyle="--")
         ax_original.axvline(0, color="gray", linestyle="--")
         ax_original.axis("equal")
-        ax_original.set_xlim(*centralized_limits["x"])
-        ax_original.set_ylim(*centralized_limits["y"])
+        ax_original.set_xlim(x_min, x_max)
+        ax_original.set_ylim(y_min, y_max)
+
+        # Compute dynamic limits for the aligned positions
+        x_aligned, y_aligned = processed_positions[frame, 0, :, 0], processed_positions[frame, 0, :, 1]
+        x_min_aligned, x_max_aligned = x_aligned.min() - 10, x_aligned.max() + 10  # Add a margin
+        y_min_aligned, y_max_aligned = y_aligned.min() - 10, y_aligned.max() + 10
 
         # Centralized Aligned positions
         ax_aligned = axes[i, 1]
-        x_aligned, y_aligned = processed_positions[frame, 0, :, 0], processed_positions[frame, 0, :, 1]
-        # x_aligned -= x_aligned[0]  # Centralize around the first keypoint
-        # y_aligned -= y_aligned[0]
         ax_aligned.scatter(x_aligned, y_aligned, c="green", label="Aligned")
         for k, (x, y) in enumerate(zip(x_aligned, y_aligned)):
-            if (
-                centralized_limits["x"][0] <= x <= centralized_limits["x"][1]
-                and centralized_limits["y"][0] <= y <= centralized_limits["y"][1]
-            ):
-                ax_aligned.text(
-                    x, y, keypoints_labels[k], fontsize=8, color="green"
-                )  # Annotate only points within limits
-        ax_aligned.set_title(f"Aligned - Frame {frame}", fontsize=10)  # Reduced title font size
+            ax_aligned.text(x, y, keypoints_labels[k], fontsize=8, color="green")
+        ax_aligned.set_title(f"Aligned - Frame {frame}", fontsize=10)
         ax_aligned.set_xlabel("X", fontsize=8)
         ax_aligned.set_ylabel("Y", fontsize=8)
         ax_aligned.axhline(0, color="gray", linestyle="--")
         ax_aligned.axvline(0, color="gray", linestyle="--")
         ax_aligned.axis("equal")
-        ax_aligned.set_xlim(*centralized_limits["x"])
-        ax_aligned.set_ylim(*centralized_limits["y"])
+        ax_aligned.set_xlim(x_min_aligned, x_max_aligned)
+        ax_aligned.set_ylim(y_min_aligned, y_max_aligned)
 
     plt.tight_layout(pad=2.0)  # Add padding to reduce overlap
 

@@ -67,18 +67,23 @@ def egocentrically_align_and_center(
 
             # Calculate vectors between keypoints
             vector = centralized_positions[:, idx2, :]  # Vector from keypoint1 to keypoint2
-            angles = np.arctan2(vector[:, 1], vector[:, 0])  # Angles in radians
+            angles = np.arctan2(vector[:, 0], vector[:, 1])  # Angles in radians
 
-            # Apply rotation to align the second keypoint along the x-axis
+            # Apply rotation to align the second keypoint along the y-axis
             for t in range(centralized_positions.shape[0]):
                 rotation_matrix = np.array(
                     [
-                        [np.cos(-angles[t]), -np.sin(-angles[t])],
-                        [np.sin(-angles[t]), np.cos(-angles[t])],
+                        [np.cos(angles[t]), -np.sin(angles[t])],
+                        [np.sin(angles[t]), np.cos(angles[t])],
                     ]
                 )
                 frame_positions = centralized_positions[t, :, :]
                 rotated_positions = (rotation_matrix @ frame_positions.T).T
+
+                # Check and ensure the y-value of orientation_reference_keypoint is negative
+                if rotated_positions[idx2, 1] > 0:
+                    rotated_positions[:, :] *= -1  # Flip all coordinates
+
                 position_aligned[t, individual, :, :] = rotated_positions
 
         # Update the dataset with the cleaned position values
