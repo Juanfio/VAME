@@ -1,5 +1,5 @@
 from vame.logging.logger import VameLogger
-from vame.preprocessing.cleaning import lowconf_cleaning
+from vame.preprocessing.cleaning import lowconf_cleaning, outlier_cleaning
 from vame.preprocessing.alignment import egocentrically_align_and_center
 
 
@@ -26,6 +26,8 @@ def preprocessing(
         orientation_reference_keypoint=orientation_reference_keypoint,
     )
 
-    # outlier_cleaning(config=config)
+    # Outlier cleaning
+    logger.info("Cleaning outliers...")
+    outlier_cleaning(config=config)
 
     # savgol_filtering(config=config)

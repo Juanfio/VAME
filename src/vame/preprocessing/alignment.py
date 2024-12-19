@@ -82,17 +82,8 @@ def egocentrically_align_and_center(
                 position_aligned[t, individual, :, :] = rotated_positions
 
         # Update the dataset with the cleaned position values
-        ds["position_processed"] = (
-            ds["position"].dims,
-            position_aligned,
-        )
-        processed_metadata = {
-            "processed_confidence": True,
-            "processed_egocentric": True,
-            "processed_outlier": False,
-            "processed_savgol": False,
-        }
-        ds.attrs.update(processed_metadata)
+        ds["position_processed"] = (ds["position"].dims, position_aligned)
+        ds.attrs.update({"processed_confidence": True})
 
         # Save the aligned dataset to file
         cleaned_file_path = str(Path(project_path) / "data" / "processed" / f"{session}_processed.nc")
