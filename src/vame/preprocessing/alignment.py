@@ -31,12 +31,14 @@ def egocentrically_align_and_center(
     --------
     None
     """
-    logger.info(f"Egocentric alignment with references: {centered_reference_keypoint} and {orientation_reference_keypoint}")
+    logger.info(
+        f"Egocentric alignment with references: {centered_reference_keypoint} and {orientation_reference_keypoint}"
+    )
     project_path = config["project_path"]
     sessions = config["session_names"]
 
     for i, session in enumerate(sessions):
-        logger.info(f"Session {session}")
+        logger.info(f"Session: {session}")
         # Read raw session data
         file_path = str(Path(project_path) / "data" / "processed" / f"{session}_processed.nc")
         _, _, ds = read_pose_estimation_file(file_path=file_path)
@@ -54,9 +56,14 @@ def egocentrically_align_and_center(
         for individual in range(position_processed.shape[1]):
             # Shape: (time, keypoints, space)
             individual_positions = position_processed[:, individual, :, :]
+            centralized_positions = np.empty_like(individual_positions)
 
             # Centralize all positions around the first keypoint
-            centralized_positions = individual_positions - individual_positions[:, idx1, :][:, np.newaxis, :]
+            for kp in range(individual_positions.shape[1]):
+                for space in range(individual_positions.shape[2]):
+                    centralized_positions[:, kp, space] = (
+                        individual_positions[:, kp, space] - individual_positions[:, idx1, space]
+                    )
 
             # Calculate vectors between keypoints
             vector = centralized_positions[:, idx2, :]  # Vector from keypoint1 to keypoint2

@@ -19,9 +19,10 @@ def lowconf_cleaning(config: dict):
     project_path = config["project_path"]
     sessions = config["session_names"]
     pose_confidence = config["pose_confidence"]
+    logger.info(f"Cleaning low confidence data points. Confidence threshold: {pose_confidence}")
 
     for i, session in enumerate(sessions):
-        logger.info(f"Low-confidence cleaning: session {session}, confidence threshold {pose_confidence}")
+        logger.info(f"Session: {session}")
         # Read raw session data
         file_path = str(Path(project_path) / "data" / "raw" / f"{session}.nc")
         _, _, ds = read_pose_estimation_file(file_path=file_path)

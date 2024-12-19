@@ -26,7 +26,6 @@ def preprocessing(
         orientation_reference_keypoint=orientation_reference_keypoint,
     )
 
-    # clean_timeseries(
-    #     config=config,
-    #     save_logs=save_logs,
-    # )
+    # outlier_cleaning(config=config)
+
+    # savgol_filtering(config=config)
