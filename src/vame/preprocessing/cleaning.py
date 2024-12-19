@@ -24,7 +24,7 @@ def lowconf_cleaning(config: dict):
         logger.info(f"Low-confidence cleaning: session {session}, confidence threshold {pose_confidence}")
         # Read raw session data
         file_path = str(Path(project_path) / "data" / "raw" / f"{session}.nc")
-        _, data_mat, ds = read_pose_estimation_file(file_path=file_path)
+        _, _, ds = read_pose_estimation_file(file_path=file_path)
 
         position = ds["position"].values
         cleaned_position = np.empty_like(position)
@@ -43,7 +43,9 @@ def lowconf_cleaning(config: dict):
                     # Interpolate NaN values
                     if not nan_mask.all():
                         series[nan_mask] = np.interp(
-                            np.flatnonzero(nan_mask), np.flatnonzero(~nan_mask), series[~nan_mask]
+                            np.flatnonzero(nan_mask),
+                            np.flatnonzero(~nan_mask),
+                            series[~nan_mask],
                         )
 
                     # Update the position array

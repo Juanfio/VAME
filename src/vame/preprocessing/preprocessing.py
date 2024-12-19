@@ -1,13 +1,6 @@
-from pathlib import Path
-import xarray as xr
-
 from vame.logging.logger import VameLogger
 from vame.preprocessing.cleaning import lowconf_cleaning
-
-# from vame.preprocessing.align_egocentrical import (
-#     egocentric_alignment_legacy,
-#     egocentric_alignment,
-# )
+from vame.preprocessing.alignment import egocentrically_align_and_center
 
 
 logger_config = VameLogger(__name__)
@@ -16,8 +9,8 @@ logger = logger_config.logger
 
 def preprocessing(
     config: dict,
-    pose_ref_1: str = "snout",
-    pose_ref_2: str = "tailbase",
+    centered_reference_keypoint: str = "snout",
+    orientation_reference_keypoint: str = "tailbase",
     save_logs: bool = False,
 ):
 
@@ -25,11 +18,13 @@ def preprocessing(
     logger.info("Cleaning low confidence data points...")
     lowconf_cleaning(config=config)
 
-    # egocentric_alignment(
-    #     config=config,
-    #     pose_ref_1=pose_ref_1,
-    #     pose_ref_2=pose_ref_2,
-    # )
+    # Egocentric alignment
+    logger.info("Egocentrically aligning and centering...")
+    egocentrically_align_and_center(
+        config=config,
+        centered_reference_keypoint=centered_reference_keypoint,
+        orientation_reference_keypoint=orientation_reference_keypoint,
+    )
 
     # clean_timeseries(
     #     config=config,
