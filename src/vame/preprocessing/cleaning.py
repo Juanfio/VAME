@@ -83,7 +83,7 @@ def outlier_cleaning(config: dict):
         _, _, ds = read_pose_estimation_file(file_path=file_path)
 
         position = np.copy(ds["position_processed"].values)
-        cleaned_position = np.empty_like(position)
+        cleaned_position = np.copy(position)
 
         for individual in range(position.shape[1]):
             for keypoint in range(position.shape[2]):

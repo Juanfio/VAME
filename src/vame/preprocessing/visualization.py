@@ -9,7 +9,7 @@ def visualize_preprocessing_scatter(
     config: dict,
     session_index: int = 0,
     frames: list = [],
-    save_fig_path: str | None = None,
+    save_to_file: bool = False,
 ):
     """
     Visualize the preprocessing results by plotting the original and aligned positions
@@ -87,15 +87,17 @@ def visualize_preprocessing_scatter(
 
     plt.tight_layout(pad=2.0)  # Add padding to reduce overlap
 
-    if save_fig_path:
-        plt.savefig(save_fig_path)
+    if save_to_file:
+        save_fig_path = Path(project_path) / "reports" / "figures" / f"{session}_preprocessing_scatter.png"
+        save_fig_path.parent.mkdir(parents=True, exist_ok=True)
+        plt.savefig(str(save_fig_path))
 
 
 def visualize_preprocessing_timeseries(
     config: dict,
     session_index: int = 0,
     n_samples: int = 1000,
-    save_fig_path: str | None = None,
+    save_to_file: bool = False,
 ):
     """
     Visualize the preprocessing results by plotting the original and aligned positions
@@ -131,25 +133,25 @@ def visualize_preprocessing_timeseries(
         )
 
         ds.position.sel(**sel_x)[0:n_samples].plot(
-            linewidth=2,
+            linewidth=1.5,
             ax=ax[0],
             label=kp,
             color=colors[i],
         )
         ds.position.sel(**sel_y)[0:n_samples].plot(
-            linewidth=2,
+            linewidth=1.5,
             ax=ax[1],
             label=kp,
             color=colors[i],
         )
         ds.position_processed.sel(**sel_x)[0:n_samples].plot(
-            linewidth=2,
+            linewidth=1.5,
             ax=ax[2],
             label=kp,
             color=colors[i],
         )
         ds.position_processed.sel(**sel_y)[0:n_samples].plot(
-            linewidth=2,
+            linewidth=1.5,
             ax=ax[3],
             label=kp,
             color=colors[i],
@@ -181,5 +183,7 @@ def visualize_preprocessing_timeseries(
 
     plt.tight_layout(rect=[0, 0, 1, 0.98])
 
-    if save_fig_path:
-        plt.savefig(save_fig_path)
+    if save_to_file:
+        save_fig_path = Path(project_path) / "reports" / "figures" / f"{session}_preprocessing_timeseries.png"
+        save_fig_path.parent.mkdir(parents=True, exist_ok=True)
+        plt.savefig(str(save_fig_path))
