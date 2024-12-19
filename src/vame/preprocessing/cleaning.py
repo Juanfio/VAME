@@ -32,14 +32,15 @@ def lowconf_cleaning(config: dict):
         cleaned_position = np.empty_like(position)
         confidence = ds["confidence"].values
 
+        perc_interp_points = np.zeros((position.shape[1], position.shape[2]))
         for individual in range(position.shape[1]):
             for keypoint in range(position.shape[2]):
+                conf_series = confidence[:, individual, keypoint]
+                nan_mask = conf_series < pose_confidence
+                perc_interp_points[individual, keypoint] = 100 * np.sum(nan_mask) / len(nan_mask)
                 for space in range(position.shape[3]):
-                    series = np.copy(position[:, individual, keypoint, space])
-                    conf_series = confidence[:, individual, keypoint]
-
                     # Set low-confidence positions to NaN
-                    nan_mask = conf_series < pose_confidence
+                    series = np.copy(position[:, individual, keypoint, space])
                     series[nan_mask] = np.nan
 
                     # Interpolate NaN values
@@ -56,6 +57,8 @@ def lowconf_cleaning(config: dict):
         # Update the dataset with the cleaned position values
         ds["position_processed"] = (ds["position"].dims, cleaned_position)
         ds.attrs.update({"processed_confidence": True})
+
+        ds["percentage_low_confidence"] = (["individual", "keypoint"], perc_interp_points)
 
         # Save the cleaned dataset to file
         cleaned_file_path = str(Path(project_path) / "data" / "processed" / f"{session}_processed.nc")
@@ -85,6 +88,8 @@ def outlier_cleaning(config: dict):
         position = np.copy(ds["position_processed"].values)
         cleaned_position = np.copy(position)
 
+        perc_interp_points = np.zeros((position.shape[1], position.shape[2], position.shape[3]))
+
         for individual in range(position.shape[1]):
             for keypoint in range(position.shape[2]):
                 for space in range(position.shape[3]):
@@ -103,6 +108,7 @@ def outlier_cleaning(config: dict):
                         iqr_val = iqr(z_series)
                         outlier_mask = np.abs(z_series) > iqr_factor * iqr_val
                         z_series[outlier_mask] = np.nan
+                        perc_interp_points[individual, keypoint, space] = 100 * np.sum(outlier_mask) / len(outlier_mask)
 
                         # Interpolate NaN values
                         if not outlier_mask.all():
@@ -121,6 +127,8 @@ def outlier_cleaning(config: dict):
         # Update the dataset with the cleaned position values
         ds["position_processed"] = (ds["position"].dims, cleaned_position)
         ds.attrs.update({"processed_outliers": True})
+
+        ds["percentage_iqr_outliers"] = (["individual", "keypoint", "space"], perc_interp_points)
 
         # Save the cleaned dataset to file
         cleaned_file_path = str(Path(project_path) / "data" / "processed" / f"{session}_processed.nc")
