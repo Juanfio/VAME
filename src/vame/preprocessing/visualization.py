@@ -27,12 +27,6 @@ def visualize_preprocessing_scatter(
     processed_positions = ds["position_processed"].values
     keypoints_labels = ds.keypoints.values
 
-    # # Fixed axis limits
-    # centralized_limits = {
-    #     "x": (-150, 150),
-    #     "y": (-150, 150),
-    # }
-
     if not frames:
         frames = [int(i * len(original_positions)) for i in [0.1, 0.3, 0.5, 0.7, 0.9]]
     num_frames = len(frames)
