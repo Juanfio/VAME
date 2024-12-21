@@ -5,10 +5,12 @@ import scipy.signal
 from scipy.stats import iqr
 import matplotlib.pyplot as plt
 from typing import List, Optional
+
 from vame.logging.logger import VameLogger
 from vame.util.auxiliary import read_config
 from vame.schemas.states import CreateTrainsetFunctionSchema, save_state
 from vame.util.data_manipulation import interpol_all_nans
+from vame.util.data_manipulation import read_pose_estimation_file
 
 
 logger_config = VameLogger(__name__)
@@ -102,164 +104,80 @@ def plot_check_parameter(
 
 
 def traindata_aligned(
-    cfg: dict,
-    sessions: List[str],
-    testfraction: float,
-    savgol_filter: bool,
-    check_parameter: bool,
+    config: dict,
+    sessions: List[str] | None = None,
+    test_fraction: float | None = None,
+    read_from_variable: str = "position_processed",
 ) -> None:
     """
     Create training dataset for aligned data.
+    Save numpy arrays with the test/train info to the project folder.
 
     Parameters
     ----------
-    cfg : dict
-        Configuration parameters.
-    sessions : List[str]
-        List of sessions.
-    testfraction : float
-        Fraction of data to use as test data.
-    savgol_filter : bool
-        Flag indicating whether to apply Savitzky-Golay filter.
-    check_parameter : bool
-        If True, the function will plot the z-scored data and the filtered data.
+    config : dict
+        Configuration parameters dictionary.
+    sessions : List[str], optional
+        List of session names. If None, all sessions will be used. Defaults to None.
+    test_fraction : float, optional
+        Fraction of data to use as test data. Defaults to 0.1.
 
     Returns
     -------
     None
-        Save numpy arrays with the test/train info to the project folder.
     """
-    X_train = []
-    pos = []
-    pos_temp = 0
-    pos.append(0)
+    project_path = config["project_path"]
+    if sessions is None:
+        sessions = config["session_names"]
+    if test_fraction is None:
+        test_fraction = config["test_fraction"]
 
-    if check_parameter:
-        X_true = []
-        sessions = [sessions[0]]
-
+    all_data_list = []
     for session in sessions:
-        logger.info("z-scoring of session %s" % session)
-        path_to_file = os.path.join(
-            cfg["project_path"],
-            "data",
-            "processed",
-            session,
-            session + "-PE-seq.npy",
-        )
-        data = np.load(path_to_file)
+        # Read session data
+        file_path = str(Path(project_path) / "data" / "processed" / f"{session}_processed.nc")
+        _, _, ds = read_pose_estimation_file(file_path=file_path)
 
-        X_mean = np.mean(data, axis=None)
-        X_std = np.std(data, axis=None)
-        X_z = (data.T - X_mean) / X_std
+        position_data = ds[read_from_variable]
+        centered_reference_keypoint = ds.attrs['centered_reference_keypoint']
+        orientation_reference_keypoint = ds.attrs['orientation_reference_keypoint']
 
-        # Introducing artificial error spikes
-        # rang = [1.5, 2, 2.5, 3, 3.5, 3, 3, 2.5, 2, 1.5]
-        # for i in range(num_frames):
-        #     if i % 300 == 0:
-        #         rnd = np.random.choice(12,2)
-        #         for j in range(10):
-        #             X_z[i+j, rnd[0]] = X_z[i+j, rnd[0]] * rang[j]
-        #             X_z[i+j, rnd[1]] = X_z[i+j, rnd[1]] * rang[j]
+        # Get the coordinates
+        individuals = position_data.coords['individuals'].values
+        keypoints = position_data.coords['keypoints'].values
+        spaces = position_data.coords['space'].values
 
-        if check_parameter:
-            X_z_copy = X_z.copy()
-            X_true.append(X_z_copy)
+        # Create a flattened array and infer column indices
+        flattened_array = position_data.values.reshape(position_data.shape[0], -1)
+        columns = [f"{ind}_{kp}_{sp}" for ind in individuals for kp in keypoints for sp in spaces]
 
-        if cfg["robust"]:
-            iqr_val = iqr(X_z)
-            logger.info("IQR value: %.2f, IQR cutoff: %.2f" % (iqr_val, cfg["iqr_factor"] * iqr_val))
-            for i in range(X_z.shape[0]):
-                for marker in range(X_z.shape[1]):
-                    if X_z[i, marker] > cfg["iqr_factor"] * iqr_val:
-                        X_z[i, marker] = np.nan
+        # Identify columns to exclude
+        excluded_columns = []
+        for ind in individuals:
+            excluded_columns.append(f"{ind}_{centered_reference_keypoint}_x")  # Exclude both x and y for centered_reference_keypoint
+            excluded_columns.append(f"{ind}_{centered_reference_keypoint}_y")
+            excluded_columns.append(f"{ind}_{orientation_reference_keypoint}_x")  # Exclude only x for orientation_reference_keypoint
 
-                    elif X_z[i, marker] < -cfg["iqr_factor"] * iqr_val:
-                        X_z[i, marker] = np.nan
+        # Filter out the excluded columns
+        included_indices = [i for i, col in enumerate(columns) if col not in excluded_columns]
+        filtered_array = flattened_array[:, included_indices]
 
-            X_z = interpol_all_nans(X_z)
+        all_data_list.append(filtered_array)
 
-        X_len = len(data.T)
-        pos_temp += X_len
-        pos.append(pos_temp)
-        X_train.append(X_z)
+    all_data_array = np.concatenate(all_data_list, axis=0).T
+    test_size = int(all_data_array.shape[1] * test_fraction)
+    data_test = all_data_array[:, :test_size]
+    data_train = all_data_array[:, test_size:]
 
-    X = np.concatenate(X_train, axis=0)
-    # X_std = np.std(X)
+    # Save numpy arrays the the test/train info:
+    train_data_path = Path(project_path) / "data" / "train" / "train_seq.npy"
+    np.save(str(train_data_path), data_train)
 
-    detect_anchors = np.std(X.T, axis=1)
-    sort_anchors = np.sort(detect_anchors)
-    if sort_anchors[0] == sort_anchors[1]:
-        anchors = np.where(detect_anchors == sort_anchors[0])[0]
-        anchor_1_temp = anchors[0]
-        anchor_2_temp = anchors[1]
-    else:
-        anchor_1_temp = int(np.where(detect_anchors == sort_anchors[0])[0])
-        anchor_2_temp = int(np.where(detect_anchors == sort_anchors[1])[0])
+    test_data_path = Path(project_path) / "data" / "train" / "test_seq.npy"
+    np.save(str(test_data_path), data_test)
 
-    if anchor_1_temp > anchor_2_temp:
-        anchor_1 = anchor_1_temp
-        anchor_2 = anchor_2_temp
-    else:
-        anchor_1 = anchor_2_temp
-        anchor_2 = anchor_1_temp
-
-    X = np.delete(X, anchor_1, 1)
-    X = np.delete(X, anchor_2, 1)
-    X = X.T
-
-    if savgol_filter:
-        X_med = scipy.signal.savgol_filter(X, cfg["savgol_length"], cfg["savgol_order"])
-    else:
-        X_med = X
-
-    num_frames = len(X_med.T)
-    test = int(num_frames * testfraction)
-
-    z_test = X_med[:, :test]
-    z_train = X_med[:, test:]
-
-    if check_parameter:
-        plot_check_parameter(
-            cfg=cfg,
-            iqr_val=iqr_val,
-            num_frames=num_frames,
-            X_true=X_true,
-            X_med=X_med,
-        )
-    else:
-        # save numpy arrays the the test/train info:
-        np.save(
-            os.path.join(
-                cfg["project_path"],
-                "data",
-                "train",
-                "train_seq.npy",
-            ),
-            z_train,
-        )
-        np.save(
-            os.path.join(
-                cfg["project_path"],
-                "data",
-                "train",
-                "test_seq.npy",
-            ),
-            z_test,
-        )
-        for i, session in enumerate(sessions):
-            np.save(
-                os.path.join(
-                    cfg["project_path"],
-                    "data",
-                    "processed",
-                    session,
-                    session + "-PE-seq-clean.npy",
-                ),
-                X_med[:, pos[i] : pos[i + 1]],
-            )
-        logger.info("Lenght of train data: %d" % len(z_train.T))
-        logger.info("Lenght of test data: %d" % len(z_test.T))
+    logger.info(f"Lenght of train data: {data_train.shape[1]}")
+    logger.info(f"Lenght of test data: {data_test.shape[1]}")
 
 
 def traindata_fixed(
@@ -417,9 +335,7 @@ def traindata_fixed(
 
 @save_state(model=CreateTrainsetFunctionSchema)
 def create_trainset(
-    config: str,
-    pose_ref_index: Optional[List] = None,
-    check_parameter: bool = False,
+    config: dict,
     save_logs: bool = False,
 ) -> None:
     """
@@ -445,12 +361,8 @@ def create_trainset(
 
     Parameters
     ----------
-    config : str
-        Path to the config file.
-    pose_ref_index : Optional[List], optional
-        List of reference coordinate indices for alignment. Defaults to None.
-    check_parameter : bool, optional
-        If True, the function will plot the z-scored data and the filtered data. Defaults to False.
+    config : dict
+        Configuration parameters dictionary.
     save_logs : bool, optional
         If True, the function will save logs to the project folder. Defaults to False.
 
@@ -459,55 +371,48 @@ def create_trainset(
     None
     """
     try:
-        config_file = Path(config).resolve()
-        cfg = read_config(str(config_file))
-        fixed = cfg["egocentric_data"]
+        fixed = config["egocentric_data"]
 
         if save_logs:
-            log_path = Path(cfg["project_path"]) / "logs" / "create_trainset.log"
+            log_path = Path(config["project_path"]) / "logs" / "create_trainset.log"
             logger_config.add_file_handler(str(log_path))
 
-        if not os.path.exists(os.path.join(cfg["project_path"], "data", "train", "")):
-            os.mkdir(os.path.join(cfg["project_path"], "data", "train", ""))
+        if not os.path.exists(os.path.join(config["project_path"], "data", "train", "")):
+            os.mkdir(os.path.join(config["project_path"], "data", "train", ""))
 
         sessions = []
-        if cfg["all_data"] == "No":
-            for session in cfg["session_names"]:
+        if config["all_data"] == "No":
+            for session in config["session_names"]:
                 use_session = input("Do you want to train on " + session + "? yes/no: ")
                 if use_session == "yes":
                     sessions.append(session)
                 if use_session == "no":
                     continue
         else:
-            sessions = cfg["session_names"]
+            sessions = config["session_names"]
 
         logger.info("Creating training dataset...")
-        if cfg["robust"]:
-            logger.info("Using robust setting to eliminate outliers! IQR factor: %d" % cfg["iqr_factor"])
 
         if not fixed:
             logger.info("Creating trainset from the vame.egocentrical_alignment() output ")
             traindata_aligned(
-                cfg,
-                sessions,
-                cfg["test_fraction"],
-                cfg["savgol_filter"],
-                check_parameter,
+                config=config,
+                sessions=sessions,
             )
         else:
-            logger.info("Creating trainset from the vame.pose_to_numpy() output ")
-            traindata_fixed(
-                cfg,
-                sessions,
-                cfg["test_fraction"],
-                cfg["num_features"],
-                cfg["savgol_filter"],
-                check_parameter,
-                pose_ref_index,
-            )
+            raise NotImplementedError("Fixed data training is not implemented yet")
+            # logger.info("Creating trainset from the vame.pose_to_numpy() output ")
+            # traindata_fixed(
+            #     cfg,
+            #     sessions,
+            #     cfg["test_fraction"],
+            #     cfg["num_features"],
+            #     cfg["savgol_filter"],
+            #     check_parameter,
+            #     pose_ref_index,
+            # )
 
-        if not check_parameter:
-            logger.info("A training and test set has been created. Next step: vame.train_model()")
+        logger.info("A training and test set has been created. Next step: vame.train_model()")
 
     except Exception as e:
         logger.exception(str(e))

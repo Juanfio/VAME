@@ -90,7 +90,11 @@ def egocentrically_align_and_center(
 
         # Update the dataset with the cleaned position values
         ds[save_to_variable] = (ds[read_from_variable].dims, position_aligned)
-        ds.attrs.update({"processed_alignment": True})
+        ds.attrs.update({
+            "processed_alignment": True,
+            "centered_reference_keypoint": centered_reference_keypoint,
+            "orientation_reference_keypoint": orientation_reference_keypoint,
+        })
 
         # Save the aligned dataset to file
         cleaned_file_path = str(Path(project_path) / "data" / "processed" / f"{session}_processed.nc")

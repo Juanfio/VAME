@@ -28,7 +28,7 @@ def lowconf_cleaning(
 
     for i, session in enumerate(sessions):
         logger.info(f"Session: {session}")
-        # Read raw session data
+        # Read session data
         file_path = str(Path(project_path) / "data" / "processed" / f"{session}_processed.nc")
         _, _, ds = read_pose_estimation_file(file_path=file_path)
 

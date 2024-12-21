@@ -22,7 +22,7 @@ class GenerativeModelModeEnum(str, Enum):
 
 
 class BaseStateSchema(BaseModel):
-    config: str = Field(title="Configuration file path")
+    config: dict = Field(title="Configuration dictionary")
     execution_state: StatesEnum | None = Field(
         title="Method execution state",
         default=None,
@@ -55,15 +55,7 @@ class EgocentricAlignmentFunctionSchema(BaseStateSchema):
 class PoseToNumpyFunctionSchema(BaseStateSchema): ...
 
 
-class CreateTrainsetFunctionSchema(BaseStateSchema):
-    pose_ref_index: Optional[list] = Field(
-        title="Pose reference index",
-        default=None,
-    )
-    check_parameter: bool = Field(
-        title="Check parameter",
-        default=False,
-    )
+class CreateTrainsetFunctionSchema(BaseStateSchema): ...
 
 
 class TrainModelFunctionSchema(BaseStateSchema): ...
@@ -176,14 +168,11 @@ class VAMEPipelineStatesSchema(BaseModel):
     )
 
 
-def _save_state(model: BaseModel, function_name: str, state: StatesEnum) -> None:
+def _save_state(model: BaseStateSchema, function_name: str, state: StatesEnum) -> None:
     """
     Save the state of the function to the project states json file.
     """
-    config_file_path = Path(model.config)
-    project_path = config_file_path.parent
-    states_file_path = project_path / "states/states.json"
-
+    states_file_path = Path(model.config["project_path"]) / "states" / "states.json"
     with open(states_file_path, "r") as f:
         states = json.load(f)
 
