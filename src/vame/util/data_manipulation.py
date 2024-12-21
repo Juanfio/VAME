@@ -168,25 +168,25 @@ def nan_helper(y: np.ndarray) -> Tuple:
     return np.isnan(y), lambda z: z.nonzero()[0]
 
 
-def interpol_all_nans(arr: np.ndarray) -> np.ndarray:
-    """
-    Interpolates all NaN values in the given array.
+# def interpol_all_nans(arr: np.ndarray) -> np.ndarray:
+#     """
+#     Interpolates all NaN values in the given array.
 
-    Parameters
-    ----------
-    arr : np.ndarray
-        Input array containing NaN values.
+#     Parameters
+#     ----------
+#     arr : np.ndarray
+#         Input array containing NaN values.
 
-    Returns
-    -------
-    np.ndarray
-        Array with NaN values replaced by interpolated values.
-    """
-    y = np.transpose(arr)
-    nans, x = nan_helper(y)
-    y[nans] = np.interp(x(nans), x(~nans), y[~nans])
-    arr = np.transpose(y)
-    return arr
+#     Returns
+#     -------
+#     np.ndarray
+#         Array with NaN values replaced by interpolated values.
+#     """
+#     y = np.transpose(arr)
+#     nans, x = nan_helper(y)
+#     y[nans] = np.interp(x(nans), x(~nans), y[~nans])
+#     arr = np.transpose(y)
+#     return arr
 
 
 def interpol_first_rows_nans(arr: np.ndarray) -> np.ndarray:
