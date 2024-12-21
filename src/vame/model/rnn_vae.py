@@ -552,7 +552,7 @@ def train_model(
         LEARNING_RATE = cfg["learning_rate"]
         NUM_FEATURES = cfg["num_features"]
         if not fixed:
-            NUM_FEATURES = NUM_FEATURES - 2
+            NUM_FEATURES = NUM_FEATURES - 3
         TEMPORAL_WINDOW = cfg["time_window"] * 2
         FUTURE_DECODER = cfg["prediction_decoder"]
         FUTURE_STEPS = cfg["prediction_steps"]
