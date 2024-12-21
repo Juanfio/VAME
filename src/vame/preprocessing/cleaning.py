@@ -10,7 +10,11 @@ logger_config = VameLogger(__name__)
 logger = logger_config.logger
 
 
-def lowconf_cleaning(config: dict):
+def lowconf_cleaning(
+    config: dict,
+    read_from_variable: str = "position_processed",
+    save_to_variable: str = "position_processed",
+):
     """
     Clean the low confidence data points from the dataset.
     Processes position data by:
@@ -25,10 +29,10 @@ def lowconf_cleaning(config: dict):
     for i, session in enumerate(sessions):
         logger.info(f"Session: {session}")
         # Read raw session data
-        file_path = str(Path(project_path) / "data" / "raw" / f"{session}.nc")
+        file_path = str(Path(project_path) / "data" / "processed" / f"{session}_processed.nc")
         _, _, ds = read_pose_estimation_file(file_path=file_path)
 
-        position = ds["position"].values
+        position = ds[read_from_variable].values
         cleaned_position = np.empty_like(position)
         confidence = ds["confidence"].values
 
@@ -55,7 +59,7 @@ def lowconf_cleaning(config: dict):
                     cleaned_position[:, individual, keypoint, space] = series
 
         # Update the dataset with the cleaned position values
-        ds["position_processed"] = (ds["position"].dims, cleaned_position)
+        ds[save_to_variable] = (ds[read_from_variable].dims, cleaned_position)
         ds.attrs.update({"processed_confidence": True})
 
         ds["percentage_low_confidence"] = (["individual", "keypoint"], perc_interp_points)
@@ -68,7 +72,11 @@ def lowconf_cleaning(config: dict):
         )
 
 
-def outlier_cleaning(config: dict):
+def outlier_cleaning(
+    config: dict,
+    read_from_variable: str = "position_processed",
+    save_to_variable: str = "position_processed",
+):
     """
     Clean the outliers from the dataset.
     Processes position data by:
@@ -85,7 +93,7 @@ def outlier_cleaning(config: dict):
         file_path = str(Path(project_path) / "data" / "processed" / f"{session}_processed.nc")
         _, _, ds = read_pose_estimation_file(file_path=file_path)
 
-        position = np.copy(ds["position_processed"].values)
+        position = np.copy(ds[read_from_variable].values)
         cleaned_position = np.copy(position)
 
         perc_interp_points = np.zeros((position.shape[1], position.shape[2], position.shape[3]))
@@ -108,7 +116,9 @@ def outlier_cleaning(config: dict):
                         iqr_val = iqr(z_series)
                         outlier_mask = np.abs(z_series) > iqr_factor * iqr_val
                         z_series[outlier_mask] = np.nan
-                        perc_interp_points[individual, keypoint, space] = 100 * np.sum(outlier_mask) / len(outlier_mask)
+                        perc_interp_points[individual, keypoint, space] = (
+                            100 * np.sum(outlier_mask) / len(outlier_mask)
+                        )
 
                         # Interpolate NaN values
                         if not outlier_mask.all():
@@ -125,7 +135,7 @@ def outlier_cleaning(config: dict):
                     cleaned_position[:, individual, keypoint, space] = z_series
 
         # Update the dataset with the cleaned position values
-        ds["position_processed"] = (ds["position"].dims, cleaned_position)
+        ds[save_to_variable] = (ds[read_from_variable].dims, cleaned_position)
         ds.attrs.update({"processed_outliers": True})
 
         ds["percentage_iqr_outliers"] = (["individual", "keypoint", "space"], perc_interp_points)

@@ -13,6 +13,8 @@ def egocentrically_align_and_center(
     config: dict,
     centered_reference_keypoint: str = "snout",
     orientation_reference_keypoint: str = "tailbase",
+    read_from_variable: str = "position_processed",
+    save_to_variable: str = "position_egocentric_aligned",
 ) -> None:
     """
     Aligns the time series by first centralizing all positions around the first keypoint
@@ -39,7 +41,7 @@ def egocentrically_align_and_center(
 
     for i, session in enumerate(sessions):
         logger.info(f"Session: {session}")
-        # Read raw session data
+        # Read session data
         file_path = str(Path(project_path) / "data" / "processed" / f"{session}_processed.nc")
         _, _, ds = read_pose_estimation_file(file_path=file_path)
 
@@ -49,7 +51,7 @@ def egocentrically_align_and_center(
         idx2 = np.where(keypoints == orientation_reference_keypoint)[0][0]
 
         # Extract processed positions values, with shape: (time, individuals, keypoints, space)
-        position_processed = np.copy(ds["position_processed"].values)
+        position_processed = np.copy(ds[read_from_variable].values)
         position_aligned = np.empty_like(position_processed)
 
         # Loop over individuals
@@ -87,7 +89,7 @@ def egocentrically_align_and_center(
                 position_aligned[t, individual, :, :] = rotated_positions
 
         # Update the dataset with the cleaned position values
-        ds["position_processed"] = (ds["position"].dims, position_aligned)
+        ds[save_to_variable] = (ds[read_from_variable].dims, position_aligned)
         ds.attrs.update({"processed_alignment": True})
 
         # Save the aligned dataset to file

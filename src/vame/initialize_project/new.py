@@ -34,9 +34,16 @@ def init_new_project(
     A VAME project is a directory with the following structure:
     - project_name/
         - data/
-            - video1/
-            - video2/
-            - ...
+            - raw/
+                - session1.mp4
+                - session1.nc
+                - session2.mp4
+                - session2.nc
+                - ...
+            - processed/
+                - session1_processed.nc
+                - session2_processed.nc
+                - ...
         - model/
             - pretrained_model/
         - results/
@@ -45,13 +52,6 @@ def init_new_project(
             - ...
         - states/
             - states.json
-        - videos/
-            - pose_estimation/
-                - video1.csv
-                - video2.csv
-            - video1.mp4
-            - video2.mp4
-            - ...
         - config.yaml
 
     Parameters:
@@ -160,13 +160,16 @@ def init_new_project(
             "If the pose estimation file is in nwb format, you must provide the path to the pose series data for each nwb file."
         )
 
-    # Creates directories under project/data/processed/
+    # Session names
     videos_paths = [Path(vp).resolve() for vp in videos]
     session_names = []
-    dirs_processed_data = [data_processed_path / Path(i.stem) for i in videos_paths]
-    for p in dirs_processed_data:
-        p.mkdir(parents=True, exist_ok=True)
-        session_names.append(p.stem)
+    for s in videos_paths:
+        session_names.append(s.stem)
+
+    # # Creates directories under project/data/processed/
+    # dirs_processed_data = [data_processed_path / Path(i.stem) for i in videos_paths]
+    # for p in dirs_processed_data:
+    #     p.mkdir(parents=True, exist_ok=True)
 
     # Creates directories under project/results/
     dirs_results = [results_path / Path(i.stem) for i in videos_paths]
@@ -201,6 +204,12 @@ def init_new_project(
             engine="scipy",
         )
         num_features_list.append(ds.space.shape[0] * ds.keypoints.shape[0])
+
+        output_processed_name = data_processed_path / Path(video_path).stem
+        ds.to_netcdf(
+            path=f"{output_processed_name}_processed.nc",
+            engine="scipy",
+        )
 
     unique_num_features = list(set(num_features_list))
     if len(unique_num_features) > 1:

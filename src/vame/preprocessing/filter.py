@@ -10,7 +10,11 @@ logger_config = VameLogger(__name__)
 logger = logger_config.logger
 
 
-def savgol_filtering(config: dict):
+def savgol_filtering(
+    config: dict,
+    read_from_variable: str = "position_processed",
+    save_to_variable: str = "position_processed",
+):
     """
     Apply Savitzky-Golay filter to the data.
     """
@@ -27,7 +31,7 @@ def savgol_filtering(config: dict):
         _, _, ds = read_pose_estimation_file(file_path=file_path)
 
         # Extract processed positions values, with shape: (time, individuals, keypoints, space)
-        position = np.copy(ds["position_processed"].values)
+        position = np.copy(ds[read_from_variable].values)
         filtered_position = np.copy(position)
         for individual in range(position.shape[1]):
             for keypoint in range(position.shape[2]):
@@ -47,7 +51,7 @@ def savgol_filtering(config: dict):
                     )
 
         # Update the dataset with the filtered position values
-        ds["position_processed"] = (ds["position"].dims, filtered_position)
+        ds[save_to_variable] = (ds[read_from_variable].dims, filtered_position)
         ds.attrs.update({"processed_filtered": True})
 
         # Save the filtered dataset to file
