@@ -471,7 +471,10 @@ def test(
 
 
 @save_state(model=TrainModelFunctionSchema)
-def train_model(config: str, save_logs: bool = False) -> None:
+def train_model(
+    config: dict,
+    save_logs: bool = False,
+) -> None:
     """
     Train Variational Autoencoder using the configuration file values.
     Fills in the values in the "train_model" key of the states.json file.
@@ -497,8 +500,8 @@ def train_model(config: str, save_logs: bool = False) -> None:
 
     Parameters
     ----------
-    config : str
-        Path to the configuration file.
+    config : dict
+        Configuration dictionary.
     save_logs : bool, optional
         Whether to save the logs, by default False.
 
@@ -506,10 +509,9 @@ def train_model(config: str, save_logs: bool = False) -> None:
     -------
     None
     """
+    cfg = config
     try:
         tqdm_logger_stream = None
-        config_file = Path(config).resolve()
-        cfg = read_config(str(config_file))
         if save_logs:
             tqdm_logger_stream = TqdmToLogger(logger)
             log_path = Path(cfg["project_path"]) / "logs" / "train_model.log"
