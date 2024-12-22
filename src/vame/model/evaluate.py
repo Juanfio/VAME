@@ -220,7 +220,7 @@ def eval_temporal(
     FUTURE_STEPS = cfg["prediction_steps"]
     NUM_FEATURES = cfg["num_features"]
     if not fixed:
-        NUM_FEATURES = NUM_FEATURES - 2
+        NUM_FEATURES = NUM_FEATURES - 3
     TEST_BATCH_SIZE = 64
     hidden_size_layer_1 = cfg["hidden_size_layer_1"]
     hidden_size_layer_2 = cfg["hidden_size_layer_2"]
@@ -332,7 +332,7 @@ def eval_temporal(
 
 @save_state(model=EvaluateModelFunctionSchema)
 def evaluate_model(
-    config: str,
+    config: dict,
     use_snapshots: bool = False,
     save_logs: bool = False,
 ) -> None:
@@ -346,8 +346,8 @@ def evaluate_model(
 
     Parameters
     ----------
-    config : str
-        Path to config file.
+    config : dict
+        Configuration dictionary.
     use_snapshots : bool, optional
         Whether to plot for all snapshots or only the best model. Defaults to False.
     save_logs : bool, optional
@@ -357,18 +357,14 @@ def evaluate_model(
     -------
     None
     """
+    project_path = Path(config["project_path"]).resolve()
     try:
-        config_file = Path(config).resolve()
-        cfg = read_config(str(config_file))
         if save_logs:
-            log_path = Path(cfg["project_path"]) / "logs" / "evaluate_model.log"
+            log_path = project_path / "logs" / "evaluate_model.log"
             logger_config.add_file_handler(str(log_path))
 
-        model_name = cfg["model_name"]
-        fixed = cfg["egocentric_data"]
-
-        if not os.path.exists(os.path.join(cfg["project_path"], "model", "evaluate")):
-            os.mkdir(os.path.join(cfg["project_path"], "model", "evaluate"))
+        model_name = config["model_name"]
+        fixed = config["egocentric_data"]
 
         use_gpu = torch.cuda.is_available()
         if use_gpu:
@@ -379,19 +375,24 @@ def evaluate_model(
             torch.device("cpu")
             logger.info("CUDA is not working, or a GPU is not found; using CPU!")
 
-        logger.info("Evaluation of %s model. " % model_name)
+        logger.info(f"Evaluation of model: {model_name}")
         if not use_snapshots:
-            eval_temporal(cfg, use_gpu, model_name, fixed)  # suffix=suffix
+            eval_temporal(
+                cfg=config,
+                use_gpu=use_gpu,
+                model_name=model_name,
+                fixed=fixed,
+            )
         elif use_snapshots:
-            snapshots = os.listdir(os.path.join(cfg["project_path"], "model", "best_model", "snapshots"))
+            snapshots = os.listdir(os.path.join(str(project_path), "model", "best_model", "snapshots"))
             for snap in snapshots:
-                fullpath = os.path.join(cfg["project_path"], "model", "best_model", "snapshots", snap)
+                fullpath = os.path.join(str(project_path), "model", "best_model", "snapshots", snap)
                 epoch = snap.split("_")[-1]
                 eval_temporal(
-                    cfg,
-                    use_gpu,
-                    model_name,
-                    fixed,
+                    cfg=config,
+                    use_gpu=use_gpu,
+                    model_name=model_name,
+                    fixed=fixed,
                     snapshot=fullpath,
                     suffix="snapshot" + str(epoch),
                 )

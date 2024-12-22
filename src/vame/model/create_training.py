@@ -48,13 +48,13 @@ def traindata_aligned(
         _, _, ds = read_pose_estimation_file(file_path=file_path)
 
         position_data = ds[read_from_variable]
-        centered_reference_keypoint = ds.attrs['centered_reference_keypoint']
-        orientation_reference_keypoint = ds.attrs['orientation_reference_keypoint']
+        centered_reference_keypoint = ds.attrs["centered_reference_keypoint"]
+        orientation_reference_keypoint = ds.attrs["orientation_reference_keypoint"]
 
         # Get the coordinates
-        individuals = position_data.coords['individuals'].values
-        keypoints = position_data.coords['keypoints'].values
-        spaces = position_data.coords['space'].values
+        individuals = position_data.coords["individuals"].values
+        keypoints = position_data.coords["keypoints"].values
+        spaces = position_data.coords["space"].values
 
         # Create a flattened array and infer column indices
         flattened_array = position_data.values.reshape(position_data.shape[0], -1)
@@ -63,9 +63,13 @@ def traindata_aligned(
         # Identify columns to exclude
         excluded_columns = []
         for ind in individuals:
-            excluded_columns.append(f"{ind}_{centered_reference_keypoint}_x")  # Exclude both x and y for centered_reference_keypoint
+            excluded_columns.append(
+                f"{ind}_{centered_reference_keypoint}_x"
+            )  # Exclude both x and y for centered_reference_keypoint
             excluded_columns.append(f"{ind}_{centered_reference_keypoint}_y")
-            excluded_columns.append(f"{ind}_{orientation_reference_keypoint}_x")  # Exclude only x for orientation_reference_keypoint
+            excluded_columns.append(
+                f"{ind}_{orientation_reference_keypoint}_x"
+            )  # Exclude only x for orientation_reference_keypoint
 
         # Filter out the excluded columns
         included_indices = [i for i, col in enumerate(columns) if col not in excluded_columns]

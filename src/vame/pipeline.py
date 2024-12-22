@@ -5,6 +5,10 @@ import xarray as xr
 import vame
 from vame.util.auxiliary import read_config, read_states
 from vame.io.load_poses import load_vame_dataset
+from vame.preprocessing.visualization import (
+    visualize_preprocessing_scatter,
+    visualize_preprocessing_timeseries,
+)
 from vame.logging.logger import VameLogger
 
 
@@ -81,23 +85,27 @@ class VAMEPipeline:
             dss.attrs[key] = value
         return dss
 
-    def preprocessing(self, pose_ref_index=[0, 1]):
-        vame.egocentric_alignment(
-            config=self.config_path,
-            pose_ref_index=pose_ref_index,
+    def preprocessing(
+        self,
+        centered_reference_keypoint: str = "snout",
+        orientation_reference_keypoint: str = "tailbase",
+    ):
+        vame.preprocessing(
+            config=self.config,
+            centered_reference_keypoint=centered_reference_keypoint,
+            orientation_reference_keypoint=orientation_reference_keypoint,
         )
+        visualize_preprocessing_scatter(config=self.config)
+        visualize_preprocessing_timeseries(config=self.config)
 
     def create_training_set(self):
-        vame.create_trainset(
-            config=self.config_path,
-            check_parameter=False,
-        )
+        vame.create_trainset(config=self.config)
 
     def train_model(self):
-        vame.train_model(config=self.config_path)
+        vame.train_model(config=self.config)
 
     def evaluate_model(self):
-        vame.evaluate_model(config=self.config_path)
+        vame.evaluate_model(config=self.config)
 
     def run_segmentation(self):
         vame.segment_session(config=self.config_path)

@@ -94,6 +94,7 @@ def init_new_project(
     data_processed_path = data_path / "processed"
     results_path = project_path / "results"
     model_path = project_path / "model"
+    model_evaluate_path = model_path / "evaluate"
     model_pretrained_path = model_path / "pretrained_model"
     for p in [
         data_path,
@@ -102,6 +103,7 @@ def init_new_project(
         results_path,
         model_path,
         model_pretrained_path,
+        model_evaluate_path,
     ]:
         p.mkdir(parents=True)
         logger.info('Created "{}"'.format(p))
