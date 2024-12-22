@@ -5,7 +5,8 @@ from typing import List
 
 from vame.logging.logger import VameLogger
 from vame.schemas.states import CreateTrainsetFunctionSchema, save_state
-from vame.util.data_manipulation import read_pose_estimation_file
+from vame.io.load_poses import read_pose_estimation_file
+from vame.preprocessing.to_model import format_xarray_for_rnn
 
 
 logger_config = VameLogger(__name__)
@@ -47,35 +48,15 @@ def traindata_aligned(
         file_path = str(Path(project_path) / "data" / "processed" / f"{session}_processed.nc")
         _, _, ds = read_pose_estimation_file(file_path=file_path)
 
-        position_data = ds[read_from_variable]
-        centered_reference_keypoint = ds.attrs["centered_reference_keypoint"]
-        orientation_reference_keypoint = ds.attrs["orientation_reference_keypoint"]
-
-        # Get the coordinates
-        individuals = position_data.coords["individuals"].values
-        keypoints = position_data.coords["keypoints"].values
-        spaces = position_data.coords["space"].values
-
-        # Create a flattened array and infer column indices
-        flattened_array = position_data.values.reshape(position_data.shape[0], -1)
-        columns = [f"{ind}_{kp}_{sp}" for ind in individuals for kp in keypoints for sp in spaces]
-
-        # Identify columns to exclude
-        excluded_columns = []
-        for ind in individuals:
-            # Exclude both x and y for centered_reference_keypoint
-            excluded_columns.append(f"{ind}_{centered_reference_keypoint}_x")
-            excluded_columns.append(f"{ind}_{centered_reference_keypoint}_y")
-            # Exclude only x for orientation_reference_keypoint
-            excluded_columns.append(f"{ind}_{orientation_reference_keypoint}_x")
-
-        # Filter out the excluded columns
-        included_indices = [i for i, col in enumerate(columns) if col not in excluded_columns]
-        filtered_array = flattened_array[:, included_indices]
+        # Format the data for the RNN model
+        filtered_array = format_xarray_for_rnn(
+            ds=ds,
+            read_from_variable=read_from_variable,
+        )
 
         all_data_list.append(filtered_array)
 
-    all_data_array = np.concatenate(all_data_list, axis=0).T
+    all_data_array = np.concatenate(all_data_list, axis=1)
     test_size = int(all_data_array.shape[1] * test_fraction)
     data_test = all_data_array[:, :test_size]
     data_train = all_data_array[:, test_size:]

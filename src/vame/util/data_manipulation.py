@@ -1,129 +1,16 @@
-from typing import List, Tuple, Optional
+from typing import List, Tuple
 import numpy as np
 import pandas as pd
-import xarray as xr
 import cv2 as cv
 import os
 import tqdm
 from scipy.ndimage import median_filter
-from pynwb import NWBHDF5IO
-from pynwb.file import NWBFile
-from hdmf.utils import LabelledDict
 
-from vame.schemas.project import PoseEstimationFiletype
 from vame.logging.logger import VameLogger
-from vame.io.load_poses import load_vame_dataset
 
 
 logger_config = VameLogger(__name__)
 logger = logger_config.logger
-
-
-def get_pose_data_from_nwb_file(
-    nwbfile: NWBFile,
-    path_to_pose_nwb_series_data: str,
-) -> LabelledDict:
-    """
-    Get pose data from nwb file using a inside path to the nwb data.
-
-    Parameters:
-    ----------
-    nwbfile : NWBFile)
-        NWB file object.
-    path_to_pose_nwb_series_data : str
-        Path to the pose data inside the nwb file.
-
-    Returns
-    -------
-    LabelledDict
-        Pose data.
-    """
-    if not path_to_pose_nwb_series_data:
-        raise ValueError("Path to pose nwb series data is required.")
-    pose_data = nwbfile
-    for key in path_to_pose_nwb_series_data.split("/"):
-        if isinstance(pose_data, dict):
-            pose_data = pose_data.get(key)
-            continue
-        pose_data = getattr(pose_data, key)
-    return pose_data
-
-
-def get_dataframe_from_pose_nwb_file(
-    file_path: str,
-    path_to_pose_nwb_series_data: str,
-) -> pd.DataFrame:
-    """
-    Get pose data from nwb file and return it as a pandas DataFrame.
-
-    Parameters
-    ----------
-    file_path : str
-        Path to the nwb file.
-    path_to_pose_nwb_series_data : str
-        Path to the pose data inside the nwb file.
-
-    Returns
-    -------
-    pd.DataFrame
-        Pose data as a pandas DataFrame.
-    """
-    with NWBHDF5IO(file_path, "r") as io:
-        nwbfile = io.read()
-        pose = get_pose_data_from_nwb_file(nwbfile, path_to_pose_nwb_series_data)
-        dataframes = []
-        for label, pose_series in pose.items():
-            data = pose_series.data[:]
-            confidence = pose_series.confidence[:]
-            df = pd.DataFrame(data, columns=[f"{label}_x", f"{label}_y"])
-            df[f"likelihood_{label}"] = confidence
-            dataframes.append(df)
-        final_df = pd.concat(dataframes, axis=1)
-    return final_df
-
-
-def read_pose_estimation_file(
-    file_path: str,
-    file_type: Optional[PoseEstimationFiletype] = None,
-    path_to_pose_nwb_series_data: Optional[str] = None,
-) -> Tuple[pd.DataFrame, np.ndarray, xr.Dataset]:
-    """
-    Read pose estimation file.
-
-    Parameters
-    ----------
-    file_path : str
-        Path to the pose estimation file.
-    file_type : PoseEstimationFiletype
-        Type of the pose estimation file. Supported types are 'csv' and 'nwb'.
-    path_to_pose_nwb_series_data : str, optional
-        Path to the pose data inside the nwb file, by default None
-
-    Returns
-    -------
-    Tuple[pd.DataFrame, np.ndarray]
-        Tuple containing the pose estimation data as a pandas DataFrame and a numpy array.
-    """
-    ds = load_vame_dataset(ds_path=file_path)
-    data = nc_to_dataframe(ds)
-    data_mat = pd.DataFrame.to_numpy(data)
-    return data, data_mat, ds
-    # if file_type == PoseEstimationFiletype.csv:
-    #     data = pd.read_csv(file_path, skiprows=2, index_col=0)
-    #     if "coords" in data:
-    #         data = data.drop(columns=["coords"], axis=1)
-    #     data_mat = pd.DataFrame.to_numpy(data)
-    #     return data, data_mat
-    # elif file_type == PoseEstimationFiletype.nwb:
-    #     if not path_to_pose_nwb_series_data:
-    #         raise ValueError("Path to pose nwb series data is required.")
-    #     data = get_dataframe_from_pose_nwb_file(
-    #         file_path=file_path,
-    #         path_to_pose_nwb_series_data=path_to_pose_nwb_series_data,
-    #     )
-    #     data_mat = pd.DataFrame.to_numpy(data)
-    #     return data, data_mat
-    # raise ValueError(f"Filetype {file_type} not supported")
 
 
 def consecutive(
@@ -381,34 +268,3 @@ def background(
 
     capture.release()
     return background
-
-
-def nc_to_dataframe(nc_data):
-    keypoints = nc_data["keypoints"].values
-    space = nc_data["space"].values
-
-    # Flatten position data
-    position_data = nc_data["position"].isel(individuals=0).values
-    position_column_names = [f"{keypoint}_{sp}" for keypoint in keypoints for sp in space]
-    position_flattened = position_data.reshape(position_data.shape[0], -1)
-
-    # Create a DataFrame for position data
-    position_df = pd.DataFrame(position_flattened, columns=position_column_names)
-
-    # Extract and flatten confidence data
-    confidence_data = nc_data["confidence"].isel(individuals=0).values
-    confidence_column_names = [f"{keypoint}_confidence" for keypoint in keypoints]
-    confidence_flattened = confidence_data.reshape(confidence_data.shape[0], -1)
-    confidence_df = pd.DataFrame(confidence_flattened, columns=confidence_column_names)
-
-    # Combine position and confidence data
-    combined_df = pd.concat([position_df, confidence_df], axis=1)
-
-    # Reorder columns: keypoint_x, keypoint_y, keypoint_confidence
-    reordered_columns = []
-    for keypoint in keypoints:
-        reordered_columns.extend([f"{keypoint}_x", f"{keypoint}_y", f"{keypoint}_confidence"])
-
-    combined_df = combined_df[reordered_columns]
-
-    return combined_df

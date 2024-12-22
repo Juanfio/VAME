@@ -2,13 +2,12 @@ import os
 import numpy as np
 import pandas as pd
 from pathlib import Path
+
 from vame.util.auxiliary import read_config
 from vame.schemas.states import PoseToNumpyFunctionSchema, save_state
 from vame.logging.logger import VameLogger
-from vame.util.data_manipulation import (
-    interpol_first_rows_nans,
-    read_pose_estimation_file,
-)
+from vame.util.data_manipulation import interpol_first_rows_nans
+from vame.io.load_poses import read_pose_estimation_file
 
 
 logger_config = VameLogger(__name__)

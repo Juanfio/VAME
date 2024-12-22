@@ -2,7 +2,7 @@ import numpy as np
 from pathlib import Path
 
 from vame.logging.logger import VameLogger
-from vame.util.data_manipulation import read_pose_estimation_file
+from vame.io.load_poses import read_pose_estimation_file
 
 
 logger_config = VameLogger(__name__)

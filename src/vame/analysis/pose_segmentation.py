@@ -11,9 +11,10 @@ from sklearn.cluster import KMeans
 from vame.schemas.states import save_state, SegmentSessionFunctionSchema
 from vame.logging.logger import VameLogger, TqdmToLogger
 from vame.model.rnn_model import RNN_VAE
-from vame.util.data_manipulation import read_pose_estimation_file
+from vame.io.load_poses import read_pose_estimation_file
 from vame.util.cli import get_sessions_from_user_input
 from vame.util.model_util import load_model
+from vame.preprocessing.to_model import format_xarray_for_rnn
 
 
 logger_config = VameLogger(__name__)
@@ -70,19 +71,12 @@ def embedd_latent_vectors(
         _, _, ds = read_pose_estimation_file(file_path=file_path)
         data = np.copy(ds[read_from_variable].values)
 
-        # WIP - need to fix data loading here
-        # look at how it's done in `traindata_aligned()` function
-        # probably a good idea to write a function `data_load_for_rnn()`
+        # Format the data for the RNN model
+        data = format_xarray_for_rnn(
+            ds=ds,
+            read_from_variable=read_from_variable,
+        )
 
-        # data = np.load(
-        #     os.path.join(
-        #         project_path,
-        #         "data",
-        #         "processed",
-        #         session,
-        #         session + "-PE-seq-clean.npy",
-        #     )
-        # )
         latent_vector_list = []
         with torch.no_grad():
             for i in tqdm.tqdm(range(data.shape[1] - temp_win), file=tqdm_stream):

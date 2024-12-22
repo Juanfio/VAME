@@ -2,7 +2,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 from matplotlib.cm import get_cmap
 
-from vame.util.data_manipulation import read_pose_estimation_file
+from vame.io.load_poses import read_pose_estimation_file
 
 
 def visualize_preprocessing_scatter(

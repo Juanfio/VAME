@@ -10,11 +10,11 @@ from vame.logging.logger import VameLogger, TqdmToLogger
 from vame.util.auxiliary import read_config
 from vame.schemas.states import EgocentricAlignmentFunctionSchema, save_state
 from vame.schemas.project import PoseEstimationFiletype
+from vame.io.load_poses import read_pose_estimation_file
 from vame.util.data_manipulation import (
     interpol_first_rows_nans,
     crop_and_flip_legacy,
     background,
-    read_pose_estimation_file,
 )
 from vame.video import get_video_frame_rate
 

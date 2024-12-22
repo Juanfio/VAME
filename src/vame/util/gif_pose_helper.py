@@ -3,12 +3,13 @@ import tqdm
 import cv2 as cv
 import numpy as np
 import pandas as pd
+
 from vame.logging.logger import VameLogger
+from vame.io.load_poses import read_pose_estimation_file
 from vame.util.data_manipulation import (
     interpol_first_rows_nans,
     crop_and_flip_legacy,
     background,
-    read_pose_estimation_file,
 )
 
 
