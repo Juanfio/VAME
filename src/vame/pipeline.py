@@ -108,7 +108,7 @@ class VAMEPipeline:
         vame.evaluate_model(config=self.config)
 
     def run_segmentation(self):
-        vame.segment_session(config=self.config_path)
+        vame.segment_session(config=self.config)
 
     def generate_motif_videos(self):
         vame.motif_videos(

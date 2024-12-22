@@ -63,13 +63,11 @@ def traindata_aligned(
         # Identify columns to exclude
         excluded_columns = []
         for ind in individuals:
-            excluded_columns.append(
-                f"{ind}_{centered_reference_keypoint}_x"
-            )  # Exclude both x and y for centered_reference_keypoint
+            # Exclude both x and y for centered_reference_keypoint
+            excluded_columns.append(f"{ind}_{centered_reference_keypoint}_x")
             excluded_columns.append(f"{ind}_{centered_reference_keypoint}_y")
-            excluded_columns.append(
-                f"{ind}_{orientation_reference_keypoint}_x"
-            )  # Exclude only x for orientation_reference_keypoint
+            # Exclude only x for orientation_reference_keypoint
+            excluded_columns.append(f"{ind}_{orientation_reference_keypoint}_x")
 
         # Filter out the excluded columns
         included_indices = [i for i, col in enumerate(columns) if col not in excluded_columns]
