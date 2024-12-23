@@ -15,17 +15,15 @@ logger = logger_config.logger
 
 
 def report(
-    config: str,
+    config: dict,
     segmentation_algorithm: str = "hmm",
 ) -> None:
     """
     Report for a project.
     """
-    config_file = Path(config).resolve()
-    cfg = read_config(str(config_file))
-    project_path = Path(cfg["project_path"])
-    n_clusters = cfg["n_clusters"]
-    model_name = cfg["model_name"]
+    project_path = Path(config["project_path"])
+    n_clusters = config["n_clusters"]
+    model_name = config["model_name"]
 
     with open(project_path / "states" / "states.json") as f:
         project_states = json.load(f)

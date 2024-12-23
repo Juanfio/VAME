@@ -112,14 +112,14 @@ class VAMEPipeline:
 
     def generate_motif_videos(self):
         vame.motif_videos(
-            config=self.config_path,
+            config=self.config,
             video_type=".mp4",
             segmentation_algorithm="hmm",
         )
 
     def run_community_clustering(self):
         vame.community(
-            config=self.config_path,
+            config=self.config,
             segmentation_algorithm="hmm",
             cohort=True,
             cut_tree=2,
@@ -127,7 +127,7 @@ class VAMEPipeline:
 
     def generate_community_videos(self):
         vame.community_videos(
-            config=self.config_path,
+            config=self.config,
             video_type=".mp4",
             segmentation_algorithm="hmm",
         )
@@ -141,7 +141,7 @@ class VAMEPipeline:
 
     def report(self):
         vame.report(
-            config=self.config_path,
+            config=self.config,
             segmentation_algorithm="hmm",
         )
 

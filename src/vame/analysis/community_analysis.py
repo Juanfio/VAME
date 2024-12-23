@@ -473,7 +473,7 @@ def save_cohort_community_labels_per_file(
 
 @save_state(model=CommunityFunctionSchema)
 def community(
-    config: str,
+    config: dict,
     segmentation_algorithm: SegmentationAlgorithms,
     cohort: bool = True,
     cut_tree: int | None = None,
@@ -513,8 +513,8 @@ def community(
 
     Parameters
     ----------
-    config : str
-        Path to the configuration file.
+    config : dict
+        Configuration parameters.
     segmentation_algorithm : SegmentationAlgorithms
         Which segmentation algorithm to use. Options are 'hmm' or 'kmeans'.
     cohort : bool, optional
@@ -529,22 +529,19 @@ def community(
     None
     """
     try:
-        config_file = Path(config).resolve()
-        cfg = read_config(str(config_file))
-
         if save_logs:
-            log_path = Path(cfg["project_path"]) / "logs" / "community.log"
+            log_path = Path(config["project_path"]) / "logs" / "community.log"
             logger_config.add_file_handler(str(log_path))
 
-        model_name = cfg["model_name"]
-        n_clusters = cfg["n_clusters"]
+        model_name = config["model_name"]
+        n_clusters = config["n_clusters"]
 
         # Get sessions
-        if cfg["all_data"] in ["Yes", "yes"]:
-            sessions = cfg["session_names"]
+        if config["all_data"] in ["Yes", "yes"]:
+            sessions = config["session_names"]
         else:
             sessions = get_sessions_from_user_input(
-                cfg=cfg,
+                cfg=config,
                 action_message="run community analysis",
             )
 
@@ -552,7 +549,7 @@ def community(
         if cohort:
             path_to_dir = Path(
                 os.path.join(
-                    cfg["project_path"],
+                    config["project_path"],
                     "results",
                     "community_cohort",
                     segmentation_algorithm + "-" + str(n_clusters),
@@ -563,7 +560,7 @@ def community(
                 path_to_dir.mkdir(parents=True, exist_ok=True)
 
             motif_labels = get_motif_labels(
-                config=cfg,
+                config=config,
                 sessions=sessions,
                 model_name=model_name,
                 n_clusters=n_clusters,
@@ -626,7 +623,7 @@ def community(
             # Saves the full community labels list to each of the original video files
             # This is useful for further analysis when cohort=True
             save_cohort_community_labels_per_file(
-                config=cfg,
+                config=config,
                 sessions=sessions,
                 model_name=model_name,
                 n_clusters=n_clusters,

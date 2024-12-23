@@ -164,7 +164,7 @@ def create_cluster_videos(
 
 @save_state(model=MotifVideosFunctionSchema)
 def motif_videos(
-    config: Union[str, Path],
+    config: dict,
     segmentation_algorithm: SegmentationAlgorithms,
     video_type: str = ".mp4",
     output_video_type: str = ".mp4",
@@ -186,8 +186,8 @@ def motif_videos(
 
     Parameters
     ----------
-    config : Union[str, Path]
-        Path to the configuration file.
+    config : dict
+        Configuration parameters.
     segmentation_algorithm : SegmentationAlgorithms
         Which segmentation algorithm to use. Options are 'hmm' or 'kmeans'.
     video_type : str, optional
@@ -203,31 +203,28 @@ def motif_videos(
     """
     try:
         tqdm_logger_stream = None
-        config_file = Path(config).resolve()
-        cfg = read_config(str(config_file))
-
         if save_logs:
-            log_path = Path(cfg["project_path"]) / "logs" / "motif_videos.log"
+            log_path = Path(config["project_path"]) / "logs" / "motif_videos.log"
             logger_config.add_file_handler(str(log_path))
             tqdm_logger_stream = TqdmToLogger(logger=logger)
-        model_name = cfg["model_name"]
-        n_clusters = cfg["n_clusters"]
+        model_name = config["model_name"]
+        n_clusters = config["n_clusters"]
 
         logger.info(f"Creating motif videos for algorithm: {segmentation_algorithm}...")
 
         # Get sessions
-        if cfg["all_data"] in ["Yes", "yes"]:
-            sessions = cfg["session_names"]
+        if config["all_data"] in ["Yes", "yes"]:
+            sessions = config["session_names"]
         else:
             sessions = get_sessions_from_user_input(
-                cfg=cfg,
+                cfg=config,
                 action_message="write motif videos",
             )
 
         logger.info("Cluster size is: %d " % n_clusters)
         for session in sessions:
             path_to_file = os.path.join(
-                cfg["project_path"],
+                config["project_path"],
                 "results",
                 session,
                 model_name,
@@ -238,7 +235,7 @@ def motif_videos(
                 os.mkdir(os.path.join(path_to_file, "cluster_videos"))
 
             create_cluster_videos(
-                config=cfg,
+                config=config,
                 path_to_file=path_to_file,
                 session=session,
                 n_clusters=n_clusters,
@@ -258,7 +255,7 @@ def motif_videos(
 
 @save_state(model=CommunityVideosFunctionSchema)
 def community_videos(
-    config: Union[str, Path],
+    config: dict,
     segmentation_algorithm: SegmentationAlgorithms,
     cohort: bool = True,
     video_type: str = ".mp4",
@@ -286,8 +283,8 @@ def community_videos(
 
     Parameters:
     -----------
-    config : Union[str, Path]
-        Path to the configuration file.
+    config : dict
+        Configuration parameters.
     segmentation_algorithm : SegmentationAlgorithms
         Which segmentation algorithm to use. Options are 'hmm' or 'kmeans'.
     cohort : bool, optional
@@ -305,29 +302,27 @@ def community_videos(
     """
     try:
         tqdm_logger_stream = None
-        config_file = Path(config).resolve()
-        cfg = read_config(str(config_file))
 
         if save_logs:
-            log_path = Path(cfg["project_path"]) / "logs" / "community_videos.log"
+            log_path = Path(config["project_path"]) / "logs" / "community_videos.log"
             logger_config.add_file_handler(str(log_path))
             tqdm_logger_stream = TqdmToLogger(logger=logger)
-        model_name = cfg["model_name"]
-        n_clusters = cfg["n_clusters"]
+        model_name = config["model_name"]
+        n_clusters = config["n_clusters"]
 
         # Get sessions
-        if cfg["all_data"] in ["Yes", "yes"]:
-            sessions = cfg["session_names"]
+        if config["all_data"] in ["Yes", "yes"]:
+            sessions = config["session_names"]
         else:
             sessions = get_sessions_from_user_input(
-                cfg=cfg,
+                cfg=config,
                 action_message="write community videos",
             )
 
         logger.info("Cluster size is: %d " % n_clusters)
         for session in sessions:
             path_to_file = os.path.join(
-                cfg["project_path"],
+                config["project_path"],
                 "results",
                 session,
                 model_name,
@@ -338,7 +333,7 @@ def community_videos(
                 os.mkdir(os.path.join(path_to_file, "community_videos"))
 
             create_cluster_videos(
-                config=cfg,
+                config=config,
                 path_to_file=path_to_file,
                 session=session,
                 n_clusters=n_clusters,
