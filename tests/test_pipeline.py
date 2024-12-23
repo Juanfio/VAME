@@ -44,4 +44,8 @@ def test_pipeline(setup_pipeline):
     ds = pipeline.get_raw_datasets()
     assert isinstance(ds, xr.Dataset)
 
-    pipeline.run_pipeline()
+    preprocessing_kwargs = {
+        "centered_reference_keypoint": "Nose",
+        "orientation_reference_keypoint": "Tailroot",
+    }
+    pipeline.run_pipeline(preprocessing_kwargs=preprocessing_kwargs)

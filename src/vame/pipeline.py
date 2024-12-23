@@ -161,9 +161,13 @@ class VAMEPipeline:
                 logger.info(f"{key}: {value.get('execution_state', 'Not executed')}")
         return states
 
-    def run_pipeline(self, from_step: int = 0):
+    def run_pipeline(
+        self,
+        from_step: int = 0,
+        preprocessing_kwargs: dict = {},
+    ):
         if from_step == 0:
-            self.preprocessing()
+            self.preprocessing(**preprocessing_kwargs)
         if from_step <= 1:
             self.create_training_set()
         if from_step <= 2:
