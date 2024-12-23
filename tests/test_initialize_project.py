@@ -26,14 +26,14 @@ def test_existing_project():
     poses_estimations = ["./tests/tests_project_sample_data/cropped_video.csv"]
     working_directory = "./tests"
 
-    config_path_creation = init_new_project(
+    config_path_creation, config_creation = init_new_project(
         project_name=project_name,
         videos=videos,
         poses_estimations=poses_estimations,
         source_software="DeepLabCut",
         working_directory=working_directory,
     )
-    config_path_duplicated = init_new_project(
+    config_path_duplicated, config_duplicated = init_new_project(
         project_name=project_name,
         videos=videos,
         poses_estimations=poses_estimations,
