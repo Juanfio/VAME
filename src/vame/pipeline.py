@@ -95,8 +95,16 @@ class VAMEPipeline:
             centered_reference_keypoint=centered_reference_keypoint,
             orientation_reference_keypoint=orientation_reference_keypoint,
         )
-        visualize_preprocessing_scatter(config=self.config)
-        visualize_preprocessing_timeseries(config=self.config)
+        visualize_preprocessing_scatter(
+            config=self.config,
+            show_figure=False,
+            save_to_file=True,
+        )
+        visualize_preprocessing_timeseries(
+            config=self.config,
+            show_figure=False,
+            save_to_file=True,
+        )
 
     def create_training_set(self):
         vame.create_trainset(config=self.config)
@@ -134,7 +142,7 @@ class VAMEPipeline:
 
     def visualization(self):
         vame.visualization(
-            config=self.config_path,
+            config=self.config,
             label="community",
             segmentation_algorithm="hmm",
         )
