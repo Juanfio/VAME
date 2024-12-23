@@ -30,7 +30,7 @@ class VAMEPipeline:
         paths_to_pose_nwb_series_data: Optional[str] = None,
         config_kwargs: Optional[dict] = None,
     ):
-        self.config_path = vame.init_new_project(
+        self.config_path, self.config = vame.init_new_project(
             project_name=project_name,
             videos=videos,
             poses_estimations=poses_estimations,

@@ -14,9 +14,11 @@ def init_project(
     source_software: Literal["DeepLabCut", "SLEAP", "LightningPose"],
     working_directory: str,
     egocentric_data: bool = False,
+    centered_reference_keypoint: str = "Nose",
+    orientation_reference_keypoint: str = "Tailroot",
     paths_to_pose_nwb_series_data: Optional[List[str]] = None,
 ):
-    config = vame.init_new_project(
+    config_path, config_values = vame.init_new_project(
         project_name=project_name,
         videos=videos,
         poses_estimations=poses_estimations,
@@ -27,21 +29,21 @@ def init_project(
     )
 
     # Override config values with test values to speed up tests
-    config_values = read_config(config)
     config_values["egocentric_data"] = egocentric_data
     config_values["max_epochs"] = 10
     config_values["batch_size"] = 10
-    write_config(config, config_values)
+    write_config(config_path, config_values)
 
     project_data = {
         "project_name": project_name,
         "videos": videos,
-        "config_path": config,
+        "config_path": config_path,
         "config_data": config_values,
-        "pose_ref_index": [0, 5],
+        "centered_reference_keypoint": centered_reference_keypoint,
+        "orientation_reference_keypoint": orientation_reference_keypoint,
     }
 
-    return config, project_data
+    return project_data
 
 
 @fixture(scope="session")
@@ -52,7 +54,7 @@ def setup_project_from_folder():
     working_directory = "./tests"
 
     # Initialize project
-    config, project_data = init_project(
+    project_data = init_project(
         project_name=project_name,
         videos=videos,
         poses_estimations=poses_estimations,
@@ -64,7 +66,8 @@ def setup_project_from_folder():
     yield project_data
 
     # Clean up
-    shutil.rmtree(Path(config).parent)
+    config_path = project_data["config_path"]
+    shutil.rmtree(Path(config_path).parent)
 
 
 @fixture(scope="session")
@@ -75,7 +78,7 @@ def setup_project_not_aligned_data():
     working_directory = "./tests"
 
     # Initialize project
-    config, project_data = init_project(
+    project_data = init_project(
         project_name=project_name,
         videos=videos,
         poses_estimations=poses_estimations,
@@ -87,7 +90,8 @@ def setup_project_not_aligned_data():
     yield project_data
 
     # Clean up
-    shutil.rmtree(Path(config).parent)
+    config_path = project_data["config_path"]
+    shutil.rmtree(Path(config_path).parent)
 
 
 # # TODO change to test fixed (already egocentrically aligned) data when have it
@@ -99,7 +103,7 @@ def setup_project_fixed_data():
     working_directory = "./tests"
 
     # Initialize project
-    config, project_data = init_project(
+    project_data = init_project(
         project_name=project_name,
         videos=videos,
         poses_estimations=poses_estimations,
@@ -111,7 +115,8 @@ def setup_project_fixed_data():
     yield project_data
 
     # Clean up
-    shutil.rmtree(Path(config).parent)
+    config_path = project_data["config_path"]
+    shutil.rmtree(Path(config_path).parent)
 
 
 # @fixture(scope="session")
@@ -149,10 +154,13 @@ def setup_project_and_convert_pose_to_numpy(setup_project_fixed_data):
 
 @fixture(scope="session")
 def setup_project_and_align_egocentric(setup_project_not_aligned_data):
-    config_path = setup_project_not_aligned_data["config_path"]
-    vame.egocentric_alignment(
-        config_path,
-        pose_ref_index=setup_project_not_aligned_data["pose_ref_index"],
+    config_data = setup_project_not_aligned_data["config_data"]
+    centered_reference_keypoint = setup_project_not_aligned_data["centered_reference_keypoint"]
+    orientation_reference_keypoint = setup_project_not_aligned_data["orientation_reference_keypoint"]
+    vame.preprocessing(
+        config=config_data,
+        centered_reference_keypoint=centered_reference_keypoint,
+        orientation_reference_keypoint=orientation_reference_keypoint,
         save_logs=True,
     )
     return setup_project_not_aligned_data
@@ -160,11 +168,9 @@ def setup_project_and_align_egocentric(setup_project_not_aligned_data):
 
 @fixture(scope="function")
 def setup_project_and_check_param_aligned_dataset(setup_project_and_align_egocentric):
-    config = setup_project_and_align_egocentric["config_path"]
+    config = setup_project_and_align_egocentric["config_data"]
     vame.create_trainset(
-        config,
-        check_parameter=True,
-        pose_ref_index=setup_project_and_align_egocentric["pose_ref_index"],
+        config=config,
         save_logs=True,
     )
     return setup_project_and_align_egocentric
@@ -175,11 +181,9 @@ def setup_project_and_check_param_fixed_dataset(
     setup_project_and_convert_pose_to_numpy,
 ):
     # use setup_project_and_align_egocentric fixture or setup_project_and_convert_pose_to_numpy based on value of egocentric_aligned
-    config = setup_project_and_convert_pose_to_numpy["config_path"]
+    config = setup_project_and_convert_pose_to_numpy["config_data"]
     vame.create_trainset(
-        config,
-        check_parameter=True,
-        pose_ref_index=setup_project_and_convert_pose_to_numpy["pose_ref_index"],
+        config=config,
         save_logs=True,
     )
     return setup_project_and_convert_pose_to_numpy
@@ -187,11 +191,9 @@ def setup_project_and_check_param_fixed_dataset(
 
 @fixture(scope="session")
 def setup_project_and_create_train_aligned_dataset(setup_project_and_align_egocentric):
-    config = setup_project_and_align_egocentric["config_path"]
+    config = setup_project_and_align_egocentric["config_data"]
     vame.create_trainset(
-        config,
-        check_parameter=False,
-        pose_ref_index=setup_project_and_align_egocentric["pose_ref_index"],
+        config=config,
         save_logs=True,
     )
     return setup_project_and_align_egocentric
@@ -202,11 +204,9 @@ def setup_project_and_create_train_fixed_dataset(
     setup_project_and_convert_pose_to_numpy,
 ):
     # use setup_project_and_align_egocentric fixture or setup_project_and_convert_pose_to_numpy based on value of egocentric_aligned
-    config = setup_project_and_convert_pose_to_numpy["config_path"]
+    config = setup_project_and_convert_pose_to_numpy["config_data"]
     vame.create_trainset(
-        config,
-        check_parameter=False,
-        pose_ref_index=setup_project_and_convert_pose_to_numpy["pose_ref_index"],
+        config=config,
         save_logs=True,
     )
     return setup_project_and_convert_pose_to_numpy
@@ -214,13 +214,13 @@ def setup_project_and_create_train_fixed_dataset(
 
 @fixture(scope="session")
 def setup_project_and_train_model(setup_project_and_create_train_aligned_dataset):
-    config = setup_project_and_create_train_aligned_dataset["config_path"]
+    config = setup_project_and_create_train_aligned_dataset["config_data"]
     vame.train_model(config, save_logs=True)
     return setup_project_and_create_train_aligned_dataset
 
 
 @fixture(scope="session")
 def setup_project_and_evaluate_model(setup_project_and_train_model):
-    config = setup_project_and_train_model["config_path"]
+    config = setup_project_and_train_model["config_data"]
     vame.evaluate_model(config, save_logs=True)
     return setup_project_and_train_model

@@ -1,4 +1,4 @@
-from typing import List, Optional, Literal
+from typing import List, Optional, Literal, Tuple
 from datetime import datetime, timezone
 from pathlib import Path
 import shutil
@@ -8,7 +8,7 @@ import os
 from vame.schemas.project import ProjectSchema, PoseEstimationFiletype
 from vame.schemas.states import VAMEPipelineStatesSchema
 from vame.logging.logger import VameLogger
-from vame.util.auxiliary import write_config
+from vame.util.auxiliary import write_config, read_config
 from vame.video.video import get_video_frame_rate
 from vame.io.load_poses import load_pose_estimation
 
@@ -28,7 +28,7 @@ def init_new_project(
     copy_videos: bool = False,
     paths_to_pose_nwb_series_data: Optional[str] = None,
     config_kwargs: Optional[dict] = None,
-) -> str:
+) -> Tuple[str, dict]:
     """
     Creates a new VAME project with the given parameters.
     A VAME project is a directory with the following structure:
@@ -79,15 +79,15 @@ def init_new_project(
 
     Returns
     -------
-    projconfigfile : str
-        Path to the new vame project config file.
+    Tuple[str, dict]
+        Tuple containing the path to the config file and the config data.
     """
     creation_datetime = datetime.now(timezone.utc).isoformat(timespec="seconds")
     project_path = Path(working_directory).resolve() / project_name
     if project_path.exists():
         logger.info('Project "{}" already exists!'.format(project_path))
         projconfigfile = os.path.join(str(project_path), "config.yaml")
-        return projconfigfile
+        return projconfigfile, read_config(projconfigfile)
 
     data_path = project_path / "data"
     data_raw_path = data_path / "raw"
@@ -244,4 +244,4 @@ def init_new_project(
 
     logger.info(f"A VAME project has been created at {project_path}")
 
-    return projconfigfile
+    return projconfigfile, cfg_data
