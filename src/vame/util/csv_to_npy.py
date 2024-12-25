@@ -100,7 +100,6 @@ def pose_to_numpy(
                     project_path,
                     "data",
                     "processed",
-                    session,
                     session + "-PE-seq.npy",
                 ),
                 final_positions.T,
