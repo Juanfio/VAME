@@ -27,12 +27,12 @@ def test_pose_segmentation_hmm_files_exists(
         "individual_segmentation": individual_segmentation,
     }
     mock_config["hmm_trained"] = hmm_trained
-    with patch("vame.analysis.pose_segmentation.read_config", return_value=mock_config) as mock_read_config:
-        with patch("builtins.input", return_value="yes"):
-            vame.segment_session(
-                config=setup_project_and_train_model["config_data"],
-                save_logs=True,
-            )
+    # with patch("vame.analysis.pose_segmentation.read_config", return_value=mock_config) as mock_read_config:
+    with patch("builtins.input", return_value="yes"):
+        vame.segment_session(
+            config=setup_project_and_train_model["config_data"],
+            save_logs=True,
+        )
     project_path = setup_project_and_train_model["config_data"]["project_path"]
     file = setup_project_and_train_model["config_data"]["session_names"][0]
     model_name = setup_project_and_train_model["config_data"]["model_name"]
