@@ -84,7 +84,7 @@ def get_animal_frames(
         "raw",
         session + ".nc",
     )
-    data, data_mat = read_pose_estimation_file(file_path=file_path)
+    data, data_mat, ds = read_pose_estimation_file(file_path=file_path)
 
     # get the coordinates for alignment from data table
     pose_list = []
