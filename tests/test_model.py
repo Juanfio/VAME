@@ -8,7 +8,7 @@ import pytest
     "fixture",
     [
         "setup_project_and_create_train_aligned_dataset",
-        "setup_project_and_create_train_fixed_dataset",
+        # "setup_project_and_create_train_fixed_dataset",
     ],
 )
 def test_create_train_dataset_output_files_exists(request, fixture):
@@ -28,7 +28,7 @@ def test_create_train_dataset_output_files_exists(request, fixture):
     "fixture",
     [
         "setup_project_and_check_param_aligned_dataset",
-        "setup_project_and_check_param_fixed_dataset",
+        # "setup_project_and_check_param_fixed_dataset",
     ],
 )
 def test_create_check_param_train_dataset(request, fixture):

@@ -1,4 +1,4 @@
-from pytest import fixture
+from pytest import fixture, raises
 from pathlib import Path
 import shutil
 from typing import List, Optional, Literal
@@ -182,10 +182,11 @@ def setup_project_and_check_param_fixed_dataset(
 ):
     # use setup_project_and_align_egocentric fixture or setup_project_and_convert_pose_to_numpy based on value of egocentric_aligned
     config = setup_project_and_convert_pose_to_numpy["config_data"]
-    vame.create_trainset(
-        config=config,
-        save_logs=True,
-    )
+    with raises(NotImplementedError, match="Fixed data training is not implemented yet"):
+        vame.create_trainset(
+            config=config,
+            save_logs=True,
+        )
     return setup_project_and_convert_pose_to_numpy
 
 
@@ -199,17 +200,17 @@ def setup_project_and_create_train_aligned_dataset(setup_project_and_align_egoce
     return setup_project_and_align_egocentric
 
 
-@fixture(scope="session")
-def setup_project_and_create_train_fixed_dataset(
-    setup_project_and_convert_pose_to_numpy,
-):
-    # use setup_project_and_align_egocentric fixture or setup_project_and_convert_pose_to_numpy based on value of egocentric_aligned
-    config = setup_project_and_convert_pose_to_numpy["config_data"]
-    vame.create_trainset(
-        config=config,
-        save_logs=True,
-    )
-    return setup_project_and_convert_pose_to_numpy
+# @fixture(scope="session")
+# def setup_project_and_create_train_fixed_dataset(
+#     setup_project_and_convert_pose_to_numpy,
+# ):
+#     # use setup_project_and_align_egocentric fixture or setup_project_and_convert_pose_to_numpy based on value of egocentric_aligned
+#     config = setup_project_and_convert_pose_to_numpy["config_data"]
+#     vame.create_trainset(
+#         config=config,
+#         save_logs=True,
+#     )
+#     return setup_project_and_convert_pose_to_numpy
 
 
 @fixture(scope="session")
