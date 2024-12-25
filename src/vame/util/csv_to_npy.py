@@ -16,7 +16,7 @@ logger = logger_config.logger
 
 @save_state(model=PoseToNumpyFunctionSchema)
 def pose_to_numpy(
-    config: str,
+    config: dict,
     save_logs=False,
 ) -> None:
     """
@@ -26,8 +26,8 @@ def pose_to_numpy(
 
     Parameters
     ----------
-    config : str
-        Path to the config.yaml file.
+    config : dict
+        Configuration dictionary.
     save_logs : bool, optional
         If True, the logs will be saved to a file, by default False.
 
@@ -37,23 +37,20 @@ def pose_to_numpy(
         If the config.yaml file indicates that the data is not egocentric.
     """
     try:
-        config_file = Path(config).resolve()
-        cfg = read_config(str(config_file))
-
         if save_logs:
-            log_path = Path(cfg["project_path"]) / "logs" / "pose_to_numpy.log"
+            log_path = Path(config["project_path"]) / "logs" / "pose_to_numpy.log"
             logger_config.add_file_handler(str(log_path))
 
-        project_path = cfg["project_path"]
-        sessions = cfg["session_names"]
-        confidence = cfg["pose_confidence"]
-        if not cfg["egocentric_data"]:
+        project_path = config["project_path"]
+        sessions = config["session_names"]
+        confidence = config["pose_confidence"]
+        if not config["egocentric_data"]:
             raise ValueError(
                 "The config.yaml indicates that the data is not egocentric. Please check the parameter egocentric_data"
             )
 
-        file_type = cfg["pose_estimation_filetype"]
-        paths_to_pose_nwb_series_data = cfg["paths_to_pose_nwb_series_data"]
+        file_type = config["pose_estimation_filetype"]
+        paths_to_pose_nwb_series_data = config["paths_to_pose_nwb_series_data"]
         for i, session in enumerate(sessions):
             file_path = os.path.join(
                 project_path,
@@ -61,7 +58,7 @@ def pose_to_numpy(
                 "raw",
                 session + ".nc",
             )
-            data, data_mat = read_pose_estimation_file(
+            data, data_mat, ds = read_pose_estimation_file(
                 file_path=file_path,
                 file_type=file_type,
                 path_to_pose_nwb_series_data=(
