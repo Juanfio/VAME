@@ -44,7 +44,9 @@ def visualize_preprocessing_scatter(
         x_orig, y_orig = original_positions[frame, 0, :, 0], original_positions[frame, 0, :, 1]
 
         # Identify keypoints that are NaN
-        nan_keypoints = [keypoints_labels[k] for k in range(len(keypoints_labels)) if np.isnan(x_orig[k]) or np.isnan(y_orig[k])]
+        nan_keypoints = [
+            keypoints_labels[k] for k in range(len(keypoints_labels)) if np.isnan(x_orig[k]) or np.isnan(y_orig[k])
+        ]
 
         # Check if original positions contain all NaNs
         if np.all(np.isnan(x_orig)) or np.all(np.isnan(y_orig)):

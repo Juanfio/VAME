@@ -14,12 +14,24 @@ def lowconf_cleaning(
     config: dict,
     read_from_variable: str = "position_processed",
     save_to_variable: str = "position_processed",
-):
+) -> None:
     """
-    Clean the low confidence data points from the dataset.
-    Processes position data by:
+    Clean the low confidence data points from the dataset. Processes position data by:
      - setting low-confidence points to NaN
      - interpolating NaN points
+
+    Parameters:
+    -----------
+    config : dict
+        Configuration dictionary.
+    read_from_variable : str, optional
+        Variable to read from the dataset.
+    save_to_variable : str, optional
+        Variable to save the cleaned data to.
+
+    Returns:
+    --------
+    None
     """
     project_path = config["project_path"]
     sessions = config["session_names"]
@@ -80,12 +92,24 @@ def outlier_cleaning(
     config: dict,
     read_from_variable: str = "position_processed",
     save_to_variable: str = "position_processed",
-):
+) -> None:
     """
-    Clean the outliers from the dataset.
-    Processes position data by:
+    Clean the outliers from the dataset. Processes position data by:
      - setting outlier points to NaN
      - interpolating NaN points
+
+    Parameters:
+    -----------
+    config : dict
+        Configuration dictionary.
+    read_from_variable : str, optional
+        Variable to read from the dataset.
+    save_to_variable : str, optional
+        Variable to save the cleaned data to.
+
+    Returns:
+    --------
+    None
     """
     logger.info("Cleaning outliers with Z-score transformation and IQR cutoff.")
     project_path = config["project_path"]
