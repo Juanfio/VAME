@@ -1,6 +1,7 @@
 from pathlib import Path
 import matplotlib.pyplot as plt
 from matplotlib.cm import get_cmap
+import numpy as np
 
 from vame.io.load_poses import read_pose_estimation_file
 
@@ -41,24 +42,40 @@ def visualize_preprocessing_scatter(
     for i, frame in enumerate(frames):
         # Compute dynamic limits for the original positions
         x_orig, y_orig = original_positions[frame, 0, :, 0], original_positions[frame, 0, :, 1]
-        # x_orig -= x_orig[0]  # Centralize around the first keypoint
-        # y_orig -= y_orig[0]
-        x_min, x_max = x_orig.min() - 10, x_orig.max() + 10  # Add a margin
-        y_min, y_max = y_orig.min() - 10, y_orig.max() + 10
 
-        # Centralized Original positions
-        ax_original = axes[i, 0]
-        ax_original.scatter(x_orig, y_orig, c="blue", label="Original")
-        for k, (x, y) in enumerate(zip(x_orig, y_orig)):
-            ax_original.text(x, y, keypoints_labels[k], fontsize=10, color="blue")
-        ax_original.set_title(f"Original - Frame {frame}", fontsize=14)
-        ax_original.set_xlabel("X", fontsize=12)
-        ax_original.set_ylabel("Y", fontsize=12)
-        ax_original.axhline(0, color="gray", linestyle="--")
-        ax_original.axvline(0, color="gray", linestyle="--")
-        ax_original.axis("equal")
-        ax_original.set_xlim(x_min, x_max)
-        ax_original.set_ylim(y_min, y_max)
+        # Identify keypoints that are NaN
+        nan_keypoints = [keypoints_labels[k] for k in range(len(keypoints_labels)) if np.isnan(x_orig[k]) or np.isnan(y_orig[k])]
+
+        # Check if original positions contain all NaNs
+        if np.all(np.isnan(x_orig)) or np.all(np.isnan(y_orig)):
+            ax_original = axes[i, 0]
+            ax_original.set_title(f"Original - Frame {frame} (All NaNs)", fontsize=14, color="red")
+            ax_original.axis("off")  # Hide axis since there is no data to plot
+        else:
+            x_min, x_max = np.nanmin(x_orig) - 10, np.nanmax(x_orig) + 10  # Add a margin
+            y_min, y_max = np.nanmin(y_orig) - 10, np.nanmax(y_orig) + 10
+
+            ax_original = axes[i, 0]
+            ax_original.scatter(x_orig, y_orig, c="blue", label="Original")
+            for k, (x, y) in enumerate(zip(x_orig, y_orig)):
+                ax_original.text(x, y, keypoints_labels[k], fontsize=10, color="blue")
+
+            # Include NaN keypoints in the title
+            if nan_keypoints:
+                nan_text = ", ".join(nan_keypoints)
+                title_text = f"Original - Frame {frame}\nNaNs: {nan_text}"
+            else:
+                title_text = f"Original - Frame {frame}"
+
+            ax_original.set_title(title_text, fontsize=14)
+
+            ax_original.set_xlabel("X", fontsize=12)
+            ax_original.set_ylabel("Y", fontsize=12)
+            ax_original.axhline(0, color="gray", linestyle="--")
+            ax_original.axvline(0, color="gray", linestyle="--")
+            ax_original.axis("equal")
+            ax_original.set_xlim(x_min, x_max)
+            ax_original.set_ylim(y_min, y_max)
 
         # Compute dynamic limits for the cleaned positions
         x_cleaned, y_cleaned = cleaned_positions[frame, 0, :, 0], cleaned_positions[frame, 0, :, 1]
@@ -267,3 +284,81 @@ def visualize_preprocessing_timeseries(
         plt.close(
             fig,
         )
+
+
+def visualize_timeseries(
+    config: dict,
+    session_index: int = 0,
+    n_samples: int = 1000,
+    positions_key: str = "position",
+    keypoints_labels: list[str] | None = None,
+    save_to_file: bool = False,
+    show_figure: bool = True,
+):
+    """
+    Visualize the original positions of the keypoints in a timeseries plot.
+    """
+    project_path = config["project_path"]
+    sessions = config["session_names"]
+    session = sessions[session_index]
+
+    # Read session data
+    file_path = str(Path(project_path) / "data" / "processed" / f"{session}_processed.nc")
+    _, _, ds = read_pose_estimation_file(file_path=file_path)
+
+    fig, ax = plt.subplots(2, 1, figsize=(10, 8))
+
+    individual = "individual_0"
+    if keypoints_labels is None:
+        keypoints_labels = ds.keypoints.values
+
+    # Create a colormap with distinguishable colors
+    cmap = get_cmap("tab10") if len(keypoints_labels) <= 10 else get_cmap("tab20")
+    colors = [cmap(i / len(keypoints_labels)) for i in range(len(keypoints_labels))]
+
+    for i, kp in enumerate(keypoints_labels):
+        sel_x = dict(
+            individuals=individual,
+            keypoints=kp,
+            space="x",
+        )
+        sel_y = dict(
+            individuals=individual,
+            keypoints=kp,
+            space="y",
+        )
+
+        # Original positions (first two subplots)
+        ds[positions_key].sel(**sel_x)[0:n_samples].plot(
+            linewidth=1.5,
+            ax=ax[0],
+            label=kp,
+            color=colors[i],
+        )
+        ds[positions_key].sel(**sel_y)[0:n_samples].plot(
+            linewidth=1.5,
+            ax=ax[1],
+            label=kp,
+            color=colors[i],
+        )
+
+    # Set common labels for Y axes
+    ax[0].set_ylabel(
+        "Allocentric X",
+        fontsize=12,
+    )
+    ax[1].set_ylabel(
+        "Allocentric Y",
+        fontsize=12,
+    )
+
+    # Labels for X axes
+    for idx, a in enumerate(ax):
+        a.set_title("")
+        if idx % 2 == 0:
+            a.set_xlabel("")
+        else:
+            a.set_xlabel(
+                "Time",
+                fontsize=10,
+            )

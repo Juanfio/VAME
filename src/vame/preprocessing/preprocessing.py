@@ -40,6 +40,9 @@ def preprocessing(
     # Create visualization of the preprocessing results up to this point
     visualize_preprocessing_scatter(
         config,
+        original_positions_key="position",
+        cleaned_positions_key="position_cleaned_lowconf",
+        aligned_positions_key="position_egocentric_aligned",
         save_to_file=True,
         show_figure=False,
     )

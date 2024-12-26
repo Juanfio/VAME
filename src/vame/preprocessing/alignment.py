@@ -48,9 +48,15 @@ def egocentrically_align_and_center(
         # Extract keypoint indices
         keypoints = ds.coords["keypoints"].values
         if centered_reference_keypoint not in keypoints:
-            raise ValueError(f"Centered reference keypoint {centered_reference_keypoint} not found in dataset.")
+            raise ValueError(
+                f"Centered reference keypoint {centered_reference_keypoint} not found in dataset.",
+                f"Available keypoints: {keypoints}",
+            )
         if orientation_reference_keypoint not in keypoints:
-            raise ValueError(f"Orientation reference keypoint {orientation_reference_keypoint} not found in dataset.")
+            raise ValueError(
+                f"Orientation reference keypoint {orientation_reference_keypoint} not found in dataset.",
+                f"Available keypoints: {keypoints}",
+            )
         idx1 = np.where(keypoints == centered_reference_keypoint)[0][0]
         idx2 = np.where(keypoints == orientation_reference_keypoint)[0][0]
 

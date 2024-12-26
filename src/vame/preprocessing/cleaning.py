@@ -36,16 +36,20 @@ def lowconf_cleaning(
         cleaned_position = np.empty_like(position)
         confidence = ds["confidence"].values
 
-        perc_interp_points = np.zeros((position.shape[1], position.shape[2]))
+        perc_interp_points = np.zeros((position.shape[1], position.shape[2], position.shape[3]))
         for individual in range(position.shape[1]):
             for keypoint in range(position.shape[2]):
                 conf_series = confidence[:, individual, keypoint]
-                nan_mask = conf_series < pose_confidence
-                perc_interp_points[individual, keypoint] = 100 * np.sum(nan_mask) / len(nan_mask)
                 for space in range(position.shape[3]):
                     # Set low-confidence positions to NaN
+                    nan_mask = conf_series < pose_confidence
                     series = np.copy(position[:, individual, keypoint, space])
                     series[nan_mask] = np.nan
+
+                    # Update nan_mask because the series might come with NaN values previously
+                    nan_mask = np.isnan(series)
+
+                    perc_interp_points[individual, keypoint, space] = 100 * np.sum(nan_mask) / len(nan_mask)
 
                     # Interpolate NaN values
                     if not nan_mask.all():
@@ -62,7 +66,7 @@ def lowconf_cleaning(
         ds[save_to_variable] = (ds[read_from_variable].dims, cleaned_position)
         ds.attrs.update({"processed_confidence": True})
 
-        ds["percentage_low_confidence"] = (["individual", "keypoint"], perc_interp_points)
+        ds["percentage_low_confidence"] = (["individual", "keypoint", "space"], perc_interp_points)
 
         # Save the cleaned dataset to file
         cleaned_file_path = str(Path(project_path) / "data" / "processed" / f"{session}_processed.nc")
