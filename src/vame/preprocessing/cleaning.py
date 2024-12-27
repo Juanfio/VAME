@@ -81,7 +81,7 @@ def lowconf_cleaning(
         ds["percentage_low_confidence"] = (["individual", "keypoint", "space"], perc_interp_points)
 
         # Save the cleaned dataset to file
-        cleaned_file_path = str(Path(project_path) / "data" / "processed" / f"{session}_processed.nc")
+        cleaned_file_path = Path(project_path) / "data" / "processed" / f"{session}_processed.nc"
         ds.to_netcdf(
             path=cleaned_file_path,
             engine="scipy",
