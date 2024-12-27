@@ -5,6 +5,10 @@ import xarray as xr
 import vame
 from vame.util.auxiliary import read_config, read_states
 from vame.io.load_poses import load_vame_dataset
+from vame.preprocessing.visualization import (
+    visualize_preprocessing_scatter,
+    visualize_preprocessing_timeseries,
+)
 from vame.logging.logger import VameLogger
 
 
@@ -26,7 +30,7 @@ class VAMEPipeline:
         paths_to_pose_nwb_series_data: Optional[str] = None,
         config_kwargs: Optional[dict] = None,
     ):
-        self.config_path = vame.init_new_project(
+        self.config_path, self.config = vame.init_new_project(
             project_name=project_name,
             videos=videos,
             poses_estimations=poses_estimations,
@@ -64,9 +68,7 @@ class VAMEPipeline:
         datasets = list()
         attributes = list()
         for session in sessions:
-            ds_path = (
-                Path(self.config["project_path"]) / "data" / "raw" / f"{session}.nc"
-            )
+            ds_path = Path(self.config["project_path"]) / "data" / "raw" / f"{session}.nc"
             ds = load_vame_dataset(ds_path=ds_path)
             ds = ds.expand_dims({"session": [session]})
             datasets.append(ds)
@@ -78,44 +80,54 @@ class VAMEPipeline:
                 dss_attrs.setdefault(key, []).append(value)
         for key, values in dss_attrs.items():
             unique_values = unique_in_order(values)  # Maintain order of unique values
-            dss_attrs[key] = (
-                unique_values[0] if len(unique_values) == 1 else unique_values
-            )
+            dss_attrs[key] = unique_values[0] if len(unique_values) == 1 else unique_values
         for key, value in dss_attrs.items():
             dss.attrs[key] = value
         return dss
 
-    def preprocessing(self, pose_ref_index=[0, 1]):
-        vame.egocentric_alignment(
-            config=self.config_path,
-            pose_ref_index=pose_ref_index,
+    def preprocessing(
+        self,
+        centered_reference_keypoint: str = "snout",
+        orientation_reference_keypoint: str = "tailbase",
+    ):
+        vame.preprocessing(
+            config=self.config,
+            centered_reference_keypoint=centered_reference_keypoint,
+            orientation_reference_keypoint=orientation_reference_keypoint,
+        )
+        visualize_preprocessing_scatter(
+            config=self.config,
+            show_figure=False,
+            save_to_file=True,
+        )
+        visualize_preprocessing_timeseries(
+            config=self.config,
+            show_figure=False,
+            save_to_file=True,
         )
 
     def create_training_set(self):
-        vame.create_trainset(
-            config=self.config_path,
-            check_parameter=False,
-        )
+        vame.create_trainset(config=self.config)
 
     def train_model(self):
-        vame.train_model(config=self.config_path)
+        vame.train_model(config=self.config)
 
     def evaluate_model(self):
-        vame.evaluate_model(config=self.config_path)
+        vame.evaluate_model(config=self.config)
 
     def run_segmentation(self):
-        vame.segment_session(config=self.config_path)
+        vame.segment_session(config=self.config)
 
     def generate_motif_videos(self):
         vame.motif_videos(
-            config=self.config_path,
+            config=self.config,
             video_type=".mp4",
             segmentation_algorithm="hmm",
         )
 
     def run_community_clustering(self):
         vame.community(
-            config=self.config_path,
+            config=self.config,
             segmentation_algorithm="hmm",
             cohort=True,
             cut_tree=2,
@@ -123,21 +135,21 @@ class VAMEPipeline:
 
     def generate_community_videos(self):
         vame.community_videos(
-            config=self.config_path,
+            config=self.config,
             video_type=".mp4",
             segmentation_algorithm="hmm",
         )
 
     def visualization(self):
         vame.visualization(
-            config=self.config_path,
+            config=self.config,
             label="community",
             segmentation_algorithm="hmm",
         )
 
     def report(self):
         vame.report(
-            config=self.config_path,
+            config=self.config,
             segmentation_algorithm="hmm",
         )
 
@@ -157,9 +169,13 @@ class VAMEPipeline:
                 logger.info(f"{key}: {value.get('execution_state', 'Not executed')}")
         return states
 
-    def run_pipeline(self, from_step: int = 0):
+    def run_pipeline(
+        self,
+        from_step: int = 0,
+        preprocessing_kwargs: dict = {},
+    ):
         if from_step == 0:
-            self.preprocessing()
+            self.preprocessing(**preprocessing_kwargs)
         if from_step <= 1:
             self.create_training_set()
         if from_step <= 2:

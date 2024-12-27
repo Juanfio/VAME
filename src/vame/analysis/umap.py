@@ -218,7 +218,7 @@ def umap_vis_comm(
 
 @save_state(model=VisualizationFunctionSchema)
 def visualization(
-    config: Union[str, Path],
+    config: dict,
     segmentation_algorithm: SegmentationAlgorithms,
     label: Optional[str] = None,
     save_logs: bool = False,
@@ -242,8 +242,8 @@ def visualization(
 
     Parameters
     ----------
-    config : Union[str, Path]
-        Path to the configuration file.
+    config : dict
+        Configuration parameters.
     segmentation_algorithm : SegmentationAlgorithms
         Which segmentation algorithm to use. Options are 'hmm' or 'kmeans'.
     label : str, optional
@@ -256,28 +256,25 @@ def visualization(
     None
     """
     try:
-        config_file = Path(config).resolve()
-        cfg = read_config(str(config_file))
-
         if save_logs:
-            logs_path = Path(cfg["project_path"]) / "logs" / "visualization.log"
+            logs_path = Path(config["project_path"]) / "logs" / "visualization.log"
             logger_config.add_file_handler(str(logs_path))
 
-        model_name = cfg["model_name"]
-        n_clusters = cfg["n_clusters"]
+        model_name = config["model_name"]
+        n_clusters = config["n_clusters"]
 
         # Get sessions
-        if cfg["all_data"] in ["Yes", "yes"]:
-            sessions = cfg["session_names"]
+        if config["all_data"] in ["Yes", "yes"]:
+            sessions = config["session_names"]
         else:
             sessions = get_sessions_from_user_input(
-                cfg=cfg,
+                cfg=config,
                 action_message="generate visualization",
             )
 
         for idx, session in enumerate(sessions):
             path_to_file = os.path.join(
-                cfg["project_path"],
+                config["project_path"],
                 "results",
                 session,
                 "",
@@ -296,7 +293,7 @@ def visualization(
                         "umap_embedding_" + session + ".npy",
                     )
                 )
-                num_points = cfg["num_points"]
+                num_points = config["num_points"]
                 if num_points > embed.shape[0]:
                     num_points = embed.shape[0]
             except Exception:
@@ -304,13 +301,13 @@ def visualization(
                     os.mkdir(os.path.join(path_to_file, "community"))
                 logger.info(f"Compute embedding for session {session}")
                 embed = umap_embedding(
-                    cfg,
+                    config,
                     session,
                     model_name,
                     n_clusters,
                     segmentation_algorithm,
                 )
-                num_points = cfg["num_points"]
+                num_points = config["num_points"]
                 if num_points > embed.shape[0]:
                     num_points = embed.shape[0]
 
@@ -328,12 +325,7 @@ def visualization(
                     os.path.join(
                         path_to_file,
                         "",
-                        str(n_clusters)
-                        + "_"
-                        + segmentation_algorithm
-                        + "_label_"
-                        + session
-                        + ".npy",
+                        str(n_clusters) + "_" + segmentation_algorithm + "_label_" + session + ".npy",
                     )
                 )
                 output_figure = umap_label_vis(

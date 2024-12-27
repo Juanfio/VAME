@@ -27,25 +27,17 @@ def test_pose_segmentation_hmm_files_exists(
         "individual_segmentation": individual_segmentation,
     }
     mock_config["hmm_trained"] = hmm_trained
-    with patch(
-        "vame.analysis.pose_segmentation.read_config", return_value=mock_config
-    ) as mock_read_config:
-        with patch("builtins.input", return_value="yes"):
-            vame.segment_session(
-                setup_project_and_train_model["config_path"],
-                save_logs=True,
-            )
+    # with patch("vame.analysis.pose_segmentation.read_config", return_value=mock_config) as mock_read_config:
+    with patch("builtins.input", return_value="yes"):
+        vame.segment_session(
+            config=setup_project_and_train_model["config_data"],
+            save_logs=True,
+        )
     project_path = setup_project_and_train_model["config_data"]["project_path"]
     file = setup_project_and_train_model["config_data"]["session_names"][0]
     model_name = setup_project_and_train_model["config_data"]["model_name"]
     n_clusters = setup_project_and_train_model["config_data"]["n_clusters"]
-    save_base_path = (
-        Path(project_path)
-        / "results"
-        / file
-        / model_name
-        / f"{segmentation_algorithm}-{n_clusters}"
-    )
+    save_base_path = Path(project_path) / "results" / file / model_name / f"{segmentation_algorithm}-{n_clusters}"
     latent_vector_path = save_base_path / f"latent_vector_{file}.npy"
     motif_usage_path = save_base_path / f"motif_usage_{file}.npy"
 
@@ -54,11 +46,9 @@ def test_pose_segmentation_hmm_files_exists(
 
 
 @pytest.mark.parametrize("segmentation_algorithm", ["hmm", "kmeans"])
-def test_motif_videos_mp4_files_exists(
-    setup_project_and_train_model, segmentation_algorithm
-):
+def test_motif_videos_mp4_files_exists(setup_project_and_train_model, segmentation_algorithm):
     vame.motif_videos(
-        setup_project_and_train_model["config_path"],
+        config=setup_project_and_train_model["config_data"],
         segmentation_algorithm=segmentation_algorithm,
         output_video_type=".mp4",
         save_logs=True,
@@ -82,12 +72,10 @@ def test_motif_videos_mp4_files_exists(
 
 
 @pytest.mark.parametrize("segmentation_algorithm", ["hmm", "kmeans"])
-def test_motif_videos_avi_files_exists(
-    setup_project_and_train_model, segmentation_algorithm
-):
+def test_motif_videos_avi_files_exists(setup_project_and_train_model, segmentation_algorithm):
     # Check if the files are created
     vame.motif_videos(
-        setup_project_and_train_model["config_path"],
+        config=setup_project_and_train_model["config_data"],
         segmentation_algorithm=segmentation_algorithm,
         output_video_type=".avi",
         save_logs=True,
@@ -114,7 +102,7 @@ def test_motif_videos_avi_files_exists(
 # def test_community_files_exists(setup_project_and_train_model, segmentation_algorithm):
 #     # Check if the files are created
 #     vame.community(
-#         setup_project_and_train_model["config_path"],
+#         config=setup_project_and_train_model["config_data"],
 #         cut_tree=2,
 #         cohort=False,
 #         segmentation_algorithm=segmentation_algorithm,
@@ -144,31 +132,22 @@ def test_motif_videos_avi_files_exists(
 
 
 @pytest.mark.parametrize("segmentation_algorithm", ["hmm", "kmeans"])
-def test_cohort_community_files_exists(
-    setup_project_and_train_model, segmentation_algorithm
-):
+def test_cohort_community_files_exists(setup_project_and_train_model, segmentation_algorithm):
     # Check if the files are created
     vame.community(
-        setup_project_and_train_model["config_path"],
-        cut_tree=2,
-        cohort=True,
-        save_logs=True,
+        config=setup_project_and_train_model["config_data"],
         segmentation_algorithm=segmentation_algorithm,
+        cohort=True,
+        cut_tree=2,
+        save_logs=True,
     )
     project_path = setup_project_and_train_model["config_data"]["project_path"]
     n_clusters = setup_project_and_train_model["config_data"]["n_clusters"]
 
-    base_path = (
-        Path(project_path)
-        / "results"
-        / "community_cohort"
-        / f"{segmentation_algorithm}-{n_clusters}"
-    )
+    base_path = Path(project_path) / "results" / "community_cohort" / f"{segmentation_algorithm}-{n_clusters}"
     cohort_path = base_path / "cohort_transition_matrix.npy"
     community_path = base_path / "cohort_community_label.npy"
-    cohort_segmentation_algorithm_path = (
-        base_path / f"cohort_{segmentation_algorithm}_label.npy"
-    )
+    cohort_segmentation_algorithm_path = base_path / f"cohort_{segmentation_algorithm}_label.npy"
     cohort_community_bag_path = base_path / "cohort_community_bag.npy"
 
     assert cohort_path.exists()
@@ -182,9 +161,8 @@ def test_community_videos_mp4_files_exists(
     setup_project_and_train_model,
     segmentation_algorithm,
 ):
-
     vame.community_videos(
-        config=setup_project_and_train_model["config_path"],
+        config=setup_project_and_train_model["config_data"],
         segmentation_algorithm=segmentation_algorithm,
         save_logs=True,
         output_video_type=".mp4",
@@ -212,9 +190,8 @@ def test_community_videos_avi_files_exists(
     setup_project_and_train_model,
     segmentation_algorithm,
 ):
-
     vame.community_videos(
-        config=setup_project_and_train_model["config_path"],
+        config=setup_project_and_train_model["config_data"],
         segmentation_algorithm=segmentation_algorithm,
         save_logs=True,
         output_video_type=".avi",
@@ -254,7 +231,7 @@ def test_visualization_output_files(
     segmentation_algorithm,
 ):
     vame.visualization(
-        setup_project_and_train_model["config_path"],
+        setup_project_and_train_model["config_data"],
         segmentation_algorithm=segmentation_algorithm,
         label=label,
         save_logs=True,
@@ -268,12 +245,7 @@ def test_visualization_output_files(
     project_path = setup_project_and_train_model["config_data"]["project_path"]
 
     save_base_path = (
-        Path(project_path)
-        / "results"
-        / file
-        / model_name
-        / f"{segmentation_algorithm}-{n_clusters}"
-        / "community"
+        Path(project_path) / "results" / file / model_name / f"{segmentation_algorithm}-{n_clusters}" / "community"
     )
     assert len(list(save_base_path.glob(f"umap_vis*{file}.png"))) > 0
 
@@ -296,7 +268,7 @@ def test_generative_model_figures(
     segmentation_algorithm,
 ):
     generative_figure = vame.generative_model(
-        config=setup_project_and_train_model["config_path"],
+        config=setup_project_and_train_model["config_data"],
         segmentation_algorithm=segmentation_algorithm,
         mode=mode,
         save_logs=True,
@@ -313,19 +285,17 @@ def test_report(
     segmentation_algorithm,
 ):
     vame.report(
-        config=setup_project_and_train_model["config_path"],
+        config=setup_project_and_train_model["config_data"],
         segmentation_algorithm=segmentation_algorithm,
     )
-    reports_path = (
-        Path(setup_project_and_train_model["config_data"]["project_path"]) / "reports"
-    )
+    reports_path = Path(setup_project_and_train_model["config_data"]["project_path"]) / "reports"
     assert len(list(reports_path.glob("*.png"))) > 0
 
 
 def test_generative_kmeans_wrong_mode(setup_project_and_train_model):
     with pytest.raises(ValueError):
         vame.generative_model(
-            config=setup_project_and_train_model["config_path"],
+            config=setup_project_and_train_model["config_data"],
             segmentation_algorithm="hmm",
             mode="centers",
             save_logs=True,
@@ -334,9 +304,8 @@ def test_generative_kmeans_wrong_mode(setup_project_and_train_model):
 
 @pytest.mark.parametrize("label", [None, "community", "motif"])
 def test_gif_frames_files_exists(setup_project_and_evaluate_model, label):
-
     with patch("builtins.input", return_value="yes"):
-        vame.segment_session(setup_project_and_evaluate_model["config_path"])
+        vame.segment_session(setup_project_and_evaluate_model["config_data"])
 
     def mock_background(
         project_path=None,
@@ -357,14 +326,14 @@ def test_gif_frames_files_exists(setup_project_and_evaluate_model, label):
     SEGMENTATION_ALGORITHM = "hmm"
     VIDEO_LEN = 30
     vame.community(
-        setup_project_and_evaluate_model["config_path"],
+        config=setup_project_and_evaluate_model["config_data"],
         cut_tree=2,
         cohort=True,
         save_logs=False,
         segmentation_algorithm=SEGMENTATION_ALGORITHM,
     )
     vame.visualization(
-        setup_project_and_evaluate_model["config_path"],
+        config=setup_project_and_evaluate_model["config_data"],
         segmentation_algorithm=SEGMENTATION_ALGORITHM,
         label=label,
         save_logs=False,

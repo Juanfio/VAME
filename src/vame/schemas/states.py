@@ -22,7 +22,7 @@ class GenerativeModelModeEnum(str, Enum):
 
 
 class BaseStateSchema(BaseModel):
-    config: str = Field(title="Configuration file path")
+    config: dict = Field(title="Configuration dictionary")
     execution_state: StatesEnum | None = Field(
         title="Method execution state",
         default=None,
@@ -55,15 +55,7 @@ class EgocentricAlignmentFunctionSchema(BaseStateSchema):
 class PoseToNumpyFunctionSchema(BaseStateSchema): ...
 
 
-class CreateTrainsetFunctionSchema(BaseStateSchema):
-    pose_ref_index: Optional[list] = Field(
-        title="Pose reference index",
-        default=None,
-    )
-    check_parameter: bool = Field(
-        title="Check parameter",
-        default=False,
-    )
+class CreateTrainsetFunctionSchema(BaseStateSchema): ...
 
 
 class TrainModelFunctionSchema(BaseStateSchema): ...
@@ -84,9 +76,7 @@ class MotifVideosFunctionSchema(BaseStateSchema):
         title="Type of video",
         default=".mp4",
     )
-    segmentation_algorithm: SegmentationAlgorithms = Field(
-        title="Segmentation algorithm"
-    )
+    segmentation_algorithm: SegmentationAlgorithms = Field(title="Segmentation algorithm")
     output_video_type: str = Field(
         title="Type of output video",
         default=".mp4",
@@ -95,9 +85,7 @@ class MotifVideosFunctionSchema(BaseStateSchema):
 
 class CommunityFunctionSchema(BaseStateSchema):
     cohort: bool = Field(title="Cohort", default=True)
-    segmentation_algorithm: SegmentationAlgorithms = Field(
-        title="Segmentation algorithm"
-    )
+    segmentation_algorithm: SegmentationAlgorithms = Field(title="Segmentation algorithm")
     cut_tree: int | None = Field(
         title="Cut tree",
         default=None,
@@ -105,9 +93,7 @@ class CommunityFunctionSchema(BaseStateSchema):
 
 
 class CommunityVideosFunctionSchema(BaseStateSchema):
-    segmentation_algorithm: SegmentationAlgorithms = Field(
-        title="Segmentation algorithm"
-    )
+    segmentation_algorithm: SegmentationAlgorithms = Field(title="Segmentation algorithm")
     cohort: bool = Field(title="Cohort", default=True)
     video_type: str = Field(
         title="Type of video",
@@ -120,9 +106,7 @@ class CommunityVideosFunctionSchema(BaseStateSchema):
 
 
 class VisualizationFunctionSchema(BaseStateSchema):
-    segmentation_algorithm: SegmentationAlgorithms = Field(
-        title="Segmentation algorithm"
-    )
+    segmentation_algorithm: SegmentationAlgorithms = Field(title="Segmentation algorithm")
     label: Optional[str] = Field(
         title="Type of labels to visualize",
         default=None,
@@ -130,9 +114,7 @@ class VisualizationFunctionSchema(BaseStateSchema):
 
 
 class GenerativeModelFunctionSchema(BaseStateSchema):
-    segmentation_algorithm: SegmentationAlgorithms = Field(
-        title="Segmentation algorithm"
-    )
+    segmentation_algorithm: SegmentationAlgorithms = Field(title="Segmentation algorithm")
     mode: GenerativeModelModeEnum = Field(
         title="Mode for generating samples",
         default=GenerativeModelModeEnum.sampling,
@@ -186,14 +168,11 @@ class VAMEPipelineStatesSchema(BaseModel):
     )
 
 
-def _save_state(model: BaseModel, function_name: str, state: StatesEnum) -> None:
+def _save_state(model: BaseStateSchema, function_name: str, state: StatesEnum) -> None:
     """
     Save the state of the function to the project states json file.
     """
-    config_file_path = Path(model.config)
-    project_path = config_file_path.parent
-    states_file_path = project_path / "states/states.json"
-
+    states_file_path = Path(model.config["project_path"]) / "states" / "states.json"
     with open(states_file_path, "r") as f:
         states = json.load(f)
 

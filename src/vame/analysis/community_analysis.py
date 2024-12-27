@@ -250,12 +250,7 @@ def get_motif_labels(
         file_labels = np.load(
             os.path.join(
                 path_to_dir,
-                str(n_clusters)
-                + "_"
-                + segmentation_algorithm
-                + "_label_"
-                + session
-                + ".npy",
+                str(n_clusters) + "_" + segmentation_algorithm + "_label_" + session + ".npy",
             )
         )
         shape = len(file_labels)
@@ -276,12 +271,7 @@ def get_motif_labels(
         file_labels = np.load(
             os.path.join(
                 path_to_dir,
-                str(n_clusters)
-                + "_"
-                + segmentation_algorithm
-                + "_label_"
-                + session
-                + ".npy",
+                str(n_clusters) + "_" + segmentation_algorithm + "_label_" + session + ".npy",
             )
         )[:min_frames]
         community_label.extend(file_labels)
@@ -390,11 +380,7 @@ def create_cohort_community_bag(
                     add = input("Extend list or add in the end? (ext/end)")
                     if add == "ext":
                         motif_idx = int(input("Which motif number? "))
-                        list_idx = int(
-                            input(
-                                "At which position in the list? (pythonic indexing starts at 0) "
-                            )
-                        )
+                        list_idx = int(input("At which position in the list? (pythonic indexing starts at 0) "))
                         community_bag[list_idx].append(motif_idx)
                     if add == "end":
                         motif_idx = int(input("Which motif number? "))
@@ -440,9 +426,7 @@ def get_cohort_community_labels(
         for j in range(len(clust)):
             find_clust = np.where(motif_labels == clust[j])[0]
             community_labels[find_clust] = i
-    community_labels = np.int64(
-        scipy.signal.medfilt(community_labels, median_filter_size)
-    )
+    community_labels = np.int64(scipy.signal.medfilt(community_labels, median_filter_size))
     community_labels_all.append(community_labels)
     return community_labels_all
 
@@ -468,12 +452,7 @@ def save_cohort_community_labels_per_file(
         file_labels = np.load(
             os.path.join(
                 path_to_dir,
-                str(n_clusters)
-                + "_"
-                + segmentation_algorithm
-                + "_label_"
-                + session
-                + ".npy",
+                str(n_clusters) + "_" + segmentation_algorithm + "_label_" + session + ".npy",
             )
         )
         community_labels = get_cohort_community_labels(
@@ -494,7 +473,7 @@ def save_cohort_community_labels_per_file(
 
 @save_state(model=CommunityFunctionSchema)
 def community(
-    config: str,
+    config: dict,
     segmentation_algorithm: SegmentationAlgorithms,
     cohort: bool = True,
     cut_tree: int | None = None,
@@ -534,8 +513,8 @@ def community(
 
     Parameters
     ----------
-    config : str
-        Path to the configuration file.
+    config : dict
+        Configuration parameters.
     segmentation_algorithm : SegmentationAlgorithms
         Which segmentation algorithm to use. Options are 'hmm' or 'kmeans'.
     cohort : bool, optional
@@ -550,22 +529,19 @@ def community(
     None
     """
     try:
-        config_file = Path(config).resolve()
-        cfg = read_config(str(config_file))
-
         if save_logs:
-            log_path = Path(cfg["project_path"]) / "logs" / "community.log"
+            log_path = Path(config["project_path"]) / "logs" / "community.log"
             logger_config.add_file_handler(str(log_path))
 
-        model_name = cfg["model_name"]
-        n_clusters = cfg["n_clusters"]
+        model_name = config["model_name"]
+        n_clusters = config["n_clusters"]
 
         # Get sessions
-        if cfg["all_data"] in ["Yes", "yes"]:
-            sessions = cfg["session_names"]
+        if config["all_data"] in ["Yes", "yes"]:
+            sessions = config["session_names"]
         else:
             sessions = get_sessions_from_user_input(
-                cfg=cfg,
+                cfg=config,
                 action_message="run community analysis",
             )
 
@@ -573,7 +549,7 @@ def community(
         if cohort:
             path_to_dir = Path(
                 os.path.join(
-                    cfg["project_path"],
+                    config["project_path"],
                     "results",
                     "community_cohort",
                     segmentation_algorithm + "-" + str(n_clusters),
@@ -584,7 +560,7 @@ def community(
                 path_to_dir.mkdir(parents=True, exist_ok=True)
 
             motif_labels = get_motif_labels(
-                config=cfg,
+                config=config,
                 sessions=sessions,
                 model_name=model_name,
                 n_clusters=n_clusters,
@@ -640,16 +616,14 @@ def community(
                 ),
                 cohort_community_bag,
             )
-            with open(
-                os.path.join(path_to_dir, "hierarchy" + ".pkl"), "wb"
-            ) as fp:  # Pickling
+            with open(os.path.join(path_to_dir, "hierarchy" + ".pkl"), "wb") as fp:  # Pickling
                 pickle.dump(cohort_community_bag, fp)
 
             # Added by Luiz - 11/10/2024
             # Saves the full community labels list to each of the original video files
             # This is useful for further analysis when cohort=True
             save_cohort_community_labels_per_file(
-                config=cfg,
+                config=config,
                 sessions=sessions,
                 model_name=model_name,
                 n_clusters=n_clusters,
@@ -659,9 +633,7 @@ def community(
 
         # # Work in Progress - cohort is False
         else:
-            raise NotImplementedError(
-                "Community analysis for cohort=False is not supported yet."
-            )
+            raise NotImplementedError("Community analysis for cohort=False is not supported yet.")
         #     labels = get_labels(cfg, files, model_name, n_clusters, parametrization)
         #     transition_matrices = compute_transition_matrices(
         #         files,

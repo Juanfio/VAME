@@ -1,10 +1,13 @@
-from pytest import fixture
+from pytest import fixture, raises
 from pathlib import Path
 import shutil
+import psutil
+import time
 from typing import List, Optional, Literal
 
 import vame
-from vame.util.auxiliary import read_config, write_config
+from vame.pipeline import VAMEPipeline
+from vame.util.auxiliary import write_config
 
 
 def init_project(
@@ -14,9 +17,11 @@ def init_project(
     source_software: Literal["DeepLabCut", "SLEAP", "LightningPose"],
     working_directory: str,
     egocentric_data: bool = False,
+    centered_reference_keypoint: str = "Nose",
+    orientation_reference_keypoint: str = "Tailroot",
     paths_to_pose_nwb_series_data: Optional[List[str]] = None,
 ):
-    config = vame.init_new_project(
+    config_path, config_values = vame.init_new_project(
         project_name=project_name,
         videos=videos,
         poses_estimations=poses_estimations,
@@ -27,32 +32,55 @@ def init_project(
     )
 
     # Override config values with test values to speed up tests
-    config_values = read_config(config)
     config_values["egocentric_data"] = egocentric_data
     config_values["max_epochs"] = 10
     config_values["batch_size"] = 10
-    write_config(config, config_values)
+    write_config(config_path, config_values)
 
     project_data = {
         "project_name": project_name,
         "videos": videos,
-        "config_path": config,
+        "config_path": config_path,
         "config_data": config_values,
-        "pose_ref_index": [0, 5],
+        "centered_reference_keypoint": centered_reference_keypoint,
+        "orientation_reference_keypoint": orientation_reference_keypoint,
     }
 
-    return config, project_data
+    return project_data
+
+
+def cleanup_directory(directory):
+    """Helper function to clean up the directory and handle Windows-specific issues."""
+    try:
+        # Wait a moment to ensure all files are closed
+        time.sleep(1)
+
+        # Check for any open file handles and warn about them
+        for proc in psutil.process_iter(['open_files']):
+            if any(file.path.startswith(str(directory)) for file in proc.info['open_files'] or []):
+                print(f"Process {proc.pid} is holding files in {directory}.")
+
+        # Try to delete the directory
+        shutil.rmtree(directory)
+    except PermissionError as e:
+        print(f"PermissionError during cleanup: {e}. Retrying...")
+        # Retry after a short delay
+        time.sleep(2)
+        try:
+            shutil.rmtree(directory)
+        except Exception as final_error:
+            print(f"Final cleanup failed: {final_error}")
 
 
 @fixture(scope="session")
 def setup_project_from_folder():
     project_name = "test_project_from_folder"
-    videos = ["./tests/tests_project_sample_data"]
-    poses_estimations = ["./tests/tests_project_sample_data"]
-    working_directory = "./tests"
+    videos = [str(Path("./tests/tests_project_sample_data").resolve())]
+    poses_estimations = [str(Path("./tests/tests_project_sample_data").resolve())]
+    working_directory = str(Path("./tests").resolve())
 
     # Initialize project
-    config, project_data = init_project(
+    project_data = init_project(
         project_name=project_name,
         videos=videos,
         poses_estimations=poses_estimations,
@@ -64,18 +92,19 @@ def setup_project_from_folder():
     yield project_data
 
     # Clean up
-    shutil.rmtree(Path(config).parent)
+    config_path = project_data["config_path"]
+    cleanup_directory(Path(config_path).parent)
 
 
 @fixture(scope="session")
 def setup_project_not_aligned_data():
     project_name = "test_project_align"
-    videos = ["./tests/tests_project_sample_data/cropped_video.mp4"]
-    poses_estimations = ["./tests/tests_project_sample_data/cropped_video.csv"]
-    working_directory = "./tests"
+    videos = [str(Path("./tests/tests_project_sample_data/cropped_video.mp4").resolve())]
+    poses_estimations = [str(Path("./tests/tests_project_sample_data/cropped_video.csv").resolve())]
+    working_directory = str(Path("./tests").resolve())
 
     # Initialize project
-    config, project_data = init_project(
+    project_data = init_project(
         project_name=project_name,
         videos=videos,
         poses_estimations=poses_estimations,
@@ -87,19 +116,20 @@ def setup_project_not_aligned_data():
     yield project_data
 
     # Clean up
-    shutil.rmtree(Path(config).parent)
+    config_path = project_data["config_path"]
+    cleanup_directory(Path(config_path).parent)
 
 
 # # TODO change to test fixed (already egocentrically aligned) data when have it
 @fixture(scope="session")
 def setup_project_fixed_data():
     project_name = "test_project_fixed"
-    videos = ["./tests/tests_project_sample_data/cropped_video.mp4"]
-    poses_estimations = ["./tests/tests_project_sample_data/cropped_video.csv"]
-    working_directory = "./tests"
+    videos = [str(Path("./tests/tests_project_sample_data/cropped_video.mp4").resolve())]
+    poses_estimations = [str(Path("./tests/tests_project_sample_data/cropped_video.csv").resolve())]
+    working_directory = str(Path("./tests").resolve())
 
     # Initialize project
-    config, project_data = init_project(
+    project_data = init_project(
         project_name=project_name,
         videos=videos,
         poses_estimations=poses_estimations,
@@ -111,7 +141,8 @@ def setup_project_fixed_data():
     yield project_data
 
     # Clean up
-    shutil.rmtree(Path(config).parent)
+    config_path = project_data["config_path"]
+    cleanup_directory(Path(config_path).parent)
 
 
 # @fixture(scope="session")
@@ -142,17 +173,20 @@ def setup_project_fixed_data():
 
 @fixture(scope="session")
 def setup_project_and_convert_pose_to_numpy(setup_project_fixed_data):
-    config_path = setup_project_fixed_data["config_path"]
-    vame.pose_to_numpy(config_path, save_logs=True)
+    config = setup_project_fixed_data["config_data"]
+    vame.pose_to_numpy(config, save_logs=True)
     return setup_project_fixed_data
 
 
 @fixture(scope="session")
 def setup_project_and_align_egocentric(setup_project_not_aligned_data):
-    config_path = setup_project_not_aligned_data["config_path"]
-    vame.egocentric_alignment(
-        config_path,
-        pose_ref_index=setup_project_not_aligned_data["pose_ref_index"],
+    config_data = setup_project_not_aligned_data["config_data"]
+    centered_reference_keypoint = setup_project_not_aligned_data["centered_reference_keypoint"]
+    orientation_reference_keypoint = setup_project_not_aligned_data["orientation_reference_keypoint"]
+    vame.preprocessing(
+        config=config_data,
+        centered_reference_keypoint=centered_reference_keypoint,
+        orientation_reference_keypoint=orientation_reference_keypoint,
         save_logs=True,
     )
     return setup_project_not_aligned_data
@@ -160,11 +194,9 @@ def setup_project_and_align_egocentric(setup_project_not_aligned_data):
 
 @fixture(scope="function")
 def setup_project_and_check_param_aligned_dataset(setup_project_and_align_egocentric):
-    config = setup_project_and_align_egocentric["config_path"]
+    config = setup_project_and_align_egocentric["config_data"]
     vame.create_trainset(
-        config,
-        check_parameter=True,
-        pose_ref_index=setup_project_and_align_egocentric["pose_ref_index"],
+        config=config,
         save_logs=True,
     )
     return setup_project_and_align_egocentric
@@ -175,52 +207,77 @@ def setup_project_and_check_param_fixed_dataset(
     setup_project_and_convert_pose_to_numpy,
 ):
     # use setup_project_and_align_egocentric fixture or setup_project_and_convert_pose_to_numpy based on value of egocentric_aligned
-    config = setup_project_and_convert_pose_to_numpy["config_path"]
-    vame.create_trainset(
-        config,
-        check_parameter=True,
-        pose_ref_index=setup_project_and_convert_pose_to_numpy["pose_ref_index"],
-        save_logs=True,
-    )
+    config = setup_project_and_convert_pose_to_numpy["config_data"]
+    with raises(NotImplementedError, match="Fixed data training is not implemented yet"):
+        vame.create_trainset(
+            config=config,
+            save_logs=True,
+        )
     return setup_project_and_convert_pose_to_numpy
 
 
 @fixture(scope="session")
 def setup_project_and_create_train_aligned_dataset(setup_project_and_align_egocentric):
-    config = setup_project_and_align_egocentric["config_path"]
+    config = setup_project_and_align_egocentric["config_data"]
     vame.create_trainset(
-        config,
-        check_parameter=False,
-        pose_ref_index=setup_project_and_align_egocentric["pose_ref_index"],
+        config=config,
         save_logs=True,
     )
     return setup_project_and_align_egocentric
 
 
-@fixture(scope="session")
-def setup_project_and_create_train_fixed_dataset(
-    setup_project_and_convert_pose_to_numpy,
-):
-    # use setup_project_and_align_egocentric fixture or setup_project_and_convert_pose_to_numpy based on value of egocentric_aligned
-    config = setup_project_and_convert_pose_to_numpy["config_path"]
-    vame.create_trainset(
-        config,
-        check_parameter=False,
-        pose_ref_index=setup_project_and_convert_pose_to_numpy["pose_ref_index"],
-        save_logs=True,
-    )
-    return setup_project_and_convert_pose_to_numpy
+# @fixture(scope="session")
+# def setup_project_and_create_train_fixed_dataset(
+#     setup_project_and_convert_pose_to_numpy,
+# ):
+#     # use setup_project_and_align_egocentric fixture or setup_project_and_convert_pose_to_numpy based on value of egocentric_aligned
+#     config = setup_project_and_convert_pose_to_numpy["config_data"]
+#     vame.create_trainset(
+#         config=config,
+#         save_logs=True,
+#     )
+#     return setup_project_and_convert_pose_to_numpy
 
 
 @fixture(scope="session")
 def setup_project_and_train_model(setup_project_and_create_train_aligned_dataset):
-    config = setup_project_and_create_train_aligned_dataset["config_path"]
+    config = setup_project_and_create_train_aligned_dataset["config_data"]
     vame.train_model(config, save_logs=True)
     return setup_project_and_create_train_aligned_dataset
 
 
 @fixture(scope="session")
 def setup_project_and_evaluate_model(setup_project_and_train_model):
-    config = setup_project_and_train_model["config_path"]
+    config = setup_project_and_train_model["config_data"]
     vame.evaluate_model(config, save_logs=True)
     return setup_project_and_train_model
+
+
+@fixture(scope="session")
+def setup_pipeline():
+    """
+    Setup a Pipeline for testing.
+    """
+    project_name = "test_pipeline"
+    videos = [str(Path("./tests/tests_project_sample_data").resolve())]
+    poses_estimations = [str(Path("./tests/tests_project_sample_data").resolve())]
+    working_directory = str(Path("./tests").resolve())
+    source_software = "DeepLabCut"
+
+    config_kwargs = {
+        "egocentric_data": False,
+        "max_epochs": 10,
+        "batch_size": 10,
+    }
+    pipeline = VAMEPipeline(
+        working_directory=working_directory,
+        project_name=project_name,
+        videos=videos,
+        poses_estimations=poses_estimations,
+        source_software=source_software,
+        config_kwargs=config_kwargs,
+    )
+    yield {"pipeline": pipeline}
+
+    # Clean up
+    cleanup_directory(Path(pipeline.config_path).parent)
