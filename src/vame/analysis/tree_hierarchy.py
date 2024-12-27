@@ -17,8 +17,8 @@ def hierarchy_pos(
     Positions nodes in a tree-like layout.
     Ref: From Joel's answer at https://stackoverflow.com/a/29597209/2966723.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     G : nx.Graph
         The input graph. Must be a tree.
     root : str, optional
@@ -33,8 +33,8 @@ def hierarchy_pos(
     xcenter : float, optional
         The horizontal location of the root node. Defaults to 0.5.
 
-    Returns:
-    --------
+    Returns
+    -------
     Dict[str, Tuple[float, float]]
         A dictionary mapping node names to their positions (x, y).
     """
@@ -92,8 +92,8 @@ def merge_func(
     """
     Merge nodes in a graph based on a selection criterion.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     transition_matrix : np.ndarray
         The transition matrix of the graph.
     n_clusters : int
@@ -105,8 +105,8 @@ def merge_func(
         - 0: Merge nodes with highest transition probability.
         - 1: Merge nodes with lowest cost.
 
-    Returns:
-    --------
+    Returns
+    -------
     Tuple[np.ndarray, np.ndarray]
         A tuple containing the merged nodes.
     """
@@ -145,8 +145,8 @@ def graph_to_tree(
     """
     Convert a graph to a tree.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     motif_usage : np.ndarray
         The motif usage matrix.
     transition_matrix : np.ndarray
@@ -158,8 +158,8 @@ def graph_to_tree(
         - 0: Merge nodes with highest transition probability.
         - 1: Merge nodes with lowest cost.
 
-    Returns:
-    --------
+    Returns
+    -------
     nx.Graph
         The tree.
     """
@@ -334,15 +334,15 @@ def draw_tree(
     """
     Draw a tree.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     T : nx.Graph
         The tree to be drawn.
     fig_width : int, optional
         The width of the figure. Defaults to 10.
 
-    Returns:
-    --------
+    Returns
+    -------
     None
     """
     # pos = nx.drawing.layout.fruchterman_reingold_layout(T)
@@ -400,8 +400,8 @@ def _traverse_tree_cutline(
     DEPRECATED in favor of bag_nodes_by_cutline.
     Helper function for tree traversal with a cutline.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     T : nx.Graph
         The tree to be traversed.
     node : List[str]
@@ -417,8 +417,8 @@ def _traverse_tree_cutline(
     community_list : List[str], optional
         List of nodes in the current community bag.
 
-    Returns:
-    --------
+    Returns
+    -------
     List[List[str]]
         List of lists community bags.
     """
@@ -493,8 +493,8 @@ def traverse_tree_cutline(
     DEPRECATED in favor of bag_nodes_by_cutline.
     Traverse a tree with a cutline and return the community bags.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     T : nx.Graph
         The tree to be traversed.
     root_node : str, optional
@@ -502,8 +502,8 @@ def traverse_tree_cutline(
     cutline : int, optional
         The cutline level.
 
-    Returns:
-    --------
+    Returns
+    -------
     List[List[str]]
         List of community bags.
     """
@@ -537,8 +537,8 @@ def bag_nodes_by_cutline(
     """
     Bag nodes of a tree by a cutline.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     tree : nx.Graph
         The tree to be bagged.
     cutline : int, optional
@@ -546,8 +546,8 @@ def bag_nodes_by_cutline(
     root : str, optional
         The root node of the tree. Defaults to 'Root'.
 
-    Returns:
-    --------
+    Returns
+    -------
     List[List[str]]
         List of bags of nodes.
     """

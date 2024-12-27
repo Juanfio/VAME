@@ -287,8 +287,8 @@ def compute_transition_matrices(
     """
     Compute transition matrices for given files and labels.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     files : List[str]
         List of file paths.
     labels : List[np.ndarray]
@@ -296,8 +296,8 @@ def compute_transition_matrices(
     n_clusters : int
         Number of clusters.
 
-    Returns:
-    --------
+    Returns
+    -------
     List[np.ndarray]:
         List of transition matrices.
     """
@@ -706,7 +706,7 @@ def community(
 #         cut_tree (int): Cut line for tree.
 #         n_clusters (int): Number of clusters.
 
-#     Returns:
+#     Returns
 #         Tuple: Tuple containing list of community bags and list of trees.
 #     """
 #     trees = []
@@ -768,7 +768,7 @@ def community(
 #         labels (List[np.ndarray]): List of label arrays.
 #         communities_all (List[List[List[int]]]): List of community bags.
 
-#     Returns:
+#     Returns
 #         List[np.ndarray]: List of community labels for each file.
 #     """
 #     community_labels_all = []

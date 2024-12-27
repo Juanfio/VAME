@@ -81,7 +81,7 @@ def umap_embedding(
 #         community_labels_all (np.ndarray): Community labels.
 #         save_path: Path to save the plot. If None it will not save the plot.
 
-#     Returns:
+#     Returns
 #         None
 #     """
 #     num_points = cfg['num_points']

@@ -281,8 +281,8 @@ def community_videos(
                             - file_name-community_1.mp4
                             - ...
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     config : dict
         Configuration parameters.
     segmentation_algorithm : SegmentationAlgorithms

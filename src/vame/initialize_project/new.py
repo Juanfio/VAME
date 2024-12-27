@@ -54,7 +54,7 @@ def init_new_project(
             - states.json
         - config.yaml
 
-    Parameters:
+    Parameters
     ----------
     project_name : str
         Project name.

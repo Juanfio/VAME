@@ -30,8 +30,8 @@ def get_animal_frames(
     """
     Extracts frames of an animal from a video file and returns them as a list.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     cfg : dict
         Configuration dictionary containing project information.
     session : str
@@ -49,8 +49,8 @@ def get_animal_frames(
     crop_size : tuple, optional
         Size of the cropped area. Defaults to (300, 300).
 
-    Returns:
-    --------
+    Returns
+    -------
     list:
         List of extracted frames.
     """

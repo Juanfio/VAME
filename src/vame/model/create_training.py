@@ -85,7 +85,7 @@ def traindata_aligned(
 #     Create training dataset for fixed data.
 
 #     Parameters
-#     ----------
+#     ---------
 #     cfg : dict
 #         Configuration parameters.
 #     sessions : List[str]
@@ -101,7 +101,7 @@ def traindata_aligned(
 #     pose_ref_index : Optional[List[int]]
 #         List of reference coordinate indices for alignment.
 
-#     Returns:
+#     Returns
 #         None
 #             Save numpy arrays with the test/train info to the project folder.
 #     """

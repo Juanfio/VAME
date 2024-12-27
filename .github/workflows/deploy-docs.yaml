@@ -36,6 +36,7 @@ jobs:
 
       - name: Install dependencies
         run: cd docs/vame-docs-app && yarn install --frozen-lockfile
+
       - name: Build website
         run: cd docs/vame-docs-app && yarn build
 

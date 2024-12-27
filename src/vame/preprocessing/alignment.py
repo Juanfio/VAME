@@ -20,8 +20,8 @@ def egocentrically_align_and_center(
     Aligns the time series by first centralizing all positions around the first keypoint
     and then applying rotation to align with the line connecting the two keypoints.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     config : dict
         Configuration dictionary
     centered_reference_keypoint : str
@@ -29,8 +29,8 @@ def egocentrically_align_and_center(
     orientation_reference_keypoint : str
         Name of the keypoint to use as orientation reference.
 
-    Returns:
-    --------
+    Returns
+    -------
     None
     """
     logger.info(

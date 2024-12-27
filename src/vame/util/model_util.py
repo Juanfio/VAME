@@ -16,7 +16,7 @@ def load_model(cfg: dict, model_name: str, fixed: bool = True) -> RNN_VAE:
         model_name (str): Name of the model.
         fixed (bool): Fixed or variable length sequences.
 
-    Returns:
+    Returns
         RNN_VAE: Loaded VAME model.
     """
     # load Model

@@ -25,8 +25,8 @@ def preprocessing(
         - Outlier cleaning
         - Savitzky-Golay filtering
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     config : dict
         Configuration dictionary.
     centered_reference_keypoint : str, optional
@@ -34,8 +34,8 @@ def preprocessing(
     orientation_reference_keypoint : str, optional
         Keypoint to use as orientation reference.
 
-    Returns:
-    --------
+    Returns
+    -------
     None
     """
     # Low-confidence cleaning

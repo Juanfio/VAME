@@ -48,8 +48,8 @@ class VAMEPipeline:
         """
         Returns a list of session names.
 
-        Returns:
-        --------
+        Returns
+        -------
         List[str]
             Session names.
         """
@@ -59,8 +59,8 @@ class VAMEPipeline:
         """
         Returns a xarray dataset which combines all the raw data from the project.
 
-        Returns:
-        --------
+        Returns
+        -------
         dss : xarray.Dataset
             Combined raw dataset.
         """
@@ -157,8 +157,8 @@ class VAMEPipeline:
         """
         Returns the pipeline states.
 
-        Returns:
-        --------
+        Returns
+        -------
         dict
             Pipeline states.
         """
