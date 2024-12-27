@@ -49,9 +49,9 @@ def init_project(
 @fixture(scope="session")
 def setup_project_from_folder():
     project_name = "test_project_from_folder"
-    videos = ["./tests/tests_project_sample_data"]
-    poses_estimations = ["./tests/tests_project_sample_data"]
-    working_directory = "./tests"
+    videos = [str(Path("./tests/tests_project_sample_data").resolve())]
+    poses_estimations = [str(Path("./tests/tests_project_sample_data").resolve())]
+    working_directory = str(Path("./tests").resolve())
 
     # Initialize project
     project_data = init_project(
@@ -73,9 +73,9 @@ def setup_project_from_folder():
 @fixture(scope="session")
 def setup_project_not_aligned_data():
     project_name = "test_project_align"
-    videos = ["./tests/tests_project_sample_data/cropped_video.mp4"]
-    poses_estimations = ["./tests/tests_project_sample_data/cropped_video.csv"]
-    working_directory = "./tests"
+    videos = [str(Path("./tests/tests_project_sample_data/cropped_video.mp4").resolve())]
+    poses_estimations = [str(Path("./tests/tests_project_sample_data/cropped_video.csv").resolve())]
+    working_directory = str(Path("./tests").resolve())
 
     # Initialize project
     project_data = init_project(
@@ -98,9 +98,9 @@ def setup_project_not_aligned_data():
 @fixture(scope="session")
 def setup_project_fixed_data():
     project_name = "test_project_fixed"
-    videos = ["./tests/tests_project_sample_data/cropped_video.mp4"]
-    poses_estimations = ["./tests/tests_project_sample_data/cropped_video.csv"]
-    working_directory = "./tests"
+    videos = [str(Path("./tests/tests_project_sample_data/cropped_video.mp4").resolve())]
+    poses_estimations = [str(Path("./tests/tests_project_sample_data/cropped_video.csv").resolve())]
+    working_directory = str(Path("./tests").resolve())
 
     # Initialize project
     project_data = init_project(
