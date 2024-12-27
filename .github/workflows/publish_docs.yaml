@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - updated-docs
 
 jobs:
   deploy:
@@ -61,3 +62,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/vame-docs-app/build
           publish_branch: gh-pages
+          destination_dir: ${{ github.ref_name == 'main' && '' || github.ref_name }}
