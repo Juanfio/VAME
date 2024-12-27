@@ -1,10 +1,12 @@
 from pytest import fixture, raises
 from pathlib import Path
 import shutil
+import psutil
+import time
 from typing import List, Optional, Literal
 
 import vame
-from vame.util.auxiliary import read_config, write_config
+from vame.util.auxiliary import write_config
 
 
 def init_project(
@@ -46,6 +48,29 @@ def init_project(
     return project_data
 
 
+def cleanup_directory(directory):
+    """Helper function to clean up the directory and handle Windows-specific issues."""
+    try:
+        # Wait a moment to ensure all files are closed
+        time.sleep(1)
+
+        # Check for any open file handles and warn about them
+        for proc in psutil.process_iter(['open_files']):
+            if any(file.path.startswith(str(directory)) for file in proc.info['open_files'] or []):
+                print(f"Process {proc.pid} is holding files in {directory}.")
+
+        # Try to delete the directory
+        shutil.rmtree(directory)
+    except PermissionError as e:
+        print(f"PermissionError during cleanup: {e}. Retrying...")
+        # Retry after a short delay
+        time.sleep(2)
+        try:
+            shutil.rmtree(directory)
+        except Exception as final_error:
+            print(f"Final cleanup failed: {final_error}")
+
+
 @fixture(scope="session")
 def setup_project_from_folder():
     project_name = "test_project_from_folder"
@@ -67,7 +92,7 @@ def setup_project_from_folder():
 
     # Clean up
     config_path = project_data["config_path"]
-    shutil.rmtree(Path(config_path).parent)
+    cleanup_directory(Path(config_path).parent)
 
 
 @fixture(scope="session")
@@ -91,7 +116,7 @@ def setup_project_not_aligned_data():
 
     # Clean up
     config_path = project_data["config_path"]
-    shutil.rmtree(Path(config_path).parent)
+    cleanup_directory(Path(config_path).parent)
 
 
 # # TODO change to test fixed (already egocentrically aligned) data when have it
@@ -116,7 +141,7 @@ def setup_project_fixed_data():
 
     # Clean up
     config_path = project_data["config_path"]
-    shutil.rmtree(Path(config_path).parent)
+    cleanup_directory(Path(config_path).parent)
 
 
 # @fixture(scope="session")
