@@ -288,79 +288,79 @@ def visualize_preprocessing_timeseries(
         )
 
 
-def visualize_timeseries(
-    config: dict,
-    session_index: int = 0,
-    n_samples: int = 1000,
-    positions_key: str = "position",
-    keypoints_labels: list[str] | None = None,
-    save_to_file: bool = False,
-    show_figure: bool = True,
-):
-    """
-    Visualize the original positions of the keypoints in a timeseries plot.
-    """
-    project_path = config["project_path"]
-    sessions = config["session_names"]
-    session = sessions[session_index]
+# def visualize_timeseries(
+#     config: dict,
+#     session_index: int = 0,
+#     n_samples: int = 1000,
+#     positions_key: str = "position",
+#     keypoints_labels: list[str] | None = None,
+#     save_to_file: bool = False,
+#     show_figure: bool = True,
+# ):
+#     """
+#     Visualize the original positions of the keypoints in a timeseries plot.
+#     """
+#     project_path = config["project_path"]
+#     sessions = config["session_names"]
+#     session = sessions[session_index]
 
-    # Read session data
-    file_path = str(Path(project_path) / "data" / "processed" / f"{session}_processed.nc")
-    _, _, ds = read_pose_estimation_file(file_path=file_path)
+#     # Read session data
+#     file_path = str(Path(project_path) / "data" / "processed" / f"{session}_processed.nc")
+#     _, _, ds = read_pose_estimation_file(file_path=file_path)
 
-    fig, ax = plt.subplots(2, 1, figsize=(10, 8))
+#     fig, ax = plt.subplots(2, 1, figsize=(10, 8))
 
-    individual = "individual_0"
-    if keypoints_labels is None:
-        keypoints_labels = ds.keypoints.values
+#     individual = "individual_0"
+#     if keypoints_labels is None:
+#         keypoints_labels = ds.keypoints.values
 
-    # Create a colormap with distinguishable colors
-    cmap = get_cmap("tab10") if len(keypoints_labels) <= 10 else get_cmap("tab20")
-    colors = [cmap(i / len(keypoints_labels)) for i in range(len(keypoints_labels))]
+#     # Create a colormap with distinguishable colors
+#     cmap = get_cmap("tab10") if len(keypoints_labels) <= 10 else get_cmap("tab20")
+#     colors = [cmap(i / len(keypoints_labels)) for i in range(len(keypoints_labels))]
 
-    for i, kp in enumerate(keypoints_labels):
-        sel_x = dict(
-            individuals=individual,
-            keypoints=kp,
-            space="x",
-        )
-        sel_y = dict(
-            individuals=individual,
-            keypoints=kp,
-            space="y",
-        )
+#     for i, kp in enumerate(keypoints_labels):
+#         sel_x = dict(
+#             individuals=individual,
+#             keypoints=kp,
+#             space="x",
+#         )
+#         sel_y = dict(
+#             individuals=individual,
+#             keypoints=kp,
+#             space="y",
+#         )
 
-        # Original positions (first two subplots)
-        ds[positions_key].sel(**sel_x)[0:n_samples].plot(
-            linewidth=1.5,
-            ax=ax[0],
-            label=kp,
-            color=colors[i],
-        )
-        ds[positions_key].sel(**sel_y)[0:n_samples].plot(
-            linewidth=1.5,
-            ax=ax[1],
-            label=kp,
-            color=colors[i],
-        )
+#         # Original positions (first two subplots)
+#         ds[positions_key].sel(**sel_x)[0:n_samples].plot(
+#             linewidth=1.5,
+#             ax=ax[0],
+#             label=kp,
+#             color=colors[i],
+#         )
+#         ds[positions_key].sel(**sel_y)[0:n_samples].plot(
+#             linewidth=1.5,
+#             ax=ax[1],
+#             label=kp,
+#             color=colors[i],
+#         )
 
-    # Set common labels for Y axes
-    ax[0].set_ylabel(
-        "Allocentric X",
-        fontsize=12,
-    )
-    ax[1].set_ylabel(
-        "Allocentric Y",
-        fontsize=12,
-    )
+#     # Set common labels for Y axes
+#     ax[0].set_ylabel(
+#         "Allocentric X",
+#         fontsize=12,
+#     )
+#     ax[1].set_ylabel(
+#         "Allocentric Y",
+#         fontsize=12,
+#     )
 
-    # Labels for X axes
-    for idx, a in enumerate(ax):
-        a.set_title("")
-        if idx % 2 == 0:
-            a.set_xlabel("")
-        else:
-            a.set_xlabel(
-                "Time",
-                fontsize=10,
-            )
+#     # Labels for X axes
+#     for idx, a in enumerate(ax):
+#         a.set_title("")
+#         if idx % 2 == 0:
+#             a.set_xlabel("")
+#         else:
+#             a.set_xlabel(
+#                 "Time",
+#                 fontsize=10,
+#             )
