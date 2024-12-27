@@ -3,7 +3,7 @@ name: Deploy VAME Docs to GitHub Pages
 on:
   push:
     branches:
-      - docs
+      - main
 
 jobs:
   deploy:
@@ -59,3 +59,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/vame-docs-app/build
+          publish_branch: gh-pages
