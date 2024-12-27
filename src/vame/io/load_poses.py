@@ -54,9 +54,13 @@ def load_vame_dataset(ds_path: Path | str) -> xr.Dataset:
     Returns:
     --------
     """
-    return xr.open_dataset(ds_path, engine="scipy")
+    # Windows will not allow opened files to be overwritten, 
+    # so we need to load data into memory, close the file and move on with the operations
+    with xr.open_dataset(ds_path, engine="scipy") as tmp_ds:
+        ds_in_memory = tmp_ds.load()  # read entire file into memory
+    return ds_in_memory
 
-
+ 
 def nc_to_dataframe(nc_data):
     keypoints = nc_data["keypoints"].values
     space = nc_data["space"].values
