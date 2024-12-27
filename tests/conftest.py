@@ -6,6 +6,7 @@ import time
 from typing import List, Optional, Literal
 
 import vame
+from vame.pipeline import VAMEPipeline
 from vame.util.auxiliary import write_config
 
 
@@ -250,3 +251,33 @@ def setup_project_and_evaluate_model(setup_project_and_train_model):
     config = setup_project_and_train_model["config_data"]
     vame.evaluate_model(config, save_logs=True)
     return setup_project_and_train_model
+
+
+@fixture(scope="session")
+def setup_pipeline():
+    """
+    Setup a Pipeline for testing.
+    """
+    project_name = "test_pipeline"
+    videos = ["./tests/tests_project_sample_data"]
+    poses_estimations = ["./tests/tests_project_sample_data"]
+    working_directory = "./tests"
+    source_software = "DeepLabCut"
+
+    config_kwargs = {
+        "egocentric_data": False,
+        "max_epochs": 10,
+        "batch_size": 10,
+    }
+    pipeline = VAMEPipeline(
+        working_directory=working_directory,
+        project_name=project_name,
+        videos=videos,
+        poses_estimations=poses_estimations,
+        source_software=source_software,
+        config_kwargs=config_kwargs,
+    )
+    yield {"pipeline": pipeline}
+
+    # Clean up
+    cleanup_directory(Path(pipeline.config_path).parent)
