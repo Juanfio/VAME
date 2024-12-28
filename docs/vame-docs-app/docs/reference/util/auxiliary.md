@@ -23,7 +23,7 @@ def read_config(config_file: str) -> dict
 
 Reads structured config file defining a project.
 
-**Arguments**
+**Parameters**
 
 * **config_file** (`str`): Path to the config file.
 
@@ -39,7 +39,7 @@ def write_config(configname: str, cfg: dict) -> None
 
 Write structured config file.
 
-**Arguments**
+**Parameters**
 
 * **configname** (`str`): Path to the config file.
 * **cfg** (`dict`): Dictionary containing the config data.
@@ -52,7 +52,7 @@ def read_states(config: dict) -> dict
 
 Reads the states.json file.
 
-**Arguments**
+**Parameters**
 
 * **config** (`dict`): Dictionary containing the config data.
 

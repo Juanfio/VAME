@@ -15,7 +15,7 @@ def consecutive(data: np.ndarray, stepsize: int = 1) -> List[np.ndarray]
 
 Find consecutive sequences in the data array.
 
-**Arguments**
+**Parameters**
 
 * **data** (`np.ndarray`): Input array.
 * **stepsize** (`int, optional`): Step size. Defaults to 1.
@@ -32,7 +32,7 @@ def nan_helper(y: np.ndarray) -> Tuple
 
 Identifies indices of NaN values in an array and provides a function to convert them to non-NaN indices.
 
-**Arguments**
+**Parameters**
 
 * **y** (`np.ndarray`): Input array containing NaN values.
 
@@ -50,7 +50,7 @@ def interpol_first_rows_nans(arr: np.ndarray) -> np.ndarray
 
 Interpolates NaN values in the given array.
 
-**Arguments**
+**Parameters**
 
 * **arr** (`np.ndarray`): Input array with NaN values.
 
@@ -66,7 +66,7 @@ def interpolate_nans_with_pandas(data: np.ndarray) -> np.ndarray
 
 Interpolate NaN values along the time axis of a 3D NumPy array using Pandas.
 
-**Arguments**
+**Parameters**
 
 * **data** (`numpy.ndarray`): Input 3D array of shape (time, keypoints, space).
 
@@ -84,7 +84,7 @@ def crop_and_flip_legacy(
 
 Crop and flip the image based on the given rectangle and points.
 
-**Arguments**
+**Parameters**
 
 * **rect** (`Tuple`): Rectangle coordinates (center, size, theta).
 * **src: np.ndarray**: Source image.
@@ -107,7 +107,7 @@ def background(project_path: str,
 
 Compute background image from fixed camera.
 
-**Arguments**
+**Parameters**
 
 * **project_path** (`str`): Path to the project directory.
 * **session** (`str`): Name of the session.

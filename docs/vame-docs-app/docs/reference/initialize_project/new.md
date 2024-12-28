@@ -47,7 +47,7 @@ A VAME project is a directory with the following structure:
         - states.json
     - config.yaml
 
-**Arguments**
+**Parameters**
 
 * **project_name** (`str`): Project name.
 * **videos** (`List[str]`): List of videos paths to be used in the project. E.g. [&#x27;./sample_data/Session001.mp4&#x27;]

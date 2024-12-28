@@ -17,7 +17,7 @@ def umap_embedding(
 
 Perform UMAP embedding for given file and parameters.
 
-**Arguments**
+**Parameters**
 
 * **cfg** (`dict`): Configuration parameters.
 * **session** (`str`): Session name.
@@ -37,7 +37,7 @@ def umap_vis(embed: np.ndarray, num_points: int) -> plt.Figure
 
 Visualize UMAP embedding without labels.
 
-**Arguments**
+**Parameters**
 
 * **embed** (`np.ndarray`): UMAP embedding.
 * **num_points** (`int`): Number of data points to visualize.
@@ -55,7 +55,7 @@ def umap_label_vis(embed: np.ndarray, label: np.ndarray,
 
 Visualize UMAP embedding with motif labels.
 
-**Arguments**
+**Parameters**
 
 * **embed** (`np.ndarray`): UMAP embedding.
 * **label** (`np.ndarray`): Motif labels.
@@ -74,7 +74,7 @@ def umap_vis_comm(embed: np.ndarray, community_label: np.ndarray,
 
 Visualize UMAP embedding with community labels.
 
-**Arguments**
+**Parameters**
 
 * **embed** (`np.ndarray`): UMAP embedding.
 * **community_label** (`np.ndarray`): Community labels.
@@ -110,7 +110,7 @@ If label is None (UMAP visualization without labels):
                         - umap_vis_motif_file_name.png  (UMAP visualization with motif labels)
                         - umap_vis_community_file_name.png  (UMAP visualization with community labels)
 
-**Arguments**
+**Parameters**
 
 * **config** (`dict`): Configuration parameters.
 * **segmentation_algorithm** (`SegmentationAlgorithms`): Which segmentation algorithm to use. Options are &#x27;hmm&#x27; or &#x27;kmeans&#x27;.

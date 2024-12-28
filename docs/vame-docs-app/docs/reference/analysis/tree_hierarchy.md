@@ -17,7 +17,7 @@ def hierarchy_pos(G: nx.Graph,
 Positions nodes in a tree-like layout.
 Ref: From Joel&#x27;s answer at https://stackoverflow.com/a/29597209/2966723.
 
-**Arguments**
+**Parameters**
 
 * **G** (`nx.Graph`): The input graph. Must be a tree.
 * **root** (`str, optional`): The root node of the tree. If None, the function selects a root node based on graph type.
@@ -41,7 +41,7 @@ def merge_func(transition_matrix: np.ndarray, n_clusters: int,
 
 Merge nodes in a graph based on a selection criterion.
 
-**Arguments**
+**Parameters**
 
 * **transition_matrix** (`np.ndarray`): The transition matrix of the graph.
 * **n_clusters** (`int`): The number of clusters.
@@ -65,7 +65,7 @@ def graph_to_tree(motif_usage: np.ndarray,
 
 Convert a graph to a tree.
 
-**Arguments**
+**Parameters**
 
 * **motif_usage** (`np.ndarray`): The motif usage matrix.
 * **transition_matrix** (`np.ndarray`): The transition matrix of the graph.
@@ -89,7 +89,7 @@ def draw_tree(
 
 Draw a tree.
 
-**Arguments**
+**Parameters**
 
 * **T** (`nx.Graph`): The tree to be drawn.
 * **fig_width** (`int, optional`): The width of the figure. Defaults to 10.
@@ -114,7 +114,7 @@ def _traverse_tree_cutline(
 DEPRECATED in favor of bag_nodes_by_cutline.
 Helper function for tree traversal with a cutline.
 
-**Arguments**
+**Parameters**
 
 * **T** (`nx.Graph`): The tree to be traversed.
 * **node** (`List[str]`): Current node being traversed.
@@ -139,7 +139,7 @@ def traverse_tree_cutline(T: nx.Graph,
 DEPRECATED in favor of bag_nodes_by_cutline.
 Traverse a tree with a cutline and return the community bags.
 
-**Arguments**
+**Parameters**
 
 * **T** (`nx.Graph`): The tree to be traversed.
 * **root_node** (`str, optional`): The root node of the tree. If None, traversal starts from the root.
@@ -157,7 +157,7 @@ def bag_nodes_by_cutline(tree: nx.Graph, cutline: int = 2, root: str = "Root")
 
 Bag nodes of a tree by a cutline.
 
-**Arguments**
+**Parameters**
 
 * **tree** (`nx.Graph`): The tree to be bagged.
 * **cutline** (`int, optional`): The cutline level. Defaults to 2.

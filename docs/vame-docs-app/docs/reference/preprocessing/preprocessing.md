@@ -22,7 +22,7 @@ Preprocess the data by:
     - Outlier cleaning
     - Savitzky-Golay filtering
 
-**Arguments**
+**Parameters**
 
 * **config** (`dict`): Configuration dictionary.
 * **centered_reference_keypoint** (`str, optional`): Keypoint to use as centered reference.

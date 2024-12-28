@@ -19,7 +19,7 @@ Clean the low confidence data points from the dataset. Processes position data b
  - setting low-confidence points to NaN
  - interpolating NaN points
 
-**Arguments**
+**Parameters**
 
 * **config** (`dict`): Configuration dictionary.
 * **read_from_variable** (`str, optional`): Variable to read from the dataset.
@@ -41,7 +41,7 @@ Clean the outliers from the dataset. Processes position data by:
  - setting outlier points to NaN
  - interpolating NaN points
 
-**Arguments**
+**Parameters**
 
 * **config** (`dict`): Configuration dictionary.
 * **read_from_variable** (`str, optional`): Variable to read from the dataset.

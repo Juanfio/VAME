@@ -18,7 +18,7 @@ def random_generative_samples_motif(cfg: dict, model: torch.nn.Module,
 
 Generate random samples for motifs.
 
-**Arguments**
+**Parameters**
 
 * **cfg** (`dict`): Configuration dictionary.
 * **model** (`torch.nn.Module`): PyTorch model.
@@ -39,7 +39,7 @@ def random_generative_samples(cfg: dict, model: torch.nn.Module,
 
 Generate random generative samples.
 
-**Arguments**
+**Parameters**
 
 * **cfg** (`dict`): Configuration dictionary.
 * **model** (`torch.nn.Module`): PyTorch model.
@@ -58,7 +58,7 @@ def random_reconstruction_samples(cfg: dict, model: torch.nn.Module,
 
 Generate random reconstruction samples.
 
-**Arguments**
+**Parameters**
 
 * **cfg** (`dict`): Configuration dictionary.
 * **model** (`torch.nn.Module`): PyTorch model to use.
@@ -77,7 +77,7 @@ def visualize_cluster_center(cfg: dict, model: torch.nn.Module,
 
 Visualize cluster centers.
 
-**Arguments**
+**Parameters**
 
 * **cfg** (`dict`): Configuration dictionary.
 * **model** (`torch.nn.Module`): PyTorch model.
@@ -99,7 +99,7 @@ def generative_model(config: dict,
 
 Generative model.
 
-**Arguments**
+**Parameters**
 
 * **config** (`dict`): Configuration dictionary.
 * **mode** (`str, optional`): Mode for generating samples. Defaults to &quot;sampling&quot;.

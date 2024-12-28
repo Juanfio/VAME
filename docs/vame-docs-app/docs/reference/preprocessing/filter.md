@@ -17,7 +17,7 @@ def savgol_filtering(config: dict,
 
 Apply Savitzky-Golay filter to the data.
 
-**Arguments**
+**Parameters**
 
 * **config** (`dict`): Configuration dictionary.
 * **read_from_variable** (`str, optional`): Variable to read from the dataset.

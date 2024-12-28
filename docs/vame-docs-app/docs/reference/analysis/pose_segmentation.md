@@ -21,7 +21,7 @@ def embedd_latent_vectors(
 
 Embed latent vectors for the given files using the VAME model.
 
-**Arguments**
+**Parameters**
 
 * **cfg** (`dict`): Configuration dictionary.
 * **sessions** (`List[str]`): List of session names.
@@ -41,7 +41,7 @@ def get_motif_usage(session_labels: np.ndarray, n_clusters: int) -> np.ndarray
 
 Count motif usage from session label array.
 
-**Arguments**
+**Parameters**
 
 * **session_labels** (`np.ndarray`): Array of session labels.
 * **n_clusters** (`int`): Number of clusters.
@@ -61,7 +61,7 @@ def same_segmentation(
 
 Apply the same segmentation to all animals.
 
-**Arguments**
+**Parameters**
 
 * **cfg** (`dict`): Configuration dictionary.
 * **sessions** (`List[str]`): List of session names.
@@ -83,7 +83,7 @@ def individual_segmentation(cfg: dict, sessions: List[str],
 
 Apply individual segmentation to each session.
 
-**Arguments**
+**Parameters**
 
 * **cfg** (`dict`): Configuration dictionary.
 * **sessions** (`List[str]`): List of session names.
@@ -128,7 +128,7 @@ Dimmentions: (n_motifs,)
 n_cluster_label_session.npy contains the label of the cluster assigned to each frame.
 Dimmentions: (n_frames,)
 
-**Arguments**
+**Parameters**
 
 * **config** (`dict`): Configuration dictionary.
 * **save_logs** (`bool, optional`): Whether to save logs, by default False.

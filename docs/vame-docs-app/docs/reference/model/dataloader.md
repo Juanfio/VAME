@@ -24,7 +24,7 @@ Creates files at:
         - seq_mean.npy
         - seq_std.npy
 
-**Arguments**
+**Parameters**
 
 * **path_to_file** (`str`): Path to the dataset files.
 * **data** (`str`): Name of the data file.
@@ -55,7 +55,7 @@ def __getitem__(index: int) -> torch.Tensor
 
 Get a normalized sequence at the specified index.
 
-**Arguments**
+**Parameters**
 
 * **index** (`int`): Index of the item.
 

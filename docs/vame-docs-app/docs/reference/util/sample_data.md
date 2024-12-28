@@ -15,7 +15,7 @@ def download_sample_data(source_software: str) -> dict
 
 Download sample data.
 
-**Arguments**
+**Parameters**
 
 * **source_software** (`str`): Source software used for pose estimation.
 

@@ -15,7 +15,7 @@ Formats the xarray dataset for use VAME&#x27;s RNN model:
 - The x coordinate of the orientation_reference_keypoint is excluded.
 - The remaining data is flattened and transposed.
 
-**Arguments**
+**Parameters**
 
 * **ds** (`xr.Dataset`): The xarray dataset to format.
 * **read_from_variable** (`str, default="position_processed"`): The variable to read from the dataset.

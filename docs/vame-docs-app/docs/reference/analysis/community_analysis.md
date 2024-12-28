@@ -17,7 +17,7 @@ def get_adjacency_matrix(
 
 Calculate the adjacency matrix, transition matrix, and temporal matrix.
 
-**Arguments**
+**Parameters**
 
 * **labels** (`np.ndarray`): Array of cluster labels.
 * **n_clusters** (`int`): Number of clusters.
@@ -35,7 +35,7 @@ def get_transition_matrix(adjacency_matrix: np.ndarray,
 
 Compute the transition matrix from the adjacency matrix.
 
-**Arguments**
+**Parameters**
 
 * **adjacency_matrix** (`np.ndarray`): Adjacency matrix.
 * **threshold** (`float, optional`): Threshold for considering transitions. Defaults to 0.0.
@@ -64,7 +64,7 @@ Example 2:
     - n_clusters = 6
     - the function will return [10, 20, 0, 30, 40, 0].
 
-**Arguments**
+**Parameters**
 
 * **unique_motif_labels** (`np.ndarray`): Array of unique motif labels.
 * **motif_counts** (`np.ndarray`): Array of motif counts (in number of frames).
@@ -83,7 +83,7 @@ def augment_motif_timeseries(labels: np.ndarray,
 
 Augment motif time series by filling zero motifs.
 
-**Arguments**
+**Parameters**
 
 * **labels** (`np.ndarray`): Original array of labels.
 * **n_clusters** (`int`): Number of clusters.
@@ -105,7 +105,7 @@ def get_motif_labels(config: dict, sessions: List[str], model_name: str,
 
 Get motif labels for given files.
 
-**Arguments**
+**Parameters**
 
 * **config** (`dict`): Configuration parameters.
 * **sessions** (`List[str]`): List of session names.
@@ -126,7 +126,7 @@ def compute_transition_matrices(files: List[str], labels: List[np.ndarray],
 
 Compute transition matrices for given files and labels.
 
-**Arguments**
+**Parameters**
 
 * **files** (`List[str]`): List of file paths.
 * **labels** (`List[np.ndarray]`): List of label arrays.
@@ -147,7 +147,7 @@ def create_cohort_community_bag(motif_labels: List[np.ndarray],
 Create cohort community bag for given motif labels, transition matrix,
 cut tree, and number of clusters. (markov chain to tree -&gt; community detection)
 
-**Arguments**
+**Parameters**
 
 * **motif_labels** (`List[np.ndarray]`): List of motif label arrays.
 * **trans_mat_full** (`np.ndarray`): Full transition matrix.
@@ -170,7 +170,7 @@ def get_cohort_community_labels(
 Transform kmeans/hmm parameterized latent vector motifs into communities.
 Get cohort community labels for given labels, and community bags.
 
-**Arguments**
+**Parameters**
 
 * **labels** (`List[np.ndarray]`): List of label arrays.
 * **cohort_community_bag** (`np.ndarray`): List of community bags. Dimensions: (n_communities, n_clusters_in_community)
@@ -231,7 +231,7 @@ Saves results files at:
                         - community_label_file_name.npy
                         - hierarchy_file_name.pkl
 
-**Arguments**
+**Parameters**
 
 * **config** (`dict`): Configuration parameters.
 * **segmentation_algorithm** (`SegmentationAlgorithms`): Which segmentation algorithm to use. Options are &#x27;hmm&#x27; or &#x27;kmeans&#x27;.

@@ -29,7 +29,7 @@ Saves the plot to:
         - evaluate/
             - Reconstruction_model_name.png
 
-**Arguments**
+**Parameters**
 
 * **filepath** (`str`): Path to save the plot.
 * **test_loader** (`Data.DataLoader`): DataLoader for the test dataset.
@@ -57,7 +57,7 @@ Saves the plot to:
         - evaluate/
             - MSE-and-KL-Loss_model_name.png
 
-**Arguments**
+**Parameters**
 
 * **cfg** (`dict`): Configuration dictionary.
 * **filepath** (`str`): Path to save the plot.
@@ -80,7 +80,7 @@ def eval_temporal(cfg: dict,
 
 Evaluate the temporal aspects of the trained model.
 
-**Arguments**
+**Parameters**
 
 * **cfg** (`dict`): Configuration dictionary.
 * **use_gpu** (`bool`): Flag indicating whether to use GPU for evaluation.
@@ -109,7 +109,7 @@ Saves the evaluation results to:
     - model/
         - evaluate/
 
-**Arguments**
+**Parameters**
 
 * **config** (`dict`): Configuration dictionary.
 * **use_snapshots** (`bool, optional`): Whether to plot for all snapshots or only the best model. Defaults to False.

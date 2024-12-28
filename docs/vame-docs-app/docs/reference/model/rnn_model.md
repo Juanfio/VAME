@@ -20,7 +20,7 @@ def __init__(NUM_FEATURES: int, hidden_size_layer_1: int,
 
 Initialize the Encoder module.
 
-**Arguments**
+**Parameters**
 
 * **NUM_FEATURES** (`int`): Number of input features.
 * **hidden_size_layer_1** (`int`): Size of the first hidden layer.
@@ -35,7 +35,7 @@ def forward(inputs: torch.Tensor) -> torch.Tensor
 
 Forward pass of the Encoder module.
 
-**Arguments**
+**Parameters**
 
 * **inputs** (`torch.Tensor`): Input tensor of shape (batch_size, sequence_length, num_features).
 
@@ -59,7 +59,7 @@ def __init__(ZDIMS: int, hidden_size_layer_1: int, softplus: bool)
 
 Initialize the Lambda module.
 
-**Arguments**
+**Parameters**
 
 * **ZDIMS** (`int`): Size of the latent space.
 * **hidden_size_layer_1** (`int`): Size of the first hidden layer.
@@ -76,7 +76,7 @@ def forward(
 
 Forward pass of the Lambda module.
 
-**Arguments**
+**Parameters**
 
 * **hidden** (`torch.Tensor`): Hidden representation tensor of shape (batch_size, hidden_size_layer_1 * 4).
 
@@ -101,7 +101,7 @@ def __init__(TEMPORAL_WINDOW: int, ZDIMS: int, NUM_FEATURES: int,
 
 Initialize the Decoder module.
 
-**Arguments**
+**Parameters**
 
 * **TEMPORAL_WINDOW** (`int`): Size of the temporal window.
 * **ZDIMS** (`int`): Size of the latent space.
@@ -117,7 +117,7 @@ def forward(inputs: torch.Tensor, z: torch.Tensor) -> torch.Tensor
 
 Forward pass of the Decoder module.
 
-**Arguments**
+**Parameters**
 
 * **inputs** (`torch.Tensor`): Input tensor of shape (batch_size, seq_len, ZDIMS).
 * **z** (`torch.Tensor`): Latent space tensor of shape (batch_size, ZDIMS).
@@ -143,7 +143,7 @@ def __init__(TEMPORAL_WINDOW: int, ZDIMS: int, NUM_FEATURES: int,
 
 Initialize the Decoder_Future module.
 
-**Arguments**
+**Parameters**
 
 * **TEMPORAL_WINDOW** (`int`): Size of the temporal window.
 * **ZDIMS** (`int`): Size of the latent space.
@@ -160,7 +160,7 @@ def forward(inputs: torch.Tensor, z: torch.Tensor) -> torch.Tensor
 
 Forward pass of the Decoder_Future module.
 
-**Arguments**
+**Parameters**
 
 * **inputs** (`torch.Tensor`): Input tensor of shape (batch_size, seq_len, ZDIMS).
 * **z** (`torch.Tensor`): Latent space tensor of shape (batch_size, ZDIMS).
@@ -189,7 +189,7 @@ def __init__(TEMPORAL_WINDOW: int, ZDIMS: int, NUM_FEATURES: int,
 
 Initialize the VAE module.
 
-**Arguments**
+**Parameters**
 
 * **TEMPORAL_WINDOW** (`int`): Size of the temporal window.
 * **ZDIMS** (`int`): Size of the latent space.
@@ -210,7 +210,7 @@ def forward(seq: torch.Tensor) -> tuple
 
 Forward pass of the VAE.
 
-**Arguments**
+**Parameters**
 
 * **seq** (`torch.Tensor`): Input sequence tensor of shape (batch_size, seq_len, NUM_FEATURES).
 

@@ -25,7 +25,7 @@ def create_cluster_videos(
 
 Generate cluster videos and save them to filesystem on project folder.
 
-**Arguments**
+**Parameters**
 
 * **config** (`dict`): Configuration parameters.
 * **path_to_file** (`str`): Path to the file.
@@ -66,7 +66,7 @@ Files are saved at:
                         - session-motif_1.mp4
                         - ...
 
-**Arguments**
+**Parameters**
 
 * **config** (`dict`): Configuration parameters.
 * **segmentation_algorithm** (`SegmentationAlgorithms`): Which segmentation algorithm to use. Options are &#x27;hmm&#x27; or &#x27;kmeans&#x27;.
@@ -108,7 +108,7 @@ TODO: Add cohort analysis
                         - file_name-community_1.mp4
                         - ...
 
-**Arguments**
+**Parameters**
 
 * **config** (`dict`): Configuration parameters.
 * **segmentation_algorithm** (`SegmentationAlgorithms`): Which segmentation algorithm to use. Options are &#x27;hmm&#x27; or &#x27;kmeans&#x27;.

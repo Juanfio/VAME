@@ -19,7 +19,7 @@ def traindata_aligned(config: dict,
 Create training dataset for aligned data.
 Save numpy arrays with the test/train info to the project folder.
 
-**Arguments**
+**Parameters**
 
 * **config** (`dict`): Configuration parameters dictionary.
 * **sessions** (`List[str], optional`): List of session names. If None, all sessions will be used. Defaults to None.
@@ -56,7 +56,7 @@ The produced test_seq.npy contains the combined data in the shape of (num_dlc_fe
 
 The produced train_seq.npy contains the combined data in the shape of (num_dlc_features - 2, num_video_frames * (1 - test_fraction)).
 
-**Arguments**
+**Parameters**
 
 * **config** (`dict`): Configuration parameters dictionary.
 * **save_logs** (`bool, optional`): If True, the function will save logs to the project folder. Defaults to False.

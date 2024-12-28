@@ -23,7 +23,7 @@ def get_animal_frames(
 
 Extracts frames of an animal from a video file and returns them as a list.
 
-**Arguments**
+**Parameters**
 
 * **cfg** (`dict`): Configuration dictionary containing project information.
 * **session** (`str`): Name of the session.

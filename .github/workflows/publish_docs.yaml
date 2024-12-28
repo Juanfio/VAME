@@ -5,11 +5,14 @@ on:
     branches:
       - main
       - updated-docs
+    # paths:
+    #   - '.github/workflows/publush_docs.yaml'
+    #   - 'docs/**'
 
 jobs:
   deploy:
     name: Deploy VAME Docs to GitHub Pages
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions:
       contents: write
       pages: write
@@ -62,4 +65,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/vame-docs-app/build
           publish_branch: gh-pages
-          destination_dir: ${{ github.ref_name == 'main' && '' || github.ref_name }}

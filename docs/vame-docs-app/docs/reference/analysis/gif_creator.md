@@ -17,7 +17,7 @@ def create_video(path_to_file: str, session: str, embed: np.ndarray,
 
 Create video frames for the given embedding.
 
-**Arguments**
+**Parameters**
 
 * **path_to_file** (`str`): Path to the file.
 * **session** (`str`): Session name.
@@ -51,7 +51,7 @@ def gif(
 
 Create a GIF from the given configuration.
 
-**Arguments**
+**Parameters**
 
 * **config** (`str`): Path to the configuration file.
 * **pose_ref_index** (`list`): List of reference coordinate indices for alignment.

@@ -20,7 +20,7 @@ def reconstruction_loss(x: torch.Tensor, x_tilde: torch.Tensor,
 
 Compute the reconstruction loss between input and reconstructed data.
 
-**Arguments**
+**Parameters**
 
 * **x** (`torch.Tensor`): Input data tensor.
 * **x_tilde** (`torch.Tensor`): Reconstructed data tensor.
@@ -39,7 +39,7 @@ def future_reconstruction_loss(x: torch.Tensor, x_tilde: torch.Tensor,
 
 Compute the future reconstruction loss between input and predicted future data.
 
-**Arguments**
+**Parameters**
 
 * **x** (`torch.Tensor`): Input future data tensor.
 * **x_tilde** (`torch.Tensor`): Reconstructed future data tensor.
@@ -58,7 +58,7 @@ def cluster_loss(H: torch.Tensor, kloss: int, lmbda: float,
 
 Compute the cluster loss.
 
-**Arguments**
+**Parameters**
 
 * **H** (`torch.Tensor`): Latent representation tensor.
 * **kloss** (`int`): Number of clusters.
@@ -81,7 +81,7 @@ See Appendix B from VAE paper: Kingma and Welling. Auto-Encoding Variational Bay
 
 Formula: 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
 
-**Arguments**
+**Parameters**
 
 * **mu** (`torch.Tensor`): Mean of the latent distribution.
 * **logvar** (`torch.Tensor`): Log variance of the latent distribution.
@@ -100,7 +100,7 @@ def kl_annealing(epoch: int, kl_start: int, annealtime: int,
 Anneal the Kullback-Leibler loss to let the model learn first the reconstruction of the data
 before the KL loss term gets introduced.
 
-**Arguments**
+**Parameters**
 
 * **epoch** (`int`): Current epoch number.
 * **kl_start** (`int`): Epoch number to start annealing the loss.
@@ -122,7 +122,7 @@ def gaussian(ins: torch.Tensor,
 
 Add Gaussian noise to the input data.
 
-**Arguments**
+**Parameters**
 
 * **ins** (`torch.Tensor`): Input data tensor.
 * **is_training** (`bool`): Whether it is training mode.
@@ -146,7 +146,7 @@ def train(train_loader: Data.DataLoader, epoch: int, model: nn.Module,
 
 Train the model.
 
-**Arguments**
+**Parameters**
 
 * **train_loader** (`DataLoader`): Training data loader.
 * **epoch** (`int`): Current epoch number.
@@ -183,7 +183,7 @@ def test(test_loader: Data.DataLoader, model: nn.Module, BETA: float,
 
 Evaluate the model on the test dataset.
 
-**Arguments**
+**Parameters**
 
 * **test_loader** (`DataLoader`): DataLoader for the test dataset.
 * **model** (`nn.Module`): The trained model.
@@ -229,7 +229,7 @@ Creates files at:
             - weight_values_VAME.npy
         - pretrained_model/
 
-**Arguments**
+**Parameters**
 
 * **config** (`dict`): Configuration dictionary.
 * **save_logs** (`bool, optional`): Whether to save the logs, by default False.

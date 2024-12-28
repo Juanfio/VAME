@@ -14,7 +14,7 @@ def load_pose_estimation(
 
 Load pose estimation data.
 
-**Arguments**
+**Parameters**
 
 * **pose_estimation_file** (`Path or str`): Path to the pose estimation file.
 * **video_file** (`Path or str`): Path to the video file.
@@ -33,7 +33,7 @@ def load_vame_dataset(ds_path: Path | str) -> xr.Dataset
 
 Load VAME dataset.
 
-**Arguments**
+**Parameters**
 
 * **ds_path** (`Path or str`): Path to the netCDF dataset.
 
@@ -59,7 +59,7 @@ def read_pose_estimation_file(
 
 Read pose estimation file.
 
-**Arguments**
+**Parameters**
 
 * **file_path** (`str`): Path to the pose estimation file.
 * **file_type** (`PoseEstimationFiletype`): Type of the pose estimation file. Supported types are &#x27;csv&#x27; and &#x27;nwb&#x27;.
