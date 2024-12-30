@@ -283,9 +283,7 @@ def visualize_preprocessing_timeseries(
     if show_figure:
         plt.show()
     else:
-        plt.close(
-            fig,
-        )
+        plt.close(fig)
 
 
 # def visualize_timeseries(

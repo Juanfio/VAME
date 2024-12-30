@@ -10,6 +10,7 @@ from vame.visualization.preprocessing import (
     visualize_preprocessing_scatter,
     visualize_preprocessing_timeseries,
 )
+from vame.visualization.model import plot_loss
 from vame.logging.logger import VameLogger
 
 
@@ -294,7 +295,7 @@ class VAMEPipeline:
             segmentation_algorithm=segmentation_algorithm,
         )
 
-    def visualize_prepocessing(
+    def visualize_preprocessing(
         self,
         scatter: bool = True,
         timeseries: bool = True,
@@ -332,6 +333,32 @@ class VAMEPipeline:
                 save_to_file=save_to_file,
             )
 
+    def visualize_model_losses(
+        self,
+        save_to_file: bool = True,
+        show_figure: bool = True,
+    ) -> None:
+        """
+        Visualizes the model losses.
+
+        Parameters
+        ----------
+        save_to_file : bool, optional
+            Save the figure to file, by default False.
+        show_figure : bool, optional
+            Show the figure, by default True.
+
+        Returns
+        -------
+        None
+        """
+        plot_loss(
+            cfg=self.config,
+            model_name="VAME",
+            save_to_file=save_to_file,
+            show_figure=show_figure,
+        )
+
     def visualize_umap(
         self,
         label: Literal["community", "motif"] = "community",
@@ -357,44 +384,6 @@ class VAMEPipeline:
             config=self.config,
             label=label,
             segmentation_algorithm=segmentation_algorithm,
-        )
-
-    def visualize_results(
-        self,
-        label: Literal["community", "motif"] = "community",
-        segmentation_algorithm: Literal["hmm", "kmeans"] = "hmm",
-        show_figure: bool = False,
-        save_to_file: bool = True,
-    ) -> None:
-        """
-        Visualize results.
-
-        Parameters
-        ----------
-        label : Literal["community", "motif"], optional
-            Label to visualize, by default "community".
-        segmentation_algorithm : Literal["hmm", "kmeans"], optional
-            Segmentation algorithm, by default "hmm".
-        show_figure : bool, optional
-            Show the figure, by default False.
-        save_to_file : bool, optional
-            Save the figure to file, by default True.
-
-        Returns
-        -------
-        None
-        """
-        self.visualize_prepocessing(
-            scatter=True,
-            timeseries=True,
-            show_figure=show_figure,
-            save_to_file=save_to_file,
-        )
-        self.visualize_umap(
-            label=label,
-            segmentation_algorithm=segmentation_algorithm,
-            show_figure=show_figure,
-            save_to_file=save_to_file,
         )
 
     def report(
@@ -449,8 +438,6 @@ class VAMEPipeline:
             self.run_segmentation()
         if from_step <= 5:
             self.run_community_clustering()
-        if from_step <= 6:
-            self.report()
 
 
 def unique_in_order(sequence):
