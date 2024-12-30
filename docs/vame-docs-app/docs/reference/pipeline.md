@@ -220,13 +220,13 @@ Generates motif and community videos.
 
 * `None`
 
-#### visualize\_prepocessing
+#### visualize\_preprocessing
 
 ```python
-def visualize_prepocessing(scatter: bool = True,
-                           timeseries: bool = True,
-                           show_figure: bool = False,
-                           save_to_file: bool = True) -> None
+def visualize_preprocessing(scatter: bool = True,
+                            timeseries: bool = True,
+                            show_figure: bool = False,
+                            save_to_file: bool = True) -> None
 ```
 
 Visualizes the preprocessing results.
@@ -237,6 +237,24 @@ Visualizes the preprocessing results.
 * **timeseries** (`bool, optional`): Visualize timeseries plot, by default True.
 * **show_figure** (`bool, optional`): Show the figure, by default False.
 * **save_to_file** (`bool, optional`): Save the figure to file, by default True.
+
+**Returns**
+
+* `None`
+
+#### visualize\_model\_losses
+
+```python
+def visualize_model_losses(save_to_file: bool = True,
+                           show_figure: bool = True) -> None
+```
+
+Visualizes the model losses.
+
+**Parameters**
+
+* **save_to_file** (`bool, optional`): Save the figure to file, by default False.
+* **show_figure** (`bool, optional`): Show the figure, by default True.
 
 **Returns**
 
@@ -257,28 +275,6 @@ Visualizes the UMAP plot.
 
 * **label** (`Literal["community", "motif"], optional`): Label to visualize, by default &quot;community&quot;.
 * **segmentation_algorithm** (`Literal["hmm", "kmeans"], optional`): Segmentation algorithm, by default &quot;hmm&quot;.
-
-**Returns**
-
-* `None`
-
-#### visualize\_results
-
-```python
-def visualize_results(label: Literal["community", "motif"] = "community",
-                      segmentation_algorithm: Literal["hmm", "kmeans"] = "hmm",
-                      show_figure: bool = False,
-                      save_to_file: bool = True) -> None
-```
-
-Visualize results.
-
-**Parameters**
-
-* **label** (`Literal["community", "motif"], optional`): Label to visualize, by default &quot;community&quot;.
-* **segmentation_algorithm** (`Literal["hmm", "kmeans"], optional`): Segmentation algorithm, by default &quot;hmm&quot;.
-* **show_figure** (`bool, optional`): Show the figure, by default False.
-* **save_to_file** (`bool, optional`): Save the figure to file, by default True.
 
 **Returns**
 
