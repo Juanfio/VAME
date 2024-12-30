@@ -87,7 +87,7 @@ Visualize UMAP embedding with community labels.
 #### visualize\_umap
 
 ```python
-@save_state(model=VisualizationFunctionSchema)
+@save_state(model=VisualizeUmapFunctionSchema)
 def visualize_umap(config: dict,
                    segmentation_algorithm: SegmentationAlgorithms,
                    label: Optional[str] = None,
