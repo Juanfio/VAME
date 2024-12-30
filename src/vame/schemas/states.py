@@ -105,7 +105,7 @@ class CommunityVideosFunctionSchema(BaseStateSchema):
     )
 
 
-class VisualizationFunctionSchema(BaseStateSchema):
+class VisualizeUmapFunctionSchema(BaseStateSchema):
     segmentation_algorithm: SegmentationAlgorithms = Field(title="Segmentation algorithm")
     label: Optional[str] = Field(
         title="Type of labels to visualize",
@@ -158,7 +158,7 @@ class VAMEPipelineStatesSchema(BaseModel):
         title="Community videos",
         default={},
     )
-    visualization: Optional[VisualizationFunctionSchema | Dict] = Field(
+    visualize_umap: Optional[VisualizeUmapFunctionSchema | Dict] = Field(
         title="Visualization",
         default={},
     )

@@ -7,7 +7,7 @@ from typing import Optional, Union
 
 from vame.util.auxiliary import read_config
 from vame.util.cli import get_sessions_from_user_input
-from vame.schemas.states import VisualizationFunctionSchema, save_state
+from vame.schemas.states import VisualizeUmapFunctionSchema, save_state
 from vame.logging.logger import VameLogger
 from vame.schemas.project import SegmentationAlgorithms
 
@@ -216,7 +216,7 @@ def umap_vis_comm(
     return fig
 
 
-@save_state(model=VisualizationFunctionSchema)
+@save_state(model=VisualizeUmapFunctionSchema)
 def visualize_umap(
     config: dict,
     segmentation_algorithm: SegmentationAlgorithms,

@@ -356,15 +356,15 @@ class VAMEPipeline:
             self.evaluate_model()
         if from_step <= 4:
             self.run_segmentation()
-        if from_step <= 5:
-            self.generate_motif_videos()
+        # if from_step <= 5:
+        #     self.generate_motif_videos()
         if from_step <= 6:
             self.run_community_clustering()
-        if from_step <= 7:
-            self.generate_community_videos()
-        if from_step <= 8:
-            self.visualize_prepocessing()
-            self.visualize_umap()
+        # if from_step <= 7:
+        #     self.generate_community_videos()
+        # if from_step <= 8:
+        #     self.visualize_prepocessing()
+        #     self.visualize_umap()
         if from_step <= 9:
             self.report()
 
