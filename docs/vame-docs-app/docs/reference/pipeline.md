@@ -151,18 +151,6 @@ Runs the pose estimation segmentation into motifs.
 
 * `None`
 
-#### generate\_motif\_videos
-
-```python
-def generate_motif_videos() -> None
-```
-
-Generates motif videos.
-
-**Returns**
-
-* `None`
-
 #### run\_community\_clustering
 
 ```python
@@ -175,13 +163,58 @@ Runs the community clustering.
 
 * `None`
 
+#### generate\_motif\_videos
+
+```python
+def generate_motif_videos(
+        video_type: str = ".mp4",
+        segmentation_algorithm: Literal["hmm", "kmeans"] = "hmm") -> None
+```
+
+Generates motif videos.
+
+**Parameters**
+
+* **video_type** (`str, optional`): Video type, by default &quot;.mp4&quot;.
+* **segmentation_algorithm** (`Literal["hmm", "kmeans"], optional`): Segmentation algorithm, by default &quot;hmm&quot;.
+
+**Returns**
+
+* `None`
+
 #### generate\_community\_videos
 
 ```python
-def generate_community_videos() -> None
+def generate_community_videos(
+        video_type: str = ".mp4",
+        segmentation_algorithm: Literal["hmm", "kmeans"] = "hmm") -> None
 ```
 
 Generates community videos.
+
+**Parameters**
+
+* **video_type** (`str, optional`): Video type, by default &quot;.mp4&quot;.
+* **segmentation_algorithm** (`Literal["hmm", "kmeans"], optional`): Segmentation algorithm, by default &quot;hmm&quot;.
+
+**Returns**
+
+* `None`
+
+#### generate\_videos
+
+```python
+def generate_videos(
+        video_type: str = ".mp4",
+        segmentation_algorithm: Literal["hmm", "kmeans"] = "hmm") -> None
+```
+
+Generates motif and community videos.
+
+**Parameters**
+
+* **video_type** (`str, optional`): Video type, by default &quot;.mp4&quot;.
+* **segmentation_algorithm** (`Literal["hmm", "kmeans"], optional`): Segmentation algorithm, by default &quot;hmm&quot;.
 
 **Returns**
 
@@ -212,9 +245,10 @@ Visualizes the preprocessing results.
 #### visualize\_umap
 
 ```python
-def visualize_umap(
-        label: Literal["community", "motif"] = "community",
-        segmentation_algorithm: Literal["hmm", "kmeans"] = "hmm") -> None
+def visualize_umap(label: Literal["community", "motif"] = "community",
+                   segmentation_algorithm: Literal["hmm", "kmeans"] = "hmm",
+                   show_figure: bool = False,
+                   save_to_file: bool = True) -> None
 ```
 
 Visualizes the UMAP plot.
@@ -223,6 +257,28 @@ Visualizes the UMAP plot.
 
 * **label** (`Literal["community", "motif"], optional`): Label to visualize, by default &quot;community&quot;.
 * **segmentation_algorithm** (`Literal["hmm", "kmeans"], optional`): Segmentation algorithm, by default &quot;hmm&quot;.
+
+**Returns**
+
+* `None`
+
+#### visualize\_results
+
+```python
+def visualize_results(label: Literal["community", "motif"] = "community",
+                      segmentation_algorithm: Literal["hmm", "kmeans"] = "hmm",
+                      show_figure: bool = False,
+                      save_to_file: bool = True) -> None
+```
+
+Visualize results.
+
+**Parameters**
+
+* **label** (`Literal["community", "motif"], optional`): Label to visualize, by default &quot;community&quot;.
+* **segmentation_algorithm** (`Literal["hmm", "kmeans"], optional`): Segmentation algorithm, by default &quot;hmm&quot;.
+* **show_figure** (`bool, optional`): Show the figure, by default False.
+* **save_to_file** (`bool, optional`): Save the figure to file, by default True.
 
 **Returns**
 
