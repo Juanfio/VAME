@@ -55,7 +55,7 @@ A VAME project is a directory with the following structure:
 * **source_software** (`Literal["DeepLabCut", "SLEAP", "LightningPose"]`): Source software used for pose estimation.
 * **working_directory** (`str, optional`): Working directory. Defaults to &#x27;.&#x27;.
 * **video_type** (`str, optional`): Video extension (.mp4 or .avi). Defaults to &#x27;.mp4&#x27;.
-* **fps** (`int, optional`): Sampling rate of the video. If not passed, it will be estimated from the video file. Defaults to None.
+* **fps** (`int, optional`): Sampling rate of the videos. If not passed, it will be estimated from the video file. Defaults to None.
 * **copy_videos** (`bool, optional`): If True, the videos will be copied to the project directory. If False, symbolic links will be created instead. Defaults to False.
 * **paths_to_pose_nwb_series_data** (`Optional[str], optional`): List of paths to the pose series data in nwb files. Defaults to None.
 * **config_kwargs** (`Optional[dict], optional`): Additional configuration parameters. Defaults to None.

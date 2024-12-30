@@ -84,14 +84,14 @@ Visualize UMAP embedding with community labels.
 
 * `plt.Figure`: Plot figure of UMAP visualization embedding with community labels.
 
-#### visualization
+#### visualize\_umap
 
 ```python
 @save_state(model=VisualizationFunctionSchema)
-def visualization(config: dict,
-                  segmentation_algorithm: SegmentationAlgorithms,
-                  label: Optional[str] = None,
-                  save_logs: bool = False) -> None
+def visualize_umap(config: dict,
+                   segmentation_algorithm: SegmentationAlgorithms,
+                   label: Optional[str] = None,
+                   save_logs: bool = False) -> None
 ```
 
 Visualize UMAP embeddings based on configuration settings.
