@@ -31,6 +31,10 @@ jobs:
       - name: Auto generate API Reference.
         run: cd docs && pydoc-markdown
 
+      - name: Convert Jupyter Notebooks to HTML
+        run: |
+          jupyter nbconvert --to html examples/pipeline.ipynb --embed-images --no-prompt --output-dir=docs/vame-docs-app/static/notebooks_html
+
       - uses: actions/setup-node@v3
         with:
           node-version: 18

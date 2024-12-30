@@ -11,7 +11,7 @@ from vame.analysis import segment_session
 from vame.analysis import motif_videos
 from vame.analysis import community
 from vame.analysis import community_videos
-from vame.analysis import visualization
+from vame.analysis import visualize_umap
 from vame.analysis import generative_model
 from vame.analysis import gif
 from vame.util.csv_to_npy import pose_to_numpy

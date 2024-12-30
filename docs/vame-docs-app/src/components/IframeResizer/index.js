@@ -10,13 +10,38 @@ const IframeResizer = ({ src, heightBuffer = 20, maxCellHeight = 200, ...props }
                 try {
                     const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
 
-                    // Inject custom CSS for output content
+                    // Inject custom CSS for Markdown cells and other notebook elements
                     const style = iframeDocument.createElement('style');
                     style.innerHTML = `
+            /* Apply Docusaurus font style */
+            html {
+              background-color: var(--ifm-background-color);
+              color: var(--ifm-font-color-base);
+              color-scheme: var(--ifm-color-scheme);
+              font: var(--ifm-font-size-base) / var(--ifm-line-height-base) var(--ifm-font-family-base);
+              -webkit-font-smoothing: antialiased;
+              -webkit-tap-highlight-color: transparent;
+              text-rendering: optimizelegibility;
+              text-size-adjust: 100%;
+            }
+
+            body {
+              margin: 0;
+              padding: 0;
+            }
+
+            /* Markdown cell styling */
+            .jp-MarkdownOutput {
+              margin: 0rem 0;
+              padding: 0rem;
+            }
+
+            /* Ensure long outputs in other cells scroll vertically */
             .jp-OutputArea, .jp-Cell-outputArea {
               max-height: ${maxCellHeight}px;
               overflow-y: auto;
             }
+
             .jp-RenderedText, .jp-OutputArea-output {
               word-wrap: break-word;
               white-space: pre-wrap;

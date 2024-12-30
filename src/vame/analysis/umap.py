@@ -217,7 +217,7 @@ def umap_vis_comm(
 
 
 @save_state(model=VisualizationFunctionSchema)
-def visualization(
+def visualize_umap(
     config: dict,
     segmentation_algorithm: SegmentationAlgorithms,
     label: Optional[str] = None,

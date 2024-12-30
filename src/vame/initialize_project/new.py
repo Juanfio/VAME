@@ -69,7 +69,7 @@ def init_new_project(
     video_type : str, optional
         Video extension (.mp4 or .avi). Defaults to '.mp4'.
     fps : int, optional
-        Sampling rate of the video. If not passed, it will be estimated from the video file. Defaults to None.
+        Sampling rate of the videos. If not passed, it will be estimated from the video file. Defaults to None.
     copy_videos : bool, optional
         If True, the videos will be copied to the project directory. If False, symbolic links will be created instead. Defaults to False.
     paths_to_pose_nwb_series_data : Optional[str], optional
