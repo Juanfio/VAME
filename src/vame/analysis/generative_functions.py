@@ -48,7 +48,6 @@ def random_generative_samples_motif(
     logger.info("Generate random generative samples for motifs...")
     time_window = cfg["time_window"]
     for j in range(n_clusters):
-
         inds = np.where(labels == j)
         motif_latents = latent_vector[inds[0], :]
         gm = GaussianMixture(n_components=10).fit(motif_latents)

@@ -439,7 +439,6 @@ def save_cohort_community_labels_per_file(
     segmentation_algorithm: str,
     cohort_community_bag: list,
 ) -> None:
-
     for idx, session in enumerate(sessions):
         path_to_dir = os.path.join(
             config["project_path"],

@@ -276,7 +276,6 @@ def graph_to_tree(
         reduction = 2
 
     for i in range(n_clusters - reduction)[::-1]:
-
         if leaf_idx[idx - 1] == 1:
             if merge[i, 1] in node_dict:
                 T.add_edge(merge[i, 0], node_dict[merge[i, 1]])

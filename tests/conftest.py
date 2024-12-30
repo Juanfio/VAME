@@ -56,8 +56,8 @@ def cleanup_directory(directory):
         time.sleep(1)
 
         # Check for any open file handles and warn about them
-        for proc in psutil.process_iter(['open_files']):
-            if any(file.path.startswith(str(directory)) for file in proc.info['open_files'] or []):
+        for proc in psutil.process_iter(["open_files"]):
+            if any(file.path.startswith(str(directory)) for file in proc.info["open_files"] or []):
                 print(f"Process {proc.pid} is holding files in {directory}.")
 
         # Try to delete the directory

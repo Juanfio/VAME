@@ -5,7 +5,8 @@ import xarray as xr
 import vame
 from vame.util.auxiliary import read_config, read_states
 from vame.io.load_poses import load_vame_dataset
-from vame.preprocessing.visualization import (
+from vame.visualization.umap import visualize_umap
+from vame.visualization.preprocessing import (
     visualize_preprocessing_scatter,
     visualize_preprocessing_timeseries,
 )
@@ -200,20 +201,6 @@ class VAMEPipeline:
         """
         vame.segment_session(config=self.config)
 
-    def generate_motif_videos(self) -> None:
-        """
-        Generates motif videos.
-
-        Returns
-        -------
-        None
-        """
-        vame.motif_videos(
-            config=self.config,
-            video_type=".mp4",
-            segmentation_algorithm="hmm",
-        )
-
     def run_community_clustering(self) -> None:
         """
         Runs the community clustering.
@@ -229,9 +216,45 @@ class VAMEPipeline:
             cut_tree=2,
         )
 
-    def generate_community_videos(self) -> None:
+    def generate_motif_videos(
+        self,
+        video_type: str = ".mp4",
+        segmentation_algorithm: Literal["hmm", "kmeans"] = "hmm",
+    ) -> None:
+        """
+        Generates motif videos.
+
+        Parameters
+        ----------
+        video_type : str, optional
+            Video type, by default ".mp4".
+        segmentation_algorithm : Literal["hmm", "kmeans"], optional
+            Segmentation algorithm, by default "hmm".
+
+        Returns
+        -------
+        None
+        """
+        vame.motif_videos(
+            config=self.config,
+            video_type=video_type,
+            segmentation_algorithm=segmentation_algorithm,
+        )
+
+    def generate_community_videos(
+        self,
+        video_type: str = ".mp4",
+        segmentation_algorithm: Literal["hmm", "kmeans"] = "hmm",
+    ) -> None:
         """
         Generates community videos.
+
+        Parameters
+        ----------
+        video_type : str, optional
+            Video type, by default ".mp4".
+        segmentation_algorithm : Literal["hmm", "kmeans"], optional
+            Segmentation algorithm, by default "hmm".
 
         Returns
         -------
@@ -239,8 +262,36 @@ class VAMEPipeline:
         """
         vame.community_videos(
             config=self.config,
-            video_type=".mp4",
-            segmentation_algorithm="hmm",
+            video_type=video_type,
+            segmentation_algorithm=segmentation_algorithm,
+        )
+
+    def generate_videos(
+        self,
+        video_type: str = ".mp4",
+        segmentation_algorithm: Literal["hmm", "kmeans"] = "hmm",
+    ) -> None:
+        """
+        Generates motif and community videos.
+
+        Parameters
+        ----------
+        video_type : str, optional
+            Video type, by default ".mp4".
+        segmentation_algorithm : Literal["hmm", "kmeans"], optional
+            Segmentation algorithm, by default "hmm".
+
+        Returns
+        -------
+        None
+        """
+        self.generate_motif_videos(
+            video_type=video_type,
+            segmentation_algorithm=segmentation_algorithm,
+        )
+        self.generate_community_videos(
+            video_type=video_type,
+            segmentation_algorithm=segmentation_algorithm,
         )
 
     def visualize_prepocessing(
@@ -285,6 +336,8 @@ class VAMEPipeline:
         self,
         label: Literal["community", "motif"] = "community",
         segmentation_algorithm: Literal["hmm", "kmeans"] = "hmm",
+        show_figure: bool = False,
+        save_to_file: bool = True,
     ) -> None:
         """
         Visualizes the UMAP plot.
@@ -300,10 +353,48 @@ class VAMEPipeline:
         -------
         None
         """
-        vame.visualize_umap(
+        visualize_umap(
             config=self.config,
             label=label,
             segmentation_algorithm=segmentation_algorithm,
+        )
+
+    def visualize_results(
+        self,
+        label: Literal["community", "motif"] = "community",
+        segmentation_algorithm: Literal["hmm", "kmeans"] = "hmm",
+        show_figure: bool = False,
+        save_to_file: bool = True,
+    ) -> None:
+        """
+        Visualize results.
+
+        Parameters
+        ----------
+        label : Literal["community", "motif"], optional
+            Label to visualize, by default "community".
+        segmentation_algorithm : Literal["hmm", "kmeans"], optional
+            Segmentation algorithm, by default "hmm".
+        show_figure : bool, optional
+            Show the figure, by default False.
+        save_to_file : bool, optional
+            Save the figure to file, by default True.
+
+        Returns
+        -------
+        None
+        """
+        self.visualize_prepocessing(
+            scatter=True,
+            timeseries=True,
+            show_figure=show_figure,
+            save_to_file=save_to_file,
+        )
+        self.visualize_umap(
+            label=label,
+            segmentation_algorithm=segmentation_algorithm,
+            show_figure=show_figure,
+            save_to_file=save_to_file,
         )
 
     def report(
@@ -356,16 +447,9 @@ class VAMEPipeline:
             self.evaluate_model()
         if from_step <= 4:
             self.run_segmentation()
-        # if from_step <= 5:
-        #     self.generate_motif_videos()
-        if from_step <= 6:
+        if from_step <= 5:
             self.run_community_clustering()
-        # if from_step <= 7:
-        #     self.generate_community_videos()
-        # if from_step <= 8:
-        #     self.visualize_prepocessing()
-        #     self.visualize_umap()
-        if from_step <= 9:
+        if from_step <= 6:
             self.report()
 
 

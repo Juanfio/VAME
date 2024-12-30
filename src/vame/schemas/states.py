@@ -52,13 +52,16 @@ class EgocentricAlignmentFunctionSchema(BaseStateSchema):
     )
 
 
-class PoseToNumpyFunctionSchema(BaseStateSchema): ...
+class PoseToNumpyFunctionSchema(BaseStateSchema):
+    ...
 
 
-class CreateTrainsetFunctionSchema(BaseStateSchema): ...
+class CreateTrainsetFunctionSchema(BaseStateSchema):
+    ...
 
 
-class TrainModelFunctionSchema(BaseStateSchema): ...
+class TrainModelFunctionSchema(BaseStateSchema):
+    ...
 
 
 class EvaluateModelFunctionSchema(BaseStateSchema):
@@ -68,7 +71,8 @@ class EvaluateModelFunctionSchema(BaseStateSchema):
     )
 
 
-class SegmentSessionFunctionSchema(BaseStateSchema): ...
+class SegmentSessionFunctionSchema(BaseStateSchema):
+    ...
 
 
 class MotifVideosFunctionSchema(BaseStateSchema):

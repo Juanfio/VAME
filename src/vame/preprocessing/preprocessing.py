@@ -2,10 +2,6 @@ from vame.logging.logger import VameLogger
 from vame.preprocessing.cleaning import lowconf_cleaning, outlier_cleaning
 from vame.preprocessing.alignment import egocentrically_align_and_center
 from vame.preprocessing.filter import savgol_filtering
-from vame.preprocessing.visualization import (
-    visualize_preprocessing_scatter,
-    visualize_preprocessing_timeseries,
-)
 
 
 logger_config = VameLogger(__name__)
@@ -56,16 +52,6 @@ def preprocessing(
         save_to_variable="position_egocentric_aligned",
     )
 
-    # Create visualization of the preprocessing results up to this point
-    visualize_preprocessing_scatter(
-        config,
-        original_positions_key="position",
-        cleaned_positions_key="position_cleaned_lowconf",
-        aligned_positions_key="position_egocentric_aligned",
-        save_to_file=True,
-        show_figure=False,
-    )
-
     # Outlier cleaning
     logger.info("Cleaning outliers...")
     outlier_cleaning(
@@ -80,11 +66,4 @@ def preprocessing(
         config=config,
         read_from_variable="position_processed",
         save_to_variable="position_processed",
-    )
-
-    # Create visualization of the preprocessing results
-    visualize_preprocessing_timeseries(
-        config,
-        save_to_file=True,
-        show_figure=False,
     )

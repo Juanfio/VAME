@@ -10,7 +10,6 @@ def run_pipeline(
     videos: list,
     poses_estimations: list,
 ):
-
     config = vame.init_new_project(
         project_name=project_name,
         videos=videos,
