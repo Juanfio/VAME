@@ -4,6 +4,7 @@ import pytest
 from matplotlib.figure import Figure
 from unittest.mock import patch
 from vame.util.gif_pose_helper import background
+from vame.visualization.umap import visualize_umap
 
 
 @pytest.mark.parametrize(
@@ -230,7 +231,6 @@ def test_visualization_output_files(
     label,
     segmentation_algorithm,
 ):
-    from vame.visualization.umap import visualize_umap
     visualize_umap(
         config=setup_project_and_train_model["config_data"],
         segmentation_algorithm=segmentation_algorithm,
@@ -333,7 +333,7 @@ def test_gif_frames_files_exists(setup_project_and_evaluate_model, label):
         save_logs=False,
         segmentation_algorithm=SEGMENTATION_ALGORITHM,
     )
-    vame.visualization(
+    visualize_umap(
         config=setup_project_and_evaluate_model["config_data"],
         segmentation_algorithm=SEGMENTATION_ALGORITHM,
         label=label,
