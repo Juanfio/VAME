@@ -230,8 +230,9 @@ def test_visualization_output_files(
     label,
     segmentation_algorithm,
 ):
-    vame.visualization(
-        setup_project_and_train_model["config_data"],
+    from vame.visualization.umap import visualize_umap
+    visualize_umap(
+        config=setup_project_and_train_model["config_data"],
         segmentation_algorithm=segmentation_algorithm,
         label=label,
         save_logs=True,
