@@ -5,6 +5,11 @@ on:
     branches:
       - main
       - dev
+    paths:
+      - '.github/workflows/publush_docs.yaml'
+      - 'docs/**'
+      - 'examples/**'
+      - 'src/**'
 
 jobs:
   deploy:

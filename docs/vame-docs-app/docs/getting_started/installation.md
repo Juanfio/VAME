@@ -19,7 +19,8 @@ pip install vame-py
 
 1. Clone the VAME repository to your local machine by running
 ```bash
-git clone https://github.com/LINCellularNeuroscience/VAME.git
+git clone https://github.com/EthoML/VAME.git
+cd VAME
 ```
 
 
@@ -29,9 +30,9 @@ git clone https://github.com/LINCellularNeuroscience/VAME.git
 ```bash
 conda env create -f VAME.yaml
 ```
+
 **Option 2:**  Installing local VAME with pip in your active virtual environment by running
 ```bash
-cd VAME
 pip install .
 ```
 

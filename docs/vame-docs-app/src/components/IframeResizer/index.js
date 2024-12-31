@@ -1,18 +1,18 @@
 import React, { useRef, useEffect } from 'react';
 
-const IframeResizer = ({ src, heightBuffer = 20, maxCellHeight = 200, ...props }) => {
-    const iframeRef = useRef(null);
+const IframeResizer = ({ src, heightBuffer = 20, maxCellHeight = 400, ...props }) => {
+  const iframeRef = useRef(null);
 
-    useEffect(() => {
-        const injectCustomStyles = () => {
-            const iframe = iframeRef.current;
-            if (iframe) {
-                try {
-                    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+  useEffect(() => {
+    const injectCustomStyles = () => {
+      const iframe = iframeRef.current;
+      if (iframe) {
+        try {
+          const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
 
-                    // Inject custom CSS for Markdown cells and other notebook elements
-                    const style = iframeDocument.createElement('style');
-                    style.innerHTML = `
+          // Inject custom CSS for Markdown cells and other notebook elements
+          const style = iframeDocument.createElement('style');
+          style.innerHTML = `
             /* Apply Docusaurus font style */
             html {
               background-color: var(--ifm-background-color);
@@ -47,37 +47,37 @@ const IframeResizer = ({ src, heightBuffer = 20, maxCellHeight = 200, ...props }
               white-space: pre-wrap;
             }
           `;
-                    iframeDocument.head.appendChild(style);
+          iframeDocument.head.appendChild(style);
 
-                    // Adjust iframe height after styles are applied
-                    const height = iframeDocument.body.scrollHeight + heightBuffer;
-                    iframe.style.height = `${height}px`;
-                } catch (error) {
-                    console.warn('Could not access iframe content due to cross-origin restrictions.', error);
-                }
-            }
-        };
-
-        const iframe = iframeRef.current;
-        if (iframe) {
-            iframe.addEventListener('load', injectCustomStyles);
+          // Adjust iframe height after styles are applied
+          const height = iframeDocument.body.scrollHeight + heightBuffer;
+          iframe.style.height = `${height}px`;
+        } catch (error) {
+          console.warn('Could not access iframe content due to cross-origin restrictions.', error);
         }
+      }
+    };
 
-        return () => {
-            if (iframe) {
-                iframe.removeEventListener('load', injectCustomStyles);
-            }
-        };
-    }, [heightBuffer, maxCellHeight]);
+    const iframe = iframeRef.current;
+    if (iframe) {
+      iframe.addEventListener('load', injectCustomStyles);
+    }
 
-    return (
-        <iframe
-            ref={iframeRef}
-            src={src}
-            style={{ width: '100%', border: 0, overflow: 'hidden' }}
-            {...props}
-        ></iframe>
-    );
+    return () => {
+      if (iframe) {
+        iframe.removeEventListener('load', injectCustomStyles);
+      }
+    };
+  }, [heightBuffer, maxCellHeight]);
+
+  return (
+    <iframe
+      ref={iframeRef}
+      src={src}
+      style={{ width: '100%', border: 0, overflow: 'hidden' }}
+      {...props}
+    ></iframe>
+  );
 };
 
 export default IframeResizer;
