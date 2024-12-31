@@ -260,6 +260,23 @@ Visualizes the model losses.
 
 * `None`
 
+#### visualize\_motif\_tree
+
+```python
+def visualize_motif_tree(
+        segmentation_algorithm: Literal["hmm", "kmeans"]) -> None
+```
+
+Visualizes the motif tree.
+
+**Parameters**
+
+* **segmentation_algorithm** (`Literal["hmm", "kmeans"]`): Segmentation algorithm.
+
+**Returns**
+
+* `None`
+
 #### visualize\_umap
 
 ```python

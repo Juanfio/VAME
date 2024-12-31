@@ -139,9 +139,10 @@ Compute transition matrices for given files and labels.
 #### create\_cohort\_community\_bag
 
 ```python
-def create_cohort_community_bag(motif_labels: List[np.ndarray],
-                                trans_mat_full: np.ndarray,
-                                cut_tree: int | None, n_clusters: int) -> list
+def create_cohort_community_bag(
+        config: dict, motif_labels: List[np.ndarray],
+        trans_mat_full: np.ndarray, cut_tree: int | None, n_clusters: int,
+        segmentation_algorithm: Literal["hmm", "kmeans"]) -> list
 ```
 
 Create cohort community bag for given motif labels, transition matrix,
@@ -149,10 +150,12 @@ cut tree, and number of clusters. (markov chain to tree -&gt; community detectio
 
 **Parameters**
 
+* **config** (`dict`): Configuration parameters.
 * **motif_labels** (`List[np.ndarray]`): List of motif label arrays.
 * **trans_mat_full** (`np.ndarray`): Full transition matrix.
 * **cut_tree** (`int | None`): Cut line for tree.
 * **n_clusters** (`int`): Number of clusters.
+* **segmentation_algorithm** (`str`): Which segmentation algorithm to use. Options are &#x27;hmm&#x27; or &#x27;kmeans&#x27;.
 
 **Returns**
 
