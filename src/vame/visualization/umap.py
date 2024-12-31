@@ -3,9 +3,8 @@ import umap
 import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
-from typing import Optional, Union
+from typing import Optional
 
-from vame.util.auxiliary import read_config
 from vame.util.cli import get_sessions_from_user_input
 from vame.schemas.states import VisualizeUmapFunctionSchema, save_state
 from vame.logging.logger import VameLogger

@@ -2,21 +2,21 @@ import os
 import scipy
 import pickle
 import numpy as np
+import networkx as nx
 from pathlib import Path
 import matplotlib.pyplot as plt
-from typing import List, Tuple
+from typing import List, Tuple, Literal
 
-from vame.util.auxiliary import read_config
 from vame.analysis.tree_hierarchy import (
     graph_to_tree,
-    draw_tree,
     bag_nodes_by_cutline,
 )
 from vame.util.data_manipulation import consecutive
 from vame.util.cli import get_sessions_from_user_input
+from vame.visualization.community import draw_tree
 from vame.schemas.states import save_state, CommunityFunctionSchema
-from vame.logging.logger import VameLogger
 from vame.schemas.project import SegmentationAlgorithms
+from vame.logging.logger import VameLogger
 
 
 logger_config = VameLogger(__name__)
@@ -309,10 +309,12 @@ def compute_transition_matrices(
 
 
 def create_cohort_community_bag(
+    config: dict,
     motif_labels: List[np.ndarray],
     trans_mat_full: np.ndarray,
     cut_tree: int | None,
     n_clusters: int,
+    segmentation_algorithm: Literal["hmm", "kmeans"],
 ) -> list:
     """
     Create cohort community bag for given motif labels, transition matrix,
@@ -320,6 +322,8 @@ def create_cohort_community_bag(
 
     Parameters
     ----------
+    config : dict
+        Configuration parameters.
     motif_labels : List[np.ndarray]
         List of motif label arrays.
     trans_mat_full : np.ndarray
@@ -328,6 +332,8 @@ def create_cohort_community_bag(
         Cut line for tree.
     n_clusters : int
         Number of clusters.
+    segmentation_algorithm : str
+        Which segmentation algorithm to use. Options are 'hmm' or 'kmeans'.
 
     Returns
     -------
@@ -345,10 +351,20 @@ def create_cohort_community_bag(
         n_clusters=n_clusters,
         merge_sel=1,
     )
+    results_dir = os.path.join(
+        config["project_path"],
+        "results",
+        "community_cohort",
+        segmentation_algorithm + "-" + str(n_clusters),
+    )
+    nx.write_graphml(T, os.path.join(results_dir, "tree.graphml"))
     draw_tree(
         T=T,
         fig_width=n_clusters,
         usage_dict=labels_usage,
+        save_to_file=True,
+        show_figure=False,
+        results_dir=results_dir,
     )
     # nx.write_gpickle(T, 'T.gpickle')
 
@@ -574,10 +590,12 @@ def community(
                 n_clusters=n_clusters,
             )
             cohort_community_bag = create_cohort_community_bag(
+                config=config,
                 motif_labels=motif_labels,
                 trans_mat_full=trans_mat_full,
                 cut_tree=cut_tree,
                 n_clusters=n_clusters,
+                segmentation_algorithm=segmentation_algorithm,
             )
             community_labels_all = get_cohort_community_labels(
                 motif_labels=motif_labels,
