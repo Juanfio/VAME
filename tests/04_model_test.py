@@ -76,6 +76,14 @@ def test_train_model_best_model_file_exists(setup_project_and_train_model):
 
 
 def test_evaluate_model_images_exists(setup_project_and_evaluate_model):
+    from vame.visualization.model import plot_loss
+
+    plot_loss(
+        cfg=setup_project_and_evaluate_model["config_data"],
+        model_name=setup_project_and_evaluate_model["config_data"]["model_name"],
+        save_to_file=True,
+        show_figure=False,
+    )
     project_path = setup_project_and_evaluate_model["config_data"]["project_path"]
     model_name = setup_project_and_evaluate_model["config_data"]["model_name"]
     reconstruction_image_path = Path(project_path) / "model" / "evaluate" / "Future_Reconstruction.png"
