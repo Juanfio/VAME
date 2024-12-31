@@ -4,10 +4,7 @@ on:
   push:
     branches:
       - main
-      - updated-docs
-    # paths:
-    #   - '.github/workflows/publush_docs.yaml'
-    #   - 'docs/**'
+      - dev
 
 jobs:
   deploy:
