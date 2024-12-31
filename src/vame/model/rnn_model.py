@@ -18,8 +18,8 @@ class Encoder(nn.Module):
         """
         Initialize the Encoder module.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         NUM_FEATURES : int
             Number of input features.
         hidden_size_layer_1 : int
@@ -54,13 +54,13 @@ class Encoder(nn.Module):
         """
         Forward pass of the Encoder module.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         inputs : torch.Tensor
             Input tensor of shape (batch_size, sequence_length, num_features).
 
-        Returns:
-        --------
+        Returns
+        -------
         torch.Tensor:
             Encoded representation tensor of shape (batch_size, hidden_size_layer_1 * 4).
         """
@@ -89,8 +89,8 @@ class Lambda(nn.Module):
         """
         Initialize the Lambda module.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         ZDIMS : int
             Size of the latent space.
         hidden_size_layer_1 : int
@@ -122,13 +122,13 @@ class Lambda(nn.Module):
         """
         Forward pass of the Lambda module.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         hidden : torch.Tensor
             Hidden representation tensor of shape (batch_size, hidden_size_layer_1 * 4).
 
-        Returns:
-        --------
+        Returns
+        -------
         tuple[torch.Tensor, torch.Tensor, torch.Tensor]
             Latent space tensor, mean tensor, logvar tensor.
         """
@@ -160,8 +160,8 @@ class Decoder(nn.Module):
         """
         Initialize the Decoder module.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         TEMPORAL_WINDOW : int
             Size of the temporal window.
         ZDIMS : int
@@ -212,15 +212,15 @@ class Decoder(nn.Module):
         """
         Forward pass of the Decoder module.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         inputs : torch.Tensor
             Input tensor of shape (batch_size, seq_len, ZDIMS).
         z : torch.Tensor
             Latent space tensor of shape (batch_size, ZDIMS).
 
-        Returns:
-        --------
+        Returns
+        -------
         torch.Tensor:
             Decoded output tensor of shape (batch_size, seq_len, NUM_FEATURES).
         """
@@ -247,8 +247,8 @@ class Decoder_Future(nn.Module):
         """
         Initialize the Decoder_Future module.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         TEMPORAL_WINDOW : int
             Size of the temporal window.
         ZDIMS : int
@@ -299,15 +299,15 @@ class Decoder_Future(nn.Module):
         """
         Forward pass of the Decoder_Future module.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         inputs : torch.Tensor
             Input tensor of shape (batch_size, seq_len, ZDIMS).
         z : torch.Tensor
             Latent space tensor of shape (batch_size, ZDIMS).
 
-        Returns:
-        --------
+        Returns
+        -------
         torch.Tensor:
             Predicted future tensor of shape (batch_size, FUTURE_STEPS, NUM_FEATURES).
         """
@@ -342,8 +342,8 @@ class RNN_VAE(nn.Module):
         """
         Initialize the VAE module.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         TEMPORAL_WINDOW : int
             Size of the temporal window.
         ZDIMS : int
@@ -401,13 +401,13 @@ class RNN_VAE(nn.Module):
         """
         Forward pass of the VAE.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         seq : torch.Tensor
             Input sequence tensor of shape (batch_size, seq_len, NUM_FEATURES).
 
-        Returns:
-        --------
+        Returns
+        -------
         Tuple containing:
             - If FUTURE_DECODER is True:
                 - prediction (torch.Tensor): Reconstructed input sequence tensor.

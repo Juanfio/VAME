@@ -81,7 +81,7 @@ def create_config_template() -> Tuple[dict, ruamel.yaml.YAML]:
     random_state:
     num_points:
     \n
-#---------------------------------------------------------------
+#--------------------------------------------------------
 # ONLY CHANGE ANYTHING BELOW IF YOU ARE FAMILIAR WITH RNN MODELS
 # RNN encoder hyperparamter:
     hidden_size_layer_1:

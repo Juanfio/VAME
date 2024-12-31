@@ -52,13 +52,16 @@ class EgocentricAlignmentFunctionSchema(BaseStateSchema):
     )
 
 
-class PoseToNumpyFunctionSchema(BaseStateSchema): ...
+class PoseToNumpyFunctionSchema(BaseStateSchema):
+    ...
 
 
-class CreateTrainsetFunctionSchema(BaseStateSchema): ...
+class CreateTrainsetFunctionSchema(BaseStateSchema):
+    ...
 
 
-class TrainModelFunctionSchema(BaseStateSchema): ...
+class TrainModelFunctionSchema(BaseStateSchema):
+    ...
 
 
 class EvaluateModelFunctionSchema(BaseStateSchema):
@@ -68,7 +71,8 @@ class EvaluateModelFunctionSchema(BaseStateSchema):
     )
 
 
-class SegmentSessionFunctionSchema(BaseStateSchema): ...
+class SegmentSessionFunctionSchema(BaseStateSchema):
+    ...
 
 
 class MotifVideosFunctionSchema(BaseStateSchema):
@@ -105,7 +109,7 @@ class CommunityVideosFunctionSchema(BaseStateSchema):
     )
 
 
-class VisualizationFunctionSchema(BaseStateSchema):
+class VisualizeUmapFunctionSchema(BaseStateSchema):
     segmentation_algorithm: SegmentationAlgorithms = Field(title="Segmentation algorithm")
     label: Optional[str] = Field(
         title="Type of labels to visualize",
@@ -158,7 +162,7 @@ class VAMEPipelineStatesSchema(BaseModel):
         title="Community videos",
         default={},
     )
-    visualization: Optional[VisualizationFunctionSchema | Dict] = Field(
+    visualize_umap: Optional[VisualizeUmapFunctionSchema | Dict] = Field(
         title="Visualization",
         default={},
     )

@@ -27,8 +27,8 @@ def random_generative_samples_motif(
     """
     Generate random samples for motifs.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     cfg : dict
         Configuration dictionary.
     model : torch.nn.Module
@@ -40,15 +40,14 @@ def random_generative_samples_motif(
     n_clusters : int
         Number of clusters.
 
-    Returns:
-    --------
+    Returns
+    -------
     plt.Figure
         Figure of generated samples.
     """
     logger.info("Generate random generative samples for motifs...")
     time_window = cfg["time_window"]
     for j in range(n_clusters):
-
         inds = np.where(labels == j)
         motif_latents = latent_vector[inds[0], :]
         gm = GaussianMixture(n_components=10).fit(motif_latents)
@@ -85,8 +84,8 @@ def random_generative_samples(
     """
     Generate random generative samples.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     cfg : dict
         Configuration dictionary.
     model : torch.nn.Module
@@ -94,8 +93,8 @@ def random_generative_samples(
     latent_vector : np.ndarray
         Latent vectors.
 
-    Returns:
-    --------
+    Returns
+    -------
     plt.Figure
         Figure of generated samples.
     """
@@ -136,8 +135,8 @@ def random_reconstruction_samples(
     """
     Generate random reconstruction samples.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     cfg : dict
         Configuration dictionary.
     model : torch.nn.Module
@@ -145,8 +144,8 @@ def random_reconstruction_samples(
     latent_vector : np.ndarray
         Latent vectors.
 
-    Returns:
-    --------
+    Returns
+    -------
     plt.Figure
         Figure of reconstructed samples.
     """
@@ -183,8 +182,8 @@ def visualize_cluster_center(
     """
     Visualize cluster centers.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     cfg : dict
         Configuration dictionary.
     model : torch.nn.Module
@@ -192,8 +191,8 @@ def visualize_cluster_center(
     cluster_center : np.ndarray
         Cluster centers.
 
-    Returns:
-    --------
+    Returns
+    -------
     plt.Figure
         Figure of cluster centers.
     """
@@ -236,15 +235,15 @@ def generative_model(
     """
     Generative model.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     config : dict
         Configuration dictionary.
     mode : str, optional
         Mode for generating samples. Defaults to "sampling".
 
-    Returns:
-    --------
+    Returns
+    -------
     plt.Figure
         Plots of generated samples for each segmentation algorithm.
     """

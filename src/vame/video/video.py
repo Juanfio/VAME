@@ -21,7 +21,7 @@ def get_video_frame_rate(video_path):
 #     Play the aligned video.
 
 #     Parameters
-#     ----------
+#     ---------
 #     a : List[np.ndarray]
 #         List of aligned images.
 #     n : List[List[np.ndarray]]

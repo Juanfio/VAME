@@ -60,7 +60,7 @@ def nan_helper(y: np.ndarray) -> Tuple:
 #     Interpolates all NaN values in the given array.
 
 #     Parameters
-#     ----------
+#     ---------
 #     arr : np.ndarray
 #         Input array containing NaN values.
 
@@ -103,13 +103,13 @@ def interpolate_nans_with_pandas(data: np.ndarray) -> np.ndarray:
     """
     Interpolate NaN values along the time axis of a 3D NumPy array using Pandas.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     data : numpy.ndarray
         Input 3D array of shape (time, keypoints, space).
 
-    Returns:
-    --------
+    Returns
+    -------
     numpy.ndarray:
         Array with NaN values interpolated.
     """

@@ -20,8 +20,8 @@ def lowconf_cleaning(
      - setting low-confidence points to NaN
      - interpolating NaN points
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     config : dict
         Configuration dictionary.
     read_from_variable : str, optional
@@ -29,8 +29,8 @@ def lowconf_cleaning(
     save_to_variable : str, optional
         Variable to save the cleaned data to.
 
-    Returns:
-    --------
+    Returns
+    -------
     None
     """
     project_path = config["project_path"]
@@ -98,8 +98,8 @@ def outlier_cleaning(
      - setting outlier points to NaN
      - interpolating NaN points
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     config : dict
         Configuration dictionary.
     read_from_variable : str, optional
@@ -107,8 +107,8 @@ def outlier_cleaning(
     save_to_variable : str, optional
         Variable to save the cleaned data to.
 
-    Returns:
-    --------
+    Returns
+    -------
     None
     """
     logger.info("Cleaning outliers with Z-score transformation and IQR cutoff.")

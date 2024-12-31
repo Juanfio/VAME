@@ -18,8 +18,8 @@ def savgol_filtering(
     """
     Apply Savitzky-Golay filter to the data.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     config : dict
         Configuration dictionary.
     read_from_variable : str, optional
@@ -27,8 +27,8 @@ def savgol_filtering(
     save_to_variable : str, optional
         Variable to save the filtered data to.
 
-    Returns:
-    --------
+    Returns
+    -------
     None
     """
     logger.info("Applying Savitzky-Golay filter...")

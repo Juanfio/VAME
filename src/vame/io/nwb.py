@@ -11,8 +11,8 @@
 #     """
 #     Get pose data from nwb file using a inside path to the nwb data.
 
-#     Parameters:
-#     ----------
+#     Parameters
+#     ---------
 #     nwbfile : NWBFile)
 #         NWB file object.
 #     path_to_pose_nwb_series_data : str
@@ -42,7 +42,7 @@
 #     Get pose data from nwb file and return it as a pandas DataFrame.
 
 #     Parameters
-#     ----------
+#     ---------
 #     file_path : str
 #         Path to the nwb file.
 #     path_to_pose_nwb_series_data : str

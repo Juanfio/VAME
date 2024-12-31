@@ -33,8 +33,8 @@ def create_video(
     """
     Create video frames for the given embedding.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     path_to_file : str
         Path to the file.
     session : str
@@ -54,8 +54,8 @@ def create_video(
     num_points : int
         Number of points.
 
-    Returns:
-    --------
+    Returns
+    -------
     None
     """
     # set matplotlib colormap
@@ -119,8 +119,8 @@ def gif(
 ) -> None:
     """Create a GIF from the given configuration.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     config : str
         Path to the configuration file.
     pose_ref_index : list
@@ -142,8 +142,8 @@ def gif(
     crop_size : Tuple[int, int], optional
         Crop size. Defaults to (300,300).
 
-    Returns:
-    --------
+    Returns
+    -------
     None
     """
     config_file = Path(config).resolve()

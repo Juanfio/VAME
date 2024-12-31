@@ -40,8 +40,8 @@
 #     """
 #     Align the mouse in the video frames.
 
-#     Parameters:
-#     -----------
+#     Parameters
+#     ----------
 #     project_path : str
 #         Path to the project directory.
 #     session : str
@@ -200,8 +200,8 @@
 #     """
 #     Perform alignment of egocentric data.
 
-#     Parameters:
-#     -----------
+#     Parameters
+#     ----------
 #     project_path : str
 #         Path to the project directory.
 #     session : str
@@ -312,7 +312,7 @@
 #     shape of (num_dlc_features, num_video_frames).
 
 #     Parameters
-#     ----------
+#     ---------
 #     config : str
 #         Path for the project config file.
 #     pose_ref_index : list, optional
@@ -430,7 +430,7 @@
 #     shape of (num_dlc_features, num_video_frames).
 
 #     Parameters
-#     ----------
+#     ---------
 #     config : str
 #         Path for the project config file.
 #     pose_ref_index : list, optional
@@ -549,8 +549,8 @@
 #     """
 #     Egocentric alignment of pose estimation data.
 
-#     Parameters:
-#     -----------
+#     Parameters
+#     ----------
 #     crop_size : Tuple[int, int]
 #         Size to crop the video frames.
 #     pose_list : List[np.ndarray]
@@ -639,7 +639,7 @@
 #     Crop and flip the image based on the given rectangle and points.
 
 #     Parameters
-#     ----------
+#     ---------
 #     rect : Tuple
 #         Rectangle coordinates (center, size, theta).
 #     points : List[np.ndarray]

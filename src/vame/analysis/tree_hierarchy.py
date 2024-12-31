@@ -1,86 +1,6 @@
 import numpy as np
 import networkx as nx
-import random
-from matplotlib import pyplot as plt
-from typing import Dict, List, Tuple
-
-
-def hierarchy_pos(
-    G: nx.Graph,
-    root: str | None = None,
-    width: float = 0.5,
-    vert_gap: float = 0.2,
-    vert_loc: float = 0,
-    xcenter: float = 0.5,
-) -> Dict[str, Tuple[float, float]]:
-    """
-    Positions nodes in a tree-like layout.
-    Ref: From Joel's answer at https://stackoverflow.com/a/29597209/2966723.
-
-    Parameters:
-    -----------
-    G : nx.Graph
-        The input graph. Must be a tree.
-    root : str, optional
-        The root node of the tree. If None, the function selects a root node based on graph type.
-        Defaults to None.
-    width : float, optional
-        The horizontal space assigned to each level. Defaults to 0.5.
-    vert_gap : float, optional
-        The vertical gap between levels. Defaults to 0.2.
-    vert_loc : float, optional
-        The vertical location of the root node. Defaults to 0.
-    xcenter : float, optional
-        The horizontal location of the root node. Defaults to 0.5.
-
-    Returns:
-    --------
-    Dict[str, Tuple[float, float]]
-        A dictionary mapping node names to their positions (x, y).
-    """
-    if not nx.is_tree(G):
-        raise TypeError("cannot use hierarchy_pos on a graph that is not a tree")
-    if root is None:
-        if isinstance(G, nx.DiGraph):
-            root = next(iter(nx.topological_sort(G)))  # allows back compatibility with nx version 1.11
-        else:
-            root = random.choice(list(G.nodes))
-
-    def _hierarchy_pos(
-        G,
-        root,
-        width=1.0,
-        vert_gap=0.2,
-        vert_loc=0,
-        xcenter=0.5,
-        pos=None,
-        parent=None,
-    ):
-        if pos is None:
-            pos = {root: (xcenter, vert_loc)}
-        else:
-            pos[root] = (xcenter, vert_loc)
-        children = list(G.neighbors(root))
-        if not isinstance(G, nx.DiGraph) and parent is not None:
-            children.remove(parent)
-        if len(children) != 0:
-            dx = width / len(children)
-            nextx = xcenter - width / 2 - dx / 2
-            for child in children:
-                nextx += dx
-                pos = _hierarchy_pos(
-                    G,
-                    child,
-                    width=dx,
-                    vert_gap=vert_gap,
-                    vert_loc=vert_loc - vert_gap,
-                    xcenter=nextx,
-                    pos=pos,
-                    parent=root,
-                )
-        return pos
-
-    return _hierarchy_pos(G, root, width, vert_gap, vert_loc, xcenter)
+from typing import List, Tuple
 
 
 def merge_func(
@@ -92,8 +12,8 @@ def merge_func(
     """
     Merge nodes in a graph based on a selection criterion.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     transition_matrix : np.ndarray
         The transition matrix of the graph.
     n_clusters : int
@@ -105,8 +25,8 @@ def merge_func(
         - 0: Merge nodes with highest transition probability.
         - 1: Merge nodes with lowest cost.
 
-    Returns:
-    --------
+    Returns
+    -------
     Tuple[np.ndarray, np.ndarray]
         A tuple containing the merged nodes.
     """
@@ -145,8 +65,8 @@ def graph_to_tree(
     """
     Convert a graph to a tree.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     motif_usage : np.ndarray
         The motif usage matrix.
     transition_matrix : np.ndarray
@@ -158,8 +78,8 @@ def graph_to_tree(
         - 0: Merge nodes with highest transition probability.
         - 1: Merge nodes with lowest cost.
 
-    Returns:
-    --------
+    Returns
+    -------
     nx.Graph
         The tree.
     """
@@ -276,7 +196,6 @@ def graph_to_tree(
         reduction = 2
 
     for i in range(n_clusters - reduction)[::-1]:
-
         if leaf_idx[idx - 1] == 1:
             if merge[i, 1] in node_dict:
                 T.add_edge(merge[i, 0], node_dict[merge[i, 1]])
@@ -326,67 +245,6 @@ def graph_to_tree(
     return T
 
 
-def draw_tree(
-    T: nx.Graph,
-    fig_width: float = 200.0,
-    usage_dict: Dict[str, float] = dict(),
-) -> None:
-    """
-    Draw a tree.
-
-    Parameters:
-    -----------
-    T : nx.Graph
-        The tree to be drawn.
-    fig_width : int, optional
-        The width of the figure. Defaults to 10.
-
-    Returns:
-    --------
-    None
-    """
-    # pos = nx.drawing.layout.fruchterman_reingold_layout(T)
-    pos = hierarchy_pos(
-        G=T,
-        root="Root",
-        width=10.0,
-        vert_gap=0.1,
-        vert_loc=0,
-        xcenter=50,
-    )
-    # Nodes appearances
-    # Nodes sizes are mapped to a scale between 100 and 61prin00, depending on the usage of the node
-    node_labels = dict()
-    node_sizes = []
-    node_colors = []
-    for k in list(T.nodes):
-        if isinstance(k, str):
-            node_labels[k] = ""
-            node_sizes.append(50)
-            node_colors.append("#000000")
-        else:
-            node_labels[k] = str(k)
-            size = usage_dict.get(str(k), 0.5)
-            node_sizes.append(100 + size * 6000)
-            node_colors.append("#46a7e8")
-
-    fig_width = min(max(fig_width, 10.0), 30.0)
-    fig = plt.figure(
-        num=2,
-        figsize=(fig_width, 20.0),
-    )
-    nx.draw_networkx(
-        G=T,
-        pos=pos,
-        with_labels=True,
-        labels=node_labels,
-        node_size=node_sizes,
-        node_color=node_colors,
-    )
-    figManager = plt.get_current_fig_manager()
-    # figManager.window.showMaximized()
-
-
 def _traverse_tree_cutline(
     T: nx.Graph,
     node: List[str],
@@ -394,14 +252,14 @@ def _traverse_tree_cutline(
     cutline: int,
     level: int,
     community_bag: List[List[str]],
-    community_list: List[str] = None,
+    community_list: List[str] | None = None,
 ) -> List[List[str]]:
     """
     DEPRECATED in favor of bag_nodes_by_cutline.
     Helper function for tree traversal with a cutline.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     T : nx.Graph
         The tree to be traversed.
     node : List[str]
@@ -417,12 +275,11 @@ def _traverse_tree_cutline(
     community_list : List[str], optional
         List of nodes in the current community bag.
 
-    Returns:
-    --------
+    Returns
+    -------
     List[List[str]]
         List of lists community bags.
     """
-    cmap = plt.get_cmap("tab10")
     traverse_list.append(node[0])
     if community_list is not None and type(node[0]) is not str:
         community_list.append(node[0])
@@ -493,8 +350,8 @@ def traverse_tree_cutline(
     DEPRECATED in favor of bag_nodes_by_cutline.
     Traverse a tree with a cutline and return the community bags.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     T : nx.Graph
         The tree to be traversed.
     root_node : str, optional
@@ -502,8 +359,8 @@ def traverse_tree_cutline(
     cutline : int, optional
         The cutline level.
 
-    Returns:
-    --------
+    Returns
+    -------
     List[List[str]]
         List of community bags.
     """
@@ -537,8 +394,8 @@ def bag_nodes_by_cutline(
     """
     Bag nodes of a tree by a cutline.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     tree : nx.Graph
         The tree to be bagged.
     cutline : int, optional
@@ -546,8 +403,8 @@ def bag_nodes_by_cutline(
     root : str, optional
         The root node of the tree. Defaults to 'Root'.
 
-    Returns:
-    --------
+    Returns
+    -------
     List[List[str]]
         List of bags of nodes.
     """

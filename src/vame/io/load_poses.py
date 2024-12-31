@@ -17,8 +17,8 @@ def load_pose_estimation(
     """
     Load pose estimation data.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     pose_estimation_file : Path or str
         Path to the pose estimation file.
     video_file : Path or str
@@ -28,8 +28,8 @@ def load_pose_estimation(
     source_software : Literal["DeepLabCut", "SLEAP", "LightningPose"]
         Source software used for pose estimation.
 
-    Returns:
-    --------
+    Returns
+    -------
     ds : xarray.Dataset
         Pose estimation dataset.
     """
@@ -46,21 +46,23 @@ def load_vame_dataset(ds_path: Path | str) -> xr.Dataset:
     """
     Load VAME dataset.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     ds_path : Path or str
         Path to the netCDF dataset.
 
-    Returns:
-    --------
+    Returns
+    -------
+    xr.Dataset
+        VAME dataset
     """
-    # Windows will not allow opened files to be overwritten, 
+    # Windows will not allow opened files to be overwritten,
     # so we need to load data into memory, close the file and move on with the operations
     with xr.open_dataset(ds_path, engine="scipy") as tmp_ds:
         ds_in_memory = tmp_ds.load()  # read entire file into memory
     return ds_in_memory
 
- 
+
 def nc_to_dataframe(nc_data):
     keypoints = nc_data["keypoints"].values
     space = nc_data["space"].values
