@@ -77,7 +77,6 @@ class VAMEPipeline:
             paths_to_pose_nwb_series_data=paths_to_pose_nwb_series_data,
             config_kwargs=config_kwargs,
         )
-        self.config = read_config(self.config_path)
 
     def get_states(self, summary: bool = True) -> dict:
         """

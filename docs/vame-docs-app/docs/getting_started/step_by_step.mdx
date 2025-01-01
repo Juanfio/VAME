@@ -20,99 +20,60 @@ The VAME workflow consists of four main steps, plus optional steps to analyse yo
     - Optional: Use the generative model (reconstruction decoder) to sample from the learned data distribution, reconstruct random real samples or visualize the cluster centre for validation.
     - Optional: Create a video of an egocentrically aligned animal + path through the community space.
 
+
+In this tutorial we will show you how to run the VAME workflow using a simple example. The code below can also be found in the `demo.py` script in our Github repository ([link here](https://github.com/EthoML/VAME/blob/main/examples/demo.py)).
+
 :::tip
 Check out also the published VAME Workflow Guide, including more hands-on recommendations [HERE](https://www.nature.com/articles/s42003-022-04080-7#Sec8).
 :::
 
-
-## Running VAME, step-by-step
-
-In this tutorial we will show you how to run the VAME workflow step-by-step using a simple example. The code below can also be found in the `demo.py` script in our Github repository ([link here](https://github.com/EthoML/VAME/blob/main/examples/demo.py)).
-
-
-### 0. Download the necessary resources:
-To run the demo you will need a video and a csv file with the pose estimation results. You can use the following files links:
-- `video-1.mp4`: Video file [link](https://drive.google.com/file/d/1w6OW9cN_-S30B7rOANvSaR9c3O5KeF0c/view)
-- `video-1.csv`: Pose estimation results [link](https://github.com/EthoML/VAME/blob/master/examples/video-1.csv)
+:::tip
+You can run an entire VAME workflow with just a few lines, using the [Pipeline method](/docs/getting_started/pipeline).
+:::
 
 
-### 2. Running the demo main pipeline
-We will now show you how to run the main pipeline of the VAME workflow using  snnipets of code. We suggest you to run these snippets in a jupyter notebook.
+## 0. [Optional] Download input data
+To run VAME you will need a video and a pose estimation file. If you don't have your own data, you download sample data:
 
-#### 2.1a Setting the demo variables using CSV files
-To start the demo you must define 4 variables:
+```python
+from vame.util.sample_data import download_sample_data
+
+source_software = "DeepLabCut"              # "DeepLabCut", "SLEAP" or "LightningPose"
+ps = download_sample_data(source_software)  # Data will be downloaded to ~/.movement/data/
+videos = [ps["video"]]                      # List of paths to the video files
+poses_estimations = [ps["poses"]]           # List of paths to the pose estimation files
+```
+
+
+## 1. Initialize the project
+VAME organizes around projects. To start a new project, you need to define a few things:
+
 ```python
 import vame
 
+working_directory = '.'      # The directory where the project will be saved
+project = 'my-vame-project'  # The name of the project
 
-# The directory where the project will be saved
-working_directory = '.'
+# [Optional] Customized configuration for the project
+config_kwargs = {
+    "n_clusters": 15,
+    "pose_confidence": 0.9,
+    "max_epochs": 100,
+}
 
-# The name you want for the project
-project = 'my-vame-project'
-
-# A list of paths to the videos file
-videos = ['video-1.mp4']
-
-# A list of paths to the poses estimations files.
-# Important: The name (without the extension) of the video file and the pose estimation file must be the same. E.g. `video-1.mp4` and `video-1.csv`
-poses_estimations = ['video-1.csv']
-```
-
-#### 2.1b Setting the demo variables using NWB files
-Alternativaly you can use `.nwb` files as pose estimation files. In this case you must define 4 variables:
-```python
-import vame
-
-
-# The directory where the project will be saved
-working_directory = '.'
-
-# The name you want for the project
-project = 'my-vame-project'
-
-# A list of paths to the videos file
-videos = ['video-1.mp4']
-
-# A list of paths to the poses estimations files.
-# Important: The name (without the extension) of the video file and the pose estimation file must be the same. E.g. `video-1.mp4` and `video-1.nwb`
-poses_estimations = ['video-1.nwb']
-
-# A list of paths in the NWB file where the pose estimation data is stored.
-paths_to_pose_nwb_series_data = ['processing/behavior/data_interfaces/PoseEstimation/pose_estimation_series']
-```
-
-
-
-#### 2.2 Initializing the project
-With the variables set, you can initialize the project by running the following code:
-
-If you are using CSV files you can run the following code to initialize the project:
-```python
-config = vame.init_new_project(
-    project=project,
+config_path, config = vame.init_new_project(
+    project_name=project_name,
     videos=videos,
     poses_estimations=poses_estimations,
+    source_software=source_software,
     working_directory=working_directory,
-    videotype='.mp4'
+    config_kwargs=config_kwargs,
 )
 ```
 
-If you are using NWB files you can run the following code to initialize the project:
-```python
-config = vame.init_new_project(
-    project=project,
-    videos=videos,
-    poses_estimations=poses_estimations,
-    working_directory=working_directory,
-    videotype='.mp4',
-    paths_to_pose_nwb_series_data=paths_to_pose_nwb_series_data
-)
-```
-
-This command will create a project folder in the defined working directory with the name you set in the `project` variable and a date suffix, e.g: `my-vame-project-May-9-2024`.
-In this folder you can find a config file called `config.yaml` where you can set the parameters for the VAME algorithm.
-The videos and poses estimations files will be copied to the project videos folder. It is really important to define in the `config.yaml` file if your data is egocentrically aligned or not before running the rest of the workflow.
+This command will create a project folder in the defined working directory with the project name you defined.
+In this folder you can find a config file called `config.yaml` which holds the main parameters for the VAME workflow.
+The videos and pose estimation files will be linked or copied to the project folder.
 
 
 #### 2.3 Egocentric alignment
