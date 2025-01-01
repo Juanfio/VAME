@@ -44,7 +44,7 @@ You should make sure that you have a GPU powerful enough to train deep learning 
 VAME can also be trained in Google Colab or on a HPC cluster.
 :::
 
-Once you have your computing setup ready, begin using VAME by following the [demo workflow guide](/docs/getting_started/running).
+Once you have your computing setup ready, begin using VAME by following the [step-by-step guide](/docs/getting_started/step_by_step).
 
 ## References
 Original VAME publication: [Identifying Behavioral Structure from Deep Variational Embeddings of Animal Motion](https://www.biorxiv.org/content/10.1101/2020.05.14.095430v2) <br/>
