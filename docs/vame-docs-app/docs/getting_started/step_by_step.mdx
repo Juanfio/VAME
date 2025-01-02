@@ -51,8 +51,8 @@ VAME organizes around projects. To start a new project, you need to define a few
 ```python
 import vame
 
-working_directory = '.'      # The directory where the project will be saved
-project = 'my-vame-project'  # The name of the project
+working_directory = "."      # The directory where the project will be saved
+project = "my-vame-project"  # The name of the project
 
 # [Optional] Customized configuration for the project
 config_kwargs = {
@@ -72,102 +72,123 @@ config_path, config = vame.init_new_project(
 ```
 
 This command will create a project folder in the defined working directory with the project name you defined.
-In this folder you can find a config file called `config.yaml` which holds the main parameters for the VAME workflow.
+In this folder you can find a config file called [config.yaml](/docs/project-config) which holds the main parameters for the VAME workflow.
 The videos and pose estimation files will be linked or copied to the project folder.
 
-
-#### 2.3 Egocentric alignment
-If your data is not egocentrically aligned, you can align it by running the following code:
-
-```python
-vame.egocentric_alignment(config, pose_ref_index=[0, 5])
-```
-
-But if your experiment is by design egocentrical (e.g. head-fixed experiment on treadmill etc) you can use the following to convert your .csv to a .npy array, ready to train vame on it.
+## 2. Preprocess the data
+The preprocessing step is responsible for cleaning, filtering and aligning the pose estimation data.
 
 ```python
-vame.csv_to_numpy(config)
+vame.preprocessing(
+    config=config,
+    centered_reference_keypoint=centered_reference_keypoint,
+    orientation_reference_keypoint=orientation_reference_keypoint,
+)
 ```
 
-#### 2.4 Creating the training dataset
+Internally, this function will:
 
-To create the training dataset you can run the following code:
+### 2.1 Clean low confidence data points
+Pose estimation data points with confidence below the threshold will be cleared and interpolated.
+
+### 2.2 Egocentric alignment
+Based on two reference keypoints, the data will be aligned to an egocentric coordinate system:
+- `centered_reference_keypoint`: The keypoint that will be centered in the frame.
+- `orientation_reference_keypoint`: The keypoint that will be used to determine the rotation of the frame.
+
+By consequence, the `x` and `y` coordinates of the `centered_reference_keypoint` and the `x` coordinate of the `orientation_reference_keypoint` will be set to an array of zeros, and further removed from the dataset.
+
+### 2.3 Clean outliers
+Outliers will be removed based on the interquartile range (IQR) method. This means that data points that are below `Q1 - iqr_factor * IQR` or above `Q3 + iqr_factor * IQR` will be cleared and interpolated.
+
+### 2.4 Savitzky-Golay filter
+The data will be further smoothed using a Savitzky-Golay filter.
+
+
+
+## 3. Train the neural network
+At this point, we will prepare the data for training the VAME model, run the training and evaluate the model.
+
+### 3.1 Create the training dataset
+To create the training dataset, which will put the data in the right format for the VAME model, and split it into training and test sets, you can run:
 
 ```python
-vame.create_trainset(config, pose_ref_index=[0,5])
+vame.create_trainset(config=config)
 ```
 
+### 3.2 Training the model
+Training the vame model might take a while depending on the size of your dataset and your machine settings. To train the model you can run:
 
-#### 2.5 Training the model
-Training the vame model might take a while depending on the size of your dataset and your machine settings. To train the model you can run the following code:
 ```python
-vame.train_model(config)
+vame.train_model(config=config)
 ```
 
-#### 2.6 Evaluate the model
+### 3.3 Evaluate the model
 THe model evaluation produces two plots, one showing the loss of the model during training and the other showing the reconstruction and future prediction of input sequence.
+
 ```python
-vame.evaluate_model(config)
+vame.evaluate_model(config=config)
 ```
 
-#### 2.7 Segmenting the behavior
-To perform pose segmentation you can run the following code:
+## 4. Segment behavior
+Behavioral segmentation in VAME is done in two steps: pose segmentation into motifs and community detection.
+
+### 4.1 Pose segmentation
+To perform pose segmentation you can run:
 ```python
-vame.pose_segmentation(config)
+vame.segmentat_session(config=config)
 ```
 
+This will perfomr the segmentation using two different algorithms: HMM and K-means. The results will be saved in the project folder.
 
-### 3. Running Optional Steps of the Pipeline
-:::tip
-The following steps are optional and can be run if you want to create motif VideoColorSpace, communities/hierarchies of behavior and community VideoColorSpace.
-:::
+### 4.2 Community detection
+Community detection is done by grouping similar motifs into communities using hierarchical clustering. To run community detection you can run:
 
-#### 3.1 Creating motif videos
+```python
+vame.community(
+    config=config,
+    segmentation_algorithm="hmm",
+    cut_tree=2,
+)
+```
+
+where `segmentation_algorithm` can be either "hmm" or "kmeans" and `cut_tree` is the cut level for the hierarchical clustering.
+
+
+## 5. Visualize and analyze
+
+### 5.1 Creating motif and community videos
 To create motif videos and get insights about the fine grained poses you can run:
-```python
-vame.motif_videos(config, videoType='.mp4')
-```
-
-#### 3.2 Run community detection
-To create behavioral hierarchies and communities detection run:
-```python
-vame.community(config, parametrization='hmm', cut_tree=2, cohort=False)
-```
-It will produce a tree plot of the behavioural hierarchies using hmm motifs.
-
-#### 3.3 Community Videos
-Create community videos to get insights about behavior on a hierarchical scale.
-```python
-vame.community_videos(config)
-```
-
-#### 3.4 UMAP Visualization
- Down projection of latent vectors and visualization via UMAP.
-```python
-fig = vame.visualization(config, label=None) #options: label: None, "motif", "community"
-```
-
-
-#### 3.5 Generative Model (Reconstruction decoder)
-Use the generative model (reconstruction decoder) to sample from the learned data distribution, reconstruct random real samples or visualize
-the cluster center for validation.
-```python
-vame.generative_model(config, mode="centers") #options: mode: "sampling", "reconstruction", "centers", "motifs"
-```
-
-#### 3.6 Create output video
-Create a video of an egocentrically aligned mouse + path through
-the community space (similar to our gif on github) to learn more about your representation
-and have something cool to show around.
-
-:::warning
-This function is currently very slow.
-:::
 
 ```python
-vame.gif(config, pose_ref_index=[0,5], subtract_background=True, start=None,
-         length=500, max_lag=30, label='community', file_format='.mp4', crop_size=(300,300))
+vame.motif_videos(
+    config=config,
+    segmentation_algorithm="hmm",
+    video_type=".mp4",
+)
 ```
-:::tip
-Once the frames are saved you can create a video or gif via e.g. ImageJ or other tools
-:::
+
+Create community videos:
+```python
+vame.community_videos(
+    config=config,
+    segmentation_algorithm="hmm",
+    video_type=".mp4",
+)
+```
+
+### 5.2 UMAP visualization
+To visualize and project latent vectors onto a 2D plane via UMAP you can run:
+
+```python
+from vame.visualization.umap import visualize_umap
+
+visualize_umap(
+    config=config,
+    label="motif",
+    segmentation_algorithm="hmm",
+)
+```
+
+where `label` can be either None, "motif" or "community", and `segmentation_algorithm` can be either 'hmm' or 'kmeans'.
+
