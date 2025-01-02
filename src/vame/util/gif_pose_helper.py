@@ -3,12 +3,13 @@ import tqdm
 import cv2 as cv
 import numpy as np
 import pandas as pd
+
 from vame.logging.logger import VameLogger
+from vame.io.load_poses import read_pose_estimation_file
 from vame.util.data_manipulation import (
     interpol_first_rows_nans,
-    crop_and_flip,
+    crop_and_flip_legacy,
     background,
-    read_pose_estimation_file,
 )
 
 
@@ -29,8 +30,8 @@ def get_animal_frames(
     """
     Extracts frames of an animal from a video file and returns them as a list.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     cfg : dict
         Configuration dictionary containing project information.
     session : str
@@ -48,8 +49,8 @@ def get_animal_frames(
     crop_size : tuple, optional
         Size of the cropped area. Defaults to (300, 300).
 
-    Returns:
-    --------
+    Returns
+    -------
     list:
         List of extracted frames.
     """
@@ -83,7 +84,7 @@ def get_animal_frames(
         "raw",
         session + ".nc",
     )
-    data, data_mat = read_pose_estimation_file(file_path=file_path)
+    data, data_mat, ds = read_pose_estimation_file(file_path=file_path)
 
     # get the coordinates for alignment from data table
     pose_list = []
@@ -145,9 +146,7 @@ def get_animal_frames(
                 frame = frame - bg
                 frame[frame <= 0] = 0
         except Exception:
-            logger.info(
-                f"Couldn't find a frame in capture.read(). #Frame: {idx + start + lag}"
-            )
+            logger.info(f"Couldn't find a frame in capture.read(). #Frame: {idx + start + lag}")
             continue
 
         # Read coordinates and add border
@@ -191,7 +190,7 @@ def get_animal_frames(
         center, size, theta = rect
 
         # crop image
-        out, shifted_points = crop_and_flip(
+        out, shifted_points = crop_and_flip_legacy(
             rect,
             img,
             pose_list_bordered,

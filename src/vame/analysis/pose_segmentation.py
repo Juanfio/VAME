@@ -11,11 +11,10 @@ from sklearn.cluster import KMeans
 from vame.schemas.states import save_state, SegmentSessionFunctionSchema
 from vame.logging.logger import VameLogger, TqdmToLogger
 from vame.model.rnn_model import RNN_VAE
-from vame.util.auxiliary import read_config
-
-# from vame.util.data_manipulation import consecutive
+from vame.io.load_poses import read_pose_estimation_file
 from vame.util.cli import get_sessions_from_user_input
 from vame.util.model_util import load_model
+from vame.preprocessing.to_model import format_xarray_for_rnn
 
 
 logger_config = VameLogger(__name__)
@@ -27,7 +26,8 @@ def embedd_latent_vectors(
     sessions: List[str],
     model: RNN_VAE,
     fixed: bool,
-    tqdm_stream: Union[TqdmToLogger, None],
+    read_from_variable: str = "position_processed",
+    tqdm_stream: Union[TqdmToLogger, None] = None,
 ) -> List[np.ndarray]:
     """
     Embed latent vectors for the given files using the VAME model.
@@ -54,7 +54,7 @@ def embedd_latent_vectors(
     temp_win = cfg["time_window"]
     num_features = cfg["num_features"]
     if not fixed:
-        num_features = num_features - 2
+        num_features = num_features - 3
 
     use_gpu = torch.cuda.is_available()
     if use_gpu:
@@ -66,15 +66,17 @@ def embedd_latent_vectors(
 
     for session in sessions:
         logger.info(f"Embedding of latent vector for file {session}")
-        data = np.load(
-            os.path.join(
-                project_path,
-                "data",
-                "processed",
-                session,
-                session + "-PE-seq-clean.npy",
-            )
+        # Read session data
+        file_path = str(Path(project_path) / "data" / "processed" / f"{session}_processed.nc")
+        _, _, ds = read_pose_estimation_file(file_path=file_path)
+        data = np.copy(ds[read_from_variable].values)
+
+        # Format the data for the RNN model
+        data = format_xarray_for_rnn(
+            ds=ds,
+            read_from_variable=read_from_variable,
         )
+
         latent_vector_list = []
         with torch.no_grad():
             for i in tqdm.tqdm(range(data.shape[1] - temp_win), file=tqdm_stream):
@@ -82,15 +84,9 @@ def embedd_latent_vectors(
                 data_sample_np = data[:, i : temp_win + i].T
                 data_sample_np = np.reshape(data_sample_np, (1, temp_win, num_features))
                 if use_gpu:
-                    h_n = model.encoder(
-                        torch.from_numpy(data_sample_np)
-                        .type("torch.FloatTensor")
-                        .cuda()
-                    )
+                    h_n = model.encoder(torch.from_numpy(data_sample_np).type("torch.FloatTensor").cuda())
                 else:
-                    h_n = model.encoder(
-                        torch.from_numpy(data_sample_np).type("torch.FloatTensor").to()
-                    )
+                    h_n = model.encoder(torch.from_numpy(data_sample_np).type("torch.FloatTensor").to())
                 mu, _, _ = model.lmbda(h_n)
                 latent_vector_list.append(mu.cpu().data.numpy())
 
@@ -264,7 +260,7 @@ def individual_segmentation(
 
 @save_state(model=SegmentSessionFunctionSchema)
 def segment_session(
-    config: str,
+    config: dict,
     save_logs: bool = False,
 ) -> None:
     """
@@ -297,8 +293,8 @@ def segment_session(
 
     Parameters
     ----------
-    config : str
-        Path to the configuration file.
+    config : dict
+        Configuration dictionary.
     save_logs : bool, optional
         Whether to save logs, by default False.
 
@@ -306,29 +302,28 @@ def segment_session(
     -------
     None
     """
+    project_path = Path(config["project_path"]).resolve()
     try:
-        config_file = Path(config).resolve()
-        cfg = read_config(str(config_file))
         tqdm_stream = None
         if save_logs:
-            log_path = Path(cfg["project_path"]) / "logs" / "pose_segmentation.log"
+            log_path = project_path / "logs" / "pose_segmentation.log"
             logger_config.add_file_handler(str(log_path))
             tqdm_stream = TqdmToLogger(logger)
-        model_name = cfg["model_name"]
-        n_clusters = cfg["n_clusters"]
-        fixed = cfg["egocentric_data"]
-        segmentation_algorithms = cfg["segmentation_algorithms"]
+        model_name = config["model_name"]
+        n_clusters = config["n_clusters"]
+        fixed = config["egocentric_data"]
+        segmentation_algorithms = config["segmentation_algorithms"]
+        ind_seg = config["individual_segmentation"]
 
         logger.info("Pose segmentation for VAME model: %s \n" % model_name)
-        ind_seg = cfg["individual_segmentation"]
         logger.info(f"Segmentation algorithms: {segmentation_algorithms}")
 
         for seg in segmentation_algorithms:
             logger.info(f"Running pose segmentation using {seg} algorithm...")
-            for session in cfg["session_names"]:
+            for session in config["session_names"]:
                 if not os.path.exists(
                     os.path.join(
-                        cfg["project_path"],
+                        str(project_path),
                         "results",
                         session,
                         model_name,
@@ -337,7 +332,7 @@ def segment_session(
                 ):
                     os.mkdir(
                         os.path.join(
-                            cfg["project_path"],
+                            str(project_path),
                             "results",
                             session,
                             model_name,
@@ -346,11 +341,11 @@ def segment_session(
                     )
 
             # Get sessions
-            if cfg["all_data"] in ["Yes", "yes"]:
-                sessions = cfg["session_names"]
+            if config["all_data"] in ["Yes", "yes"]:
+                sessions = config["session_names"]
             else:
                 sessions = get_sessions_from_user_input(
-                    cfg=cfg,
+                    cfg=config,
                     action_message="run segmentation",
                 )
 
@@ -365,7 +360,7 @@ def segment_session(
 
             if not os.path.exists(
                 os.path.join(
-                    cfg["project_path"],
+                    str(project_path),
                     "results",
                     sessions[0],
                     model_name,
@@ -374,9 +369,9 @@ def segment_session(
                 )
             ):
                 new = True
-                model = load_model(cfg, model_name, fixed)
+                model = load_model(config, model_name, fixed)
                 latent_vectors = embedd_latent_vectors(
-                    cfg,
+                    config,
                     sessions,
                     model,
                     fixed,
@@ -388,7 +383,7 @@ def segment_session(
                         f"Apply individual segmentation of latent vectors for each session, {n_clusters} clusters"
                     )
                     labels, cluster_center, motif_usages = individual_segmentation(
-                        cfg=cfg,
+                        cfg=config,
                         sessions=sessions,
                         latent_vectors=latent_vectors,
                         n_clusters=n_clusters,
@@ -398,7 +393,7 @@ def segment_session(
                         f"Apply the same segmentation of latent vectors for all sessions, {n_clusters} clusters"
                     )
                     labels, cluster_center, motif_usages = same_segmentation(
-                        cfg=cfg,
+                        cfg=config,
                         sessions=sessions,
                         latent_vectors=latent_vectors,
                         n_clusters=n_clusters,
@@ -406,13 +401,11 @@ def segment_session(
                     )
 
             else:
-                logger.info(
-                    f"\nSegmentation with {n_clusters} k-means clusters already exists for model {model_name}"
-                )
+                logger.info(f"\nSegmentation with {n_clusters} k-means clusters already exists for model {model_name}")
 
                 if os.path.exists(
                     os.path.join(
-                        cfg["project_path"],
+                        str(project_path),
                         "results",
                         sessions[0],
                         model_name,
@@ -432,7 +425,7 @@ def segment_session(
                     latent_vectors = []
                     for session in sessions:
                         path_to_latent_vector = os.path.join(
-                            cfg["project_path"],
+                            str(project_path),
                             "results",
                             session,
                             model_name,
@@ -453,7 +446,7 @@ def segment_session(
                         )
                         # [SRM, 10/28/24] rename to cluster_centers
                         labels, cluster_center, motif_usages = individual_segmentation(
-                            cfg=cfg,
+                            cfg=config,
                             sessions=sessions,
                             latent_vectors=latent_vectors,
                             n_clusters=n_clusters,
@@ -464,7 +457,7 @@ def segment_session(
                         )
                         # [SRM, 10/28/24] rename to cluster_centers
                         labels, cluster_center, motif_usages = same_segmentation(
-                            cfg=cfg,
+                            cfg=config,
                             sessions=sessions,
                             latent_vectors=latent_vectors,
                             n_clusters=n_clusters,
@@ -479,7 +472,7 @@ def segment_session(
                 for idx, session in enumerate(sessions):
                     logger.info(
                         os.path.join(
-                            cfg["project_path"],
+                            project_path,
                             "results",
                             session,
                             "",
@@ -490,7 +483,7 @@ def segment_session(
                     )
                     if not os.path.exists(
                         os.path.join(
-                            cfg["project_path"],
+                            project_path,
                             "results",
                             session,
                             model_name,
@@ -501,7 +494,7 @@ def segment_session(
                         try:
                             os.mkdir(
                                 os.path.join(
-                                    cfg["project_path"],
+                                    project_path,
                                     "results",
                                     session,
                                     "",
@@ -514,7 +507,7 @@ def segment_session(
                             logger.error(error)
 
                     save_data = os.path.join(
-                        cfg["project_path"],
+                        str(project_path),
                         "results",
                         session,
                         model_name,

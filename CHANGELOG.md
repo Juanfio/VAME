@@ -1,3 +1,21 @@
+# v0.7.0
+
+### Fixes
+
+- Egocentric alignment outputs with incorrect column order  ([Issue #96](https://github.com/EthoML/VAME/issues/96))
+- Slow align egocentrical data ([Issue #113](https://github.com/EthoML/VAME/issues/113))
+- Standardized config argument across all functions
+
+### Features
+
+- User friendly way to select reference points for alignment ([Issue #89](https://github.com/EthoML/VAME/issues/89))
+- Adopt movement Xarray data format ([Issue #111](https://github.com/EthoML/VAME/issues/111))
+- Relocate IQR cleaning into preprocessing ([Issue #22](https://github.com/EthoML/VAME/issues/22))
+- Created preprocessing module ([Issue #119](https://github.com/EthoML/VAME/issues/119))
+- Separate module for visualization of results ([Issue #127](https://github.com/EthoML/VAME/issues/127))
+- Further improvements to Pipeline
+
+
 # v0.6.0
 
 ### Fixes

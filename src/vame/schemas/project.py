@@ -23,15 +23,13 @@ class PoseEstimationFiletype(str, Enum):
 
 
 class ProjectSchema(BaseModel):
-    # Project attributes
+    # Project parameters
     project_name: str = Field(
         ...,
         title="Project name",
     )
     creation_datetime: str = Field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat(
-            timespec="seconds"
-        ),
+        default_factory=lambda: datetime.now(timezone.utc).isoformat(timespec="seconds"),
         title="Creation datetime",
     )
     model_name: str = Field(
@@ -46,8 +44,6 @@ class ProjectSchema(BaseModel):
         default=0.99,
         title="Pose confidence",
     )
-
-    # Project path and videos
     project_path: str = Field(
         ...,
         title="Project path",
@@ -102,7 +98,7 @@ class ProjectSchema(BaseModel):
         title="Test fraction",
     )
 
-    # RNN model general hyperparameter:
+    # RNN model general hyperparameters
     pretrained_model: str = Field(
         default="None",
         title="Pretrained model",
@@ -188,7 +184,7 @@ class ProjectSchema(BaseModel):
         title="Softplus",
     )
 
-    # Segmentation:
+    # Segmentation
     segmentation_algorithms: List[SegmentationAlgorithms] = Field(
         title="Segmentation algorithms",
         default_factory=lambda: [

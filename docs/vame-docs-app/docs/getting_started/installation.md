@@ -1,6 +1,6 @@
 ---
 title: Installation
-sidebar_position: 2
+sidebar_position: 1
 ---
 
 
@@ -19,7 +19,8 @@ pip install vame-py
 
 1. Clone the VAME repository to your local machine by running
 ```bash
-git clone https://github.com/LINCellularNeuroscience/VAME.git
+git clone https://github.com/EthoML/VAME.git
+cd VAME
 ```
 
 
@@ -29,9 +30,9 @@ git clone https://github.com/LINCellularNeuroscience/VAME.git
 ```bash
 conda env create -f VAME.yaml
 ```
+
 **Option 2:**  Installing local VAME with pip in your active virtual environment by running
 ```bash
-cd VAME
 pip install .
 ```
 
@@ -43,7 +44,7 @@ You should make sure that you have a GPU powerful enough to train deep learning 
 VAME can also be trained in Google Colab or on a HPC cluster.
 :::
 
-Once you have your computing setup ready, begin using VAME by following the [demo workflow guide](/docs/getting_started/running).
+Once you have your computing setup ready, begin using VAME by following the [step-by-step guide](/docs/getting_started/step_by_step).
 
 ## References
 Original VAME publication: [Identifying Behavioral Structure from Deep Variational Embeddings of Animal Motion](https://www.biorxiv.org/content/10.1101/2020.05.14.095430v2) <br/>

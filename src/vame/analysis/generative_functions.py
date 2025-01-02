@@ -27,8 +27,8 @@ def random_generative_samples_motif(
     """
     Generate random samples for motifs.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     cfg : dict
         Configuration dictionary.
     model : torch.nn.Module
@@ -40,15 +40,14 @@ def random_generative_samples_motif(
     n_clusters : int
         Number of clusters.
 
-    Returns:
-    --------
+    Returns
+    -------
     plt.Figure
         Figure of generated samples.
     """
     logger.info("Generate random generative samples for motifs...")
     time_window = cfg["time_window"]
     for j in range(n_clusters):
-
         inds = np.where(labels == j)
         motif_latents = latent_vector[inds[0], :]
         gm = GaussianMixture(n_components=10).fit(motif_latents)
@@ -85,8 +84,8 @@ def random_generative_samples(
     """
     Generate random generative samples.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     cfg : dict
         Configuration dictionary.
     model : torch.nn.Module
@@ -94,8 +93,8 @@ def random_generative_samples(
     latent_vector : np.ndarray
         Latent vectors.
 
-    Returns:
-    --------
+    Returns
+    -------
     plt.Figure
         Figure of generated samples.
     """
@@ -136,8 +135,8 @@ def random_reconstruction_samples(
     """
     Generate random reconstruction samples.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     cfg : dict
         Configuration dictionary.
     model : torch.nn.Module
@@ -145,8 +144,8 @@ def random_reconstruction_samples(
     latent_vector : np.ndarray
         Latent vectors.
 
-    Returns:
-    --------
+    Returns
+    -------
     plt.Figure
         Figure of reconstructed samples.
     """
@@ -183,8 +182,8 @@ def visualize_cluster_center(
     """
     Visualize cluster centers.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     cfg : dict
         Configuration dictionary.
     model : torch.nn.Module
@@ -192,8 +191,8 @@ def visualize_cluster_center(
     cluster_center : np.ndarray
         Cluster centers.
 
-    Returns:
-    --------
+    Returns
+    -------
     plt.Figure
         Figure of cluster centers.
     """
@@ -228,7 +227,7 @@ def visualize_cluster_center(
 
 @save_state(model=GenerativeModelFunctionSchema)
 def generative_model(
-    config: str,
+    config: dict,
     segmentation_algorithm: SegmentationAlgorithms,
     mode: str = "sampling",
     save_logs: bool = False,
@@ -236,42 +235,40 @@ def generative_model(
     """
     Generative model.
 
-    Parameters:
-    -----------
-    config : str
-        Path to the configuration file.
+    Parameters
+    ----------
+    config : dict
+        Configuration dictionary.
     mode : str, optional
         Mode for generating samples. Defaults to "sampling".
 
-    Returns:
-    --------
+    Returns
+    -------
     plt.Figure
         Plots of generated samples for each segmentation algorithm.
     """
     try:
-        config_file = str(Path(config).resolve())
-        cfg = read_config(config_file)
         if save_logs:
-            logs_path = Path(cfg["project_path"]) / "logs" / "generative_model.log"
+            logs_path = Path(config["project_path"]) / "logs" / "generative_model.log"
             logger_config.add_file_handler(str(logs_path))
         logger.info(f"Running generative model with mode {mode}...")
-        model_name = cfg["model_name"]
-        n_clusters = cfg["n_clusters"]
+        model_name = config["model_name"]
+        n_clusters = config["n_clusters"]
 
         # Get sessions
-        if cfg["all_data"] in ["Yes", "yes"]:
-            sessions = cfg["session_names"]
+        if config["all_data"] in ["Yes", "yes"]:
+            sessions = config["session_names"]
         else:
             sessions = get_sessions_from_user_input(
-                cfg=cfg,
+                cfg=config,
                 action_message="generate samples",
             )
 
-        model = load_model(cfg, model_name, fixed=False)
+        model = load_model(config, model_name, fixed=False)
 
         for session in sessions:
             path_to_file = os.path.join(
-                cfg["project_path"],
+                config["project_path"],
                 "results",
                 session,
                 model_name,
@@ -287,7 +284,7 @@ def generative_model(
                     )
                 )
                 return random_generative_samples(
-                    cfg,
+                    config,
                     model,
                     latent_vector,
                 )
@@ -300,7 +297,7 @@ def generative_model(
                     )
                 )
                 return random_reconstruction_samples(
-                    cfg,
+                    config,
                     model,
                     latent_vector,
                 )
@@ -317,7 +314,7 @@ def generative_model(
                     )
                 )
                 return visualize_cluster_center(
-                    cfg,
+                    config,
                     model,
                     cluster_center,
                 )
@@ -333,16 +330,11 @@ def generative_model(
                     os.path.join(
                         path_to_file,
                         "",
-                        str(n_clusters)
-                        + "_"
-                        + segmentation_algorithm
-                        + "_label_"
-                        + session
-                        + ".npy",
+                        str(n_clusters) + "_" + segmentation_algorithm + "_label_" + session + ".npy",
                     )
                 )
                 return random_generative_samples_motif(
-                    cfg=cfg,
+                    cfg=config,
                     model=model,
                     latent_vector=latent_vector,
                     labels=labels,

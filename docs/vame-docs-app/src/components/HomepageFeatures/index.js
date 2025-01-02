@@ -5,7 +5,6 @@ import styles from './styles.module.css';
 const FeatureList = [
   {
     title: 'Behavioral Segmentation',
-    // Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
         VAME provides advanced algorithms for precise behavioral segmentation, allowing researchers to analyze animal motion patterns efficiently.
@@ -14,7 +13,6 @@ const FeatureList = [
   },
   {
     title: 'Machine Learning Framework',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
         Utilizing state-of-the-art machine learning techniques, VAME extracts meaningful insights from behavioral data to facilitate scientific discoveries.
@@ -23,7 +21,6 @@ const FeatureList = [
   },
   {
     title: 'Python API',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
         VAME offers a straight forward Python API, making it easy for users to integrate into their workflows and perform behavioral analysis with minimal effort.
@@ -32,7 +29,7 @@ const FeatureList = [
   },
 ];
 
-function Feature({Svg, title, description}) {
+function Feature({ Svg, title, description }) {
   return (
     <div className={clsx('col col--4')}>
       {/* <div className="text--center">

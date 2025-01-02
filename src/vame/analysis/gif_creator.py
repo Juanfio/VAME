@@ -33,8 +33,8 @@ def create_video(
     """
     Create video frames for the given embedding.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     path_to_file : str
         Path to the file.
     session : str
@@ -54,8 +54,8 @@ def create_video(
     num_points : int
         Number of points.
 
-    Returns:
-    --------
+    Returns
+    -------
     None
     """
     # set matplotlib colormap
@@ -102,9 +102,7 @@ def create_video(
         frame = frames[i]
         ax2.imshow(frame, cmap=cmap_reversed)
         # ax2.set_title("Motif %d,\n Community: %s" % (lbl, motifs[lbl]), fontsize=10)
-        fig.savefig(
-            os.path.join(path_to_file, "gif_frames", session + "gif_%d.png") % i
-        )
+        fig.savefig(os.path.join(path_to_file, "gif_frames", session + "gif_%d.png") % i)
 
 
 def gif(
@@ -121,8 +119,8 @@ def gif(
 ) -> None:
     """Create a GIF from the given configuration.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     config : str
         Path to the configuration file.
     pose_ref_index : list
@@ -144,8 +142,8 @@ def gif(
     crop_size : Tuple[int, int], optional
         Crop size. Defaults to (300,300).
 
-    Returns:
-    --------
+    Returns
+    -------
     None
     """
     config_file = Path(config).resolve()
@@ -205,9 +203,7 @@ def gif(
                 random_state=cfg["random_state"],
             )
 
-            latent_vector = np.load(
-                os.path.join(path_to_file, "", "latent_vector_" + session + ".npy")
-            )
+            latent_vector = np.load(os.path.join(path_to_file, "", "latent_vector_" + session + ".npy"))
 
             num_points = cfg["num_points"]
             if num_points > latent_vector.shape[0]:
@@ -228,12 +224,7 @@ def gif(
             umap_label = np.load(
                 os.path.join(
                     path_to_file,
-                    str(n_clusters)
-                    + "_"
-                    + segmentation_algorithm
-                    + "_label_"
-                    + session
-                    + ".npy",
+                    str(n_clusters) + "_" + segmentation_algorithm + "_label_" + session + ".npy",
                 )
             )
         elif label == "community":
